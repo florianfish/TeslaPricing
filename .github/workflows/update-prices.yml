@@ -1,0 +1,49 @@
+name: "Actualisation nocturne des Superchargeurs Tesla"
+
+on:
+  schedule:
+    # Exécution chaque nuit à 03:00 UTC (04:00 heure française d'hiver, 05:00 d'été)
+    - cron: '0 3 * * *'
+  # Permet également de lancer manuellement la mise à jour depuis l'onglet Actions de GitHub
+  workflow_dispatch:
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Requis pour autoriser le commit et le push sur le dépôt
+
+    steps:
+      - name: Récupérer le code source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configurer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Installer les dépendances
+        run: npm ci --legacy-peer-deps
+
+      - name: Exécuter le script d'actualisation des stations et prix
+        run: npm run update-prices
+
+      - name: Commiter et pousser les modifications sur GitHub
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore(data): actualisation automatique nocturne des Superchargeurs"
+          file_pattern: "server/data/superchargers_db.json"
+          commit_user_name: "github-actions[bot]"
+          commit_user_email: "github-actions[bot]@users.noreply.github.com"
+          commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+
+      - name: Notifier le VPS (Webhook optionnel)
+        if: env.VPS_WEBHOOK_URL != ''
+        env:
+          VPS_WEBHOOK_URL: ${{ secrets.VPS_WEBHOOK_URL }}
+        run: |
+          echo "Notification du VPS pour actualisation des données..."
+          curl -s -X POST "$VPS_WEBHOOK_URL" || echo "Webhook non joignable"

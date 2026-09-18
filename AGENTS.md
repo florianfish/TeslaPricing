@@ -61,6 +61,10 @@ Le projet adopte une architecture full-stack unifiée servie par un unique proce
 - Persistance obligatoire : Monter le dossier `./server/data:/app/server/data` en volume pour conserver les relevés et mises à jour de prix.
 - Configuration du port via la variable d'environnement `PORT` (par défaut `3000`).
 
+### E. Automatisation Nocturne & Conflits Git (`scripts/update-prices.ts`)
+- Un workflow GitHub Actions (`.github/workflows/update-prices.yml`) actualise chaque nuit la liste des stations et tarifs depuis le flux de référence et commite directement sur le dépôt GitHub.
+- **Résolution des conflits sur VPS** : Les relevés communautaires saisis depuis le Web sont sauvegardés dans `server/data/user_contributions.json` (ignoré par Git) et ré-appliqués à chaud au démarrage et lors de l'appel à `reloadDatabase()` via `POST /api/sync`. Ainsi, les `git pull` sur le VPS ne provoquent jamais de conflit de fusion.
+
 ---
 
 ## ⚠️ 3. Gotchas & Pièges Fréquents (Important pour Agents)

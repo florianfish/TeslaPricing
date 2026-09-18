@@ -5,6 +5,7 @@ import type { Supercharger, PriceSnapshot, SuperchargerStats, SuperchargerPricin
 const DATA_DIR = path.join(process.cwd(), 'server', 'data');
 const DB_FILE = path.join(DATA_DIR, 'superchargers_db.json');
 const RAW_FILE = path.join(DATA_DIR, 'france_sites_raw.json');
+const USER_CONTRIBUTIONS_FILE = path.join(DATA_DIR, 'user_contributions.json');
 
 interface DatabaseSchema {
   superchargers: Supercharger[];
@@ -14,6 +15,53 @@ interface DatabaseSchema {
 }
 
 let dbInstance: DatabaseSchema | null = null;
+
+// Charger les relevés communautaires locaux (sans polluer le versioning git de superchargers_db.json)
+function loadUserContributions(): PriceSnapshot[] {
+  if (!fs.existsSync(USER_CONTRIBUTIONS_FILE)) return [];
+  try {
+    const raw = fs.readFileSync(USER_CONTRIBUTIONS_FILE, 'utf-8');
+    return JSON.parse(raw);
+  } catch (err) {
+    console.error('Erreur lecture user_contributions.json:', err);
+    return [];
+  }
+}
+
+// Enregistrer un nouveau relevé utilisateur dans le fichier delta
+function saveUserContribution(snapshot: PriceSnapshot) {
+  const existing = loadUserContributions();
+  existing.push(snapshot);
+  fs.writeFileSync(USER_CONTRIBUTIONS_FILE, JSON.stringify(existing, null, 2), 'utf-8');
+}
+
+// Appliquer les relevés communautaires par-dessus la base de référence
+function applyContributionsToDb(db: DatabaseSchema) {
+  const contributions = loadUserContributions();
+  for (const snap of contributions) {
+    const charger = db.superchargers.find(
+      s => s.locationSlug.toLowerCase() === snap.locationSlug.toLowerCase() || s.id === snap.superchargerId
+    );
+    if (charger) {
+      if (!charger.priceHistory) charger.priceHistory = [];
+      const alreadyHas = charger.priceHistory.some(h => h.id === snap.id);
+      if (!alreadyHas) {
+        charger.priceHistory.push(snap);
+        db.priceSnapshots.push(snap);
+      }
+      // Mettre à jour currentPricing si plus récent
+      charger.currentPricing = {
+        ...charger.currentPricing,
+        teslaPeak: snap.teslaPeak,
+        teslaOffPeak: snap.teslaOffPeak,
+        nonTeslaPeak: snap.nonTeslaPeak,
+        nonTeslaOffPeak: snap.nonTeslaOffPeak,
+        peakHours: snap.peakHours,
+        lastUpdated: new Date(snap.date).toISOString(),
+      };
+    }
+  }
+}
 
 // Clean slug generator
 function formatSlug(rawId: string | number, name: string, city: string): string {
@@ -262,8 +310,8 @@ function generateNationalHistory(): PriceSnapshot[] {
 }
 
 // Initialize database from raw data or disk
-export function initDatabase(): DatabaseSchema {
-  if (dbInstance) return dbInstance;
+export function initDatabase(forceReload = false): DatabaseSchema {
+  if (dbInstance && !forceReload) return dbInstance;
 
   fs.mkdirSync(DATA_DIR, { recursive: true });
 
@@ -271,6 +319,7 @@ export function initDatabase(): DatabaseSchema {
     try {
       const content = fs.readFileSync(DB_FILE, 'utf-8');
       dbInstance = JSON.parse(content);
+      applyContributionsToDb(dbInstance!);
       return dbInstance!;
     } catch (e) {
       console.error('Error reading existing database file, rebuilding...', e);
@@ -528,8 +577,15 @@ export function addPriceSnapshot(data: {
   if (!charger.priceHistory) charger.priceHistory = [];
   charger.priceHistory.push(newSnapshot);
 
+  saveUserContribution(newSnapshot);
   saveDatabase(db);
   return { success: true, snapshot: newSnapshot };
+}
+
+// Recharger la base en mémoire (depuis superchargers_db.json + user_contributions.json)
+export function reloadDatabase(): DatabaseSchema {
+  dbInstance = null;
+  return initDatabase(true);
 }
 
 export function getStats(): SuperchargerStats {

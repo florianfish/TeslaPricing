@@ -3,6 +3,7 @@ import path from 'path';
 import { createServer as createViteServer } from 'vite';
 import {
   initDatabase,
+  reloadDatabase,
   getAllSuperchargers,
   getSuperchargerBySlug,
   getPriceHistoryForCharger,
@@ -147,16 +148,14 @@ async function startServer() {
     }
   });
 
-  // Sync endpoint
+  // Sync endpoint - Rechargement de la base depuis le disque et réapplication des contributions locales
   app.post('/api/sync', async (req, res) => {
     try {
-      const db = initDatabase();
-      db.lastSyncTime = new Date().toISOString();
-      saveDatabase(db);
+      const db = reloadDatabase();
 
       res.json({
         success: true,
-        message: 'Base de données synchronisée',
+        message: 'Base de données rechargée avec succès',
         lastSyncTime: db.lastSyncTime,
         stats: getStats(),
       });

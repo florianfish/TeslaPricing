@@ -135,6 +135,22 @@ Pour exposer l'application sur votre domaine avec HTTPS :
   }
   ```
 
+### 5. Actualisation Nocturne Automatique (GitHub Actions & Synchronisation VPS)
+
+Le workflow `.github/workflows/update-prices.yml` tourne chaque nuit à 03:00 UTC pour :
+1. Récupérer les nouvelles stations et changements de statuts/bornes.
+2. Mettre à jour `server/data/superchargers_db.json`.
+3. Commiter et pousser automatiquement les modifications sur le dépôt GitHub.
+
+**Synchroniser votre VPS automatiquement chaque nuit :**
+Ajoutez une ligne dans la crontab de votre VPS (`crontab -e`) pour récupérer les nouveaux prix et recharger l'application à chaud sans interruption de service :
+```bash
+# Chaque nuit à 04:00 UTC : pull des nouveaux prix + rechargement en mémoire sans redémarrer le conteneur
+0 4 * * * cd /chemin/vers/TeslaPricing && git pull origin main && curl -s -X POST http://localhost:3000/api/sync
+```
+> [!TIP]
+> **Zéro conflit Git** : Les relevés de tarifs saisis par les utilisateurs depuis l'interface web sont isolés dans `server/data/user_contributions.json` (ignoré par Git) et ré-appliqués automatiquement par-dessus la base lors du rechargement. Les `git pull` s'exécutent ainsi sans aucun risque de conflit de fusion !
+
 ---
 
 ## 📡 Documentation des Endpoints API
