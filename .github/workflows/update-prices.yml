@@ -41,12 +41,15 @@ jobs:
           commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
 
       - name: Notifier et synchroniser le VPS
-        if: ${{ secrets.VPS_WEBHOOK_URL != '' || secrets.VPS_SYNC_WEBHOOK_URL != '' || secrets.VPS_URL != '' || secrets.WEBHOOK_URL != '' }}
         env:
           TARGET_URL: ${{ secrets.VPS_WEBHOOK_URL || secrets.VPS_SYNC_WEBHOOK_URL || secrets.VPS_URL || secrets.WEBHOOK_URL }}
         run: |
-          echo "Envoi de la base actualisée vers le VPS..."
-          curl -s -X POST \
-            -H "Content-Type: application/json" \
-            --data-binary @server/data/superchargers_db.json \
-            "$TARGET_URL" || echo "VPS non joignable actuellement"
+          if [ -n "$TARGET_URL" ]; then
+            echo "Envoi de la base actualisée vers le VPS..."
+            curl -s -X POST \
+              -H "Content-Type: application/json" \
+              --data-binary @server/data/superchargers_db.json \
+              "$TARGET_URL" || echo "VPS non joignable actuellement"
+          else
+            echo "Aucune URL de webhook configurée, étape ignorée."
+          fi
