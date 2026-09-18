@@ -27,6 +27,7 @@ export interface PriceSnapshot {
 
 export interface Supercharger {
   id: string;
+  locationId?: string;       // Tesla internal locationId (e.g. "300313")
   locationSlug: string;
   name: string;
   city: string;

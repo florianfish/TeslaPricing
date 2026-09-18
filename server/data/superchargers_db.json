@@ -154,7 +154,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "34045"
     },
     {
       "id": "10338",
@@ -310,7 +311,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "444407"
     },
     {
       "id": "10337",
@@ -466,7 +468,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.9
         }
-      ]
+      ],
+      "locationId": "417319"
     },
     {
       "id": "8033",
@@ -622,7 +625,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "300364"
     },
     {
       "id": "10339",
@@ -778,7 +782,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.7
         }
-      ]
+      ],
+      "locationId": "444265"
     },
     {
       "id": "10341",
@@ -934,7 +939,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "413625"
     },
     {
       "id": "7102",
@@ -1090,7 +1096,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "297775"
     },
     {
       "id": "10342",
@@ -1246,7 +1253,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "413456"
     },
     {
       "id": "10352",
@@ -1402,7 +1410,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.8
         }
-      ]
+      ],
+      "locationId": "417121"
     },
     {
       "id": "10372",
@@ -1558,7 +1567,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "417068"
     },
     {
       "id": "10741",
@@ -1714,7 +1724,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "437216"
     },
     {
       "id": "10743",
@@ -1870,7 +1881,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "29985"
     },
     {
       "id": "10740",
@@ -2026,7 +2038,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "463494"
     },
     {
       "id": "10751",
@@ -2182,7 +2195,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.7
         }
-      ]
+      ],
+      "locationId": "444409"
     },
     {
       "id": "8042",
@@ -2338,7 +2352,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.8
         }
-      ]
+      ],
+      "locationId": "corsesupercharger"
     },
     {
       "id": "10745",
@@ -2494,7 +2509,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "417274"
     },
     {
       "id": "10746",
@@ -2650,7 +2666,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.7
         }
-      ]
+      ],
+      "locationId": "29607"
     },
     {
       "id": "10747",
@@ -2806,7 +2823,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "413921"
     },
     {
       "id": "9428",
@@ -2962,7 +2980,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.8
         }
-      ]
+      ],
+      "locationId": "58603"
     },
     {
       "id": "10752",
@@ -3118,7 +3137,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.9
         }
-      ]
+      ],
+      "locationId": "437130"
     },
     {
       "id": "9427",
@@ -3274,7 +3294,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "30240"
     },
     {
       "id": "9429",
@@ -3430,7 +3451,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.9
         }
-      ]
+      ],
+      "locationId": "30258"
     },
     {
       "id": "7945",
@@ -3586,7 +3608,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.7
         }
-      ]
+      ],
+      "locationId": "30989"
     },
     {
       "id": "7584",
@@ -3612,14 +3635,14 @@
       "facilityName": "E.Leclerc",
       "dateOpened": "2024-05-29",
       "currentPricing": {
-        "teslaPeak": 0.35,
-        "teslaOffPeak": 0.3,
-        "nonTeslaPeak": 0.48,
-        "nonTeslaOffPeak": 0.39,
-        "peakHours": "16:00 - 20:00",
+        "teslaPeak": 0.36,
+        "teslaOffPeak": 0.21,
+        "nonTeslaPeak": 0.49,
+        "nonTeslaOffPeak": 0.29,
+        "peakHours": "09:00 - 20:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T05:00:00.000Z"
+        "lastUpdated": "2026-09-18T14:04:25.482Z"
       },
       "priceHistory": [
         {
@@ -3741,8 +3764,24 @@
           "source": "Tesla FindUs API & Base Locale",
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
+        },
+        {
+          "id": "7584-2026-09-18",
+          "superchargerId": "7584",
+          "superchargerName": "Champfleury, France",
+          "locationSlug": "champfleurysupercharger",
+          "date": "2026-09-18",
+          "teslaPeak": 0.36,
+          "teslaOffPeak": 0.21,
+          "nonTeslaPeak": 0.49,
+          "nonTeslaOffPeak": 0.29,
+          "peakHours": "09:00 - 20:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": -12.3
         }
-      ]
+      ],
+      "locationId": "340463"
     },
     {
       "id": "1037",
@@ -3898,7 +3937,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "sisteronsupercharger"
     },
     {
       "id": "882",
@@ -4054,7 +4094,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.9
         }
-      ]
+      ],
+      "locationId": "albaretsaintemariesupercharger"
     },
     {
       "id": "3987",
@@ -4210,7 +4251,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "WallisellenSupercharger"
     },
     {
       "id": "4218",
@@ -4366,7 +4408,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "chartresfrsupercharger"
     },
     {
       "id": "4266",
@@ -4392,14 +4435,14 @@
       "facilityName": "Hôtel / Restauration / Services",
       "dateOpened": "2022-06-29",
       "currentPricing": {
-        "teslaPeak": 0.35,
-        "teslaOffPeak": 0.3,
-        "nonTeslaPeak": 0.48,
-        "nonTeslaOffPeak": 0.39,
-        "peakHours": "16:00 - 20:00",
+        "teslaPeak": 0.32,
+        "teslaOffPeak": 0.32,
+        "nonTeslaPeak": 0.43,
+        "nonTeslaOffPeak": 0.43,
+        "peakHours": "09:00 - 20:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T05:00:00.000Z"
+        "lastUpdated": "2026-09-18T14:04:30.726Z"
       },
       "priceHistory": [
         {
@@ -4521,8 +4564,24 @@
           "source": "Tesla FindUs API & Base Locale",
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
+        },
+        {
+          "id": "4266-2026-09-18",
+          "superchargerId": "4266",
+          "superchargerName": "Croutelle, France",
+          "locationSlug": "croutellesupercharger",
+          "date": "2026-09-18",
+          "teslaPeak": 0.32,
+          "teslaOffPeak": 0.32,
+          "nonTeslaPeak": 0.43,
+          "nonTeslaOffPeak": 0.43,
+          "peakHours": "09:00 - 20:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": -1.5
         }
-      ]
+      ],
+      "locationId": "28778"
     },
     {
       "id": "2541",
@@ -4678,7 +4737,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.9
         }
-      ]
+      ],
+      "locationId": "nicesupercharger"
     },
     {
       "id": "886",
@@ -4704,14 +4764,14 @@
       "facilityName": "ibis",
       "dateOpened": "2016-07-15",
       "currentPricing": {
-        "teslaPeak": 0.37,
-        "teslaOffPeak": 0.31,
-        "nonTeslaPeak": 0.5,
-        "nonTeslaOffPeak": 0.4,
-        "peakHours": "16:00 - 20:00",
+        "teslaPeak": 0.34,
+        "teslaOffPeak": 0.15,
+        "nonTeslaPeak": 0.48,
+        "nonTeslaOffPeak": 0.21,
+        "peakHours": "09:00 - 22:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T05:00:00.000Z"
+        "lastUpdated": "2026-09-18T14:04:31.901Z"
       },
       "priceHistory": [
         {
@@ -4833,8 +4893,24 @@
           "source": "Tesla FindUs API & Base Locale",
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
+        },
+        {
+          "id": "886-2026-09-18",
+          "superchargerId": "886",
+          "superchargerName": "Caen, France - Bretteville",
+          "locationSlug": "caensupercharger",
+          "date": "2026-09-18",
+          "teslaPeak": 0.34,
+          "teslaOffPeak": 0.15,
+          "nonTeslaPeak": 0.48,
+          "nonTeslaOffPeak": 0.21,
+          "peakHours": "09:00 - 22:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": -27.9
         }
-      ]
+      ],
+      "locationId": "caensupercharger"
     },
     {
       "id": "10837",
@@ -4990,7 +5066,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "417230"
     },
     {
       "id": "296",
@@ -5146,7 +5223,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "chamberysupercharger"
     },
     {
       "id": "3390",
@@ -5302,7 +5380,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "versaillessupercharger"
     },
     {
       "id": "4201",
@@ -5458,7 +5537,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "Self-ServeDemoDriveAvignon"
     },
     {
       "id": "6374",
@@ -5614,7 +5694,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "29767"
     },
     {
       "id": "602",
@@ -5770,7 +5851,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "1745"
     },
     {
       "id": "4010",
@@ -5926,7 +6008,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.8
         }
-      ]
+      ],
+      "locationId": "MontaubanSupercharger"
     },
     {
       "id": "683",
@@ -6082,7 +6165,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "bordeauxmerignacsupercharger"
     },
     {
       "id": "2351",
@@ -6238,7 +6322,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.8
         }
-      ]
+      ],
+      "locationId": "angoulemesupercharger"
     },
     {
       "id": "7220",
@@ -6394,7 +6479,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "302557"
     },
     {
       "id": "6359",
@@ -6550,7 +6636,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "Boulogne-sur-Mer422"
     },
     {
       "id": "8055",
@@ -6706,7 +6793,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "34049"
     },
     {
       "id": "1793",
@@ -6862,7 +6950,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "lalecherelesbainssupercharger"
     },
     {
       "id": "5583",
@@ -7018,7 +7107,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "309517"
     },
     {
       "id": "7944",
@@ -7174,7 +7264,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "33158"
     },
     {
       "id": "7126",
@@ -7330,7 +7421,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.7
         }
-      ]
+      ],
+      "locationId": "301838"
     },
     {
       "id": "8082",
@@ -7486,7 +7578,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "34042"
     },
     {
       "id": "8122",
@@ -7642,7 +7735,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "29658"
     },
     {
       "id": "8099",
@@ -7798,7 +7892,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "30203"
     },
     {
       "id": "8143",
@@ -7954,7 +8049,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "31397"
     },
     {
       "id": "8102",
@@ -8110,7 +8206,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "30253"
     },
     {
       "id": "8111",
@@ -8266,7 +8363,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.9
         }
-      ]
+      ],
+      "locationId": "33188"
     },
     {
       "id": "8144",
@@ -8422,7 +8520,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "33162"
     },
     {
       "id": "877",
@@ -8578,7 +8677,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "rouensupercharger"
     },
     {
       "id": "8309",
@@ -8734,7 +8834,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "34053"
     },
     {
       "id": "8358",
@@ -8890,7 +8991,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.9
         }
-      ]
+      ],
+      "locationId": "59510"
     },
     {
       "id": "8446",
@@ -9046,7 +9148,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "34047"
     },
     {
       "id": "11132",
@@ -9202,7 +9305,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "33177"
     },
     {
       "id": "8697",
@@ -9358,7 +9462,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "33190"
     },
     {
       "id": "8704",
@@ -9514,7 +9619,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "413354"
     },
     {
       "id": "8702",
@@ -9670,7 +9776,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "29936"
     },
     {
       "id": "8709",
@@ -9826,7 +9933,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.7
         }
-      ]
+      ],
+      "locationId": "59414"
     },
     {
       "id": "8708",
@@ -9982,7 +10090,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "33166"
     },
     {
       "id": "8706",
@@ -10138,7 +10247,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "29817"
     },
     {
       "id": "10742",
@@ -10294,7 +10404,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "4008285"
     },
     {
       "id": "8707",
@@ -10450,7 +10561,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.9
         }
-      ]
+      ],
+      "locationId": "402522"
     },
     {
       "id": "8715",
@@ -10606,7 +10718,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.9
         }
-      ]
+      ],
+      "locationId": "417057"
     },
     {
       "id": "8705",
@@ -10762,7 +10875,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "30250"
     },
     {
       "id": "8713",
@@ -10918,7 +11032,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "413822"
     },
     {
       "id": "8700",
@@ -11074,7 +11189,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "30038"
     },
     {
       "id": "8714",
@@ -11230,7 +11346,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.8
         }
-      ]
+      ],
+      "locationId": "30245"
     },
     {
       "id": "8720",
@@ -11386,7 +11503,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.7
         }
-      ]
+      ],
+      "locationId": "32666"
     },
     {
       "id": "8722",
@@ -11542,7 +11660,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.7
         }
-      ]
+      ],
+      "locationId": "402564"
     },
     {
       "id": "8712",
@@ -11698,7 +11817,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "33187"
     },
     {
       "id": "8711",
@@ -11854,7 +11974,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "32189"
     },
     {
       "id": "8716",
@@ -12010,7 +12131,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "30205"
     },
     {
       "id": "8719",
@@ -12166,7 +12288,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.9
         }
-      ]
+      ],
+      "locationId": "29934"
     },
     {
       "id": "8723",
@@ -12322,7 +12445,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "413628"
     },
     {
       "id": "8717",
@@ -12478,7 +12602,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "30037"
     },
     {
       "id": "11165",
@@ -12634,7 +12759,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "34027"
     },
     {
       "id": "11166",
@@ -12790,7 +12916,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.7
         }
-      ]
+      ],
+      "locationId": "413826"
     },
     {
       "id": "10557",
@@ -12816,14 +12943,14 @@
       "facilityName": "Grand Frais",
       "dateOpened": "2026-02-04",
       "currentPricing": {
-        "teslaPeak": 0.33,
-        "teslaOffPeak": 0.28,
-        "nonTeslaPeak": 0.46,
-        "nonTeslaOffPeak": 0.37,
-        "peakHours": "16:00 - 20:00",
+        "teslaPeak": 0.36,
+        "teslaOffPeak": 0.16,
+        "nonTeslaPeak": 0.49,
+        "nonTeslaOffPeak": 0.22,
+        "peakHours": "08:00 - 21:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T05:00:00.000Z"
+        "lastUpdated": "2026-09-18T14:04:59.450Z"
       },
       "priceHistory": [
         {
@@ -12945,8 +13072,24 @@
           "source": "Tesla FindUs API & Base Locale",
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.7
+        },
+        {
+          "id": "10557-2026-09-18",
+          "superchargerId": "10557",
+          "superchargerName": "Séméac, France",
+          "locationSlug": "semeacsupercharger",
+          "date": "2026-09-18",
+          "teslaPeak": 0.36,
+          "teslaOffPeak": 0.16,
+          "nonTeslaPeak": 0.49,
+          "nonTeslaOffPeak": 0.22,
+          "peakHours": "08:00 - 21:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": -14.8
         }
-      ]
+      ],
+      "locationId": "417273"
     },
     {
       "id": "11168",
@@ -13102,7 +13245,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.9
         }
-      ]
+      ],
+      "locationId": "417220"
     },
     {
       "id": "10567",
@@ -13258,7 +13402,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "33183"
     },
     {
       "id": "10564",
@@ -13414,7 +13559,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "417065"
     },
     {
       "id": "10561",
@@ -13570,7 +13716,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "436965"
     },
     {
       "id": "10566",
@@ -13726,7 +13873,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "29783"
     },
     {
       "id": "10559",
@@ -13882,7 +14030,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "417066"
     },
     {
       "id": "10565",
@@ -14038,7 +14187,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "444309"
     },
     {
       "id": "10568",
@@ -14194,7 +14344,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.9
         }
-      ]
+      ],
+      "locationId": "437406"
     },
     {
       "id": "10560",
@@ -14350,7 +14501,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "403604"
     },
     {
       "id": "10555",
@@ -14506,7 +14658,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.9
         }
-      ]
+      ],
+      "locationId": "437218"
     },
     {
       "id": "10558",
@@ -14662,7 +14815,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "444603"
     },
     {
       "id": "10538",
@@ -14818,7 +14972,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.9
         }
-      ]
+      ],
+      "locationId": "439359"
     },
     {
       "id": "10562",
@@ -14974,7 +15129,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.7
         }
-      ]
+      ],
+      "locationId": "450315"
     },
     {
       "id": "10563",
@@ -15130,7 +15286,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "444260"
     },
     {
       "id": "10569",
@@ -15286,7 +15443,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "33174"
     },
     {
       "id": "10556",
@@ -15442,7 +15600,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "444504"
     },
     {
       "id": "3469",
@@ -15598,7 +15757,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "LeMans2frsupercharger"
     },
     {
       "id": "11439",
@@ -15910,7 +16070,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "413923"
     },
     {
       "id": "7967",
@@ -16066,7 +16227,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "453483"
     },
     {
       "id": "6507",
@@ -16093,13 +16255,13 @@
       "dateOpened": "2023-07-28",
       "currentPricing": {
         "teslaPeak": 0.36,
-        "teslaOffPeak": 0.31,
-        "nonTeslaPeak": 0.49,
-        "nonTeslaOffPeak": 0.4,
-        "peakHours": "16:00 - 20:00",
+        "teslaOffPeak": 0.16,
+        "nonTeslaPeak": 0.53,
+        "nonTeslaOffPeak": 0.22,
+        "peakHours": "09:00 - 20:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T05:00:00.000Z"
+        "lastUpdated": "2026-09-18T14:03:45.378Z"
       },
       "priceHistory": [
         {
@@ -16221,8 +16383,24 @@
           "source": "Tesla FindUs API & Base Locale",
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
+        },
+        {
+          "id": "6507-2026-09-18",
+          "superchargerId": "6507",
+          "superchargerName": "Rennes, France - Cleunay",
+          "locationSlug": "rennessupercharger",
+          "date": "2026-09-18",
+          "teslaPeak": 0.36,
+          "teslaOffPeak": 0.16,
+          "nonTeslaPeak": 0.53,
+          "nonTeslaOffPeak": 0.22,
+          "peakHours": "09:00 - 20:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé direct officiel via API Tesla findus/get-charger-details",
+          "changePercentage": -48.4
         }
-      ]
+      ],
+      "locationId": "300313"
     },
     {
       "id": "8978",
@@ -16378,7 +16556,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "34057"
     },
     {
       "id": "11669",
@@ -16534,7 +16713,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "488364"
     },
     {
       "id": "9033",
@@ -16560,14 +16740,14 @@
       "facilityName": "Hôtel / Restauration / Services",
       "dateOpened": "2025-07-09",
       "currentPricing": {
-        "teslaPeak": 0.35,
-        "teslaOffPeak": 0.3,
-        "nonTeslaPeak": 0.48,
-        "nonTeslaOffPeak": 0.39,
-        "peakHours": "16:00 - 20:00",
+        "teslaPeak": 0.28,
+        "teslaOffPeak": 0.16,
+        "nonTeslaPeak": 0.29,
+        "nonTeslaOffPeak": 0.29,
+        "peakHours": "10:00 - 20:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T05:00:00.000Z"
+        "lastUpdated": "2026-09-18T14:05:10.367Z"
       },
       "priceHistory": [
         {
@@ -16689,8 +16869,24 @@
           "source": "Tesla FindUs API & Base Locale",
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
+        },
+        {
+          "id": "9033-2026-09-18",
+          "superchargerId": "9033",
+          "superchargerName": "Porto-Vecchio, France",
+          "locationSlug": "portovecchiosupercharger",
+          "date": "2026-09-18",
+          "teslaPeak": 0.28,
+          "teslaOffPeak": 0.16,
+          "nonTeslaPeak": 0.29,
+          "nonTeslaOffPeak": 0.29,
+          "peakHours": "10:00 - 20:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": -32.3
         }
-      ]
+      ],
+      "locationId": "45349"
     },
     {
       "id": "9027",
@@ -16846,7 +17042,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "33169"
     },
     {
       "id": "9031",
@@ -17002,7 +17199,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "33185"
     },
     {
       "id": "9030",
@@ -17158,7 +17356,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "33178"
     },
     {
       "id": "9034",
@@ -17314,7 +17513,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "417170"
     },
     {
       "id": "9029",
@@ -17470,7 +17670,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.8
         }
-      ]
+      ],
+      "locationId": "5674"
     },
     {
       "id": "9028",
@@ -17626,7 +17827,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "413824"
     },
     {
       "id": "8275",
@@ -17782,7 +17984,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "30179"
     },
     {
       "id": "10750",
@@ -17938,7 +18141,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "438010"
     },
     {
       "id": "11810",
@@ -18094,7 +18298,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "490522"
     },
     {
       "id": "11922",
@@ -18250,7 +18455,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.7
         }
-      ]
+      ],
+      "locationId": "499356"
     },
     {
       "id": "11873",
@@ -18406,7 +18612,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "487325"
     },
     {
       "id": "11956",
@@ -18562,7 +18769,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.7
         }
-      ]
+      ],
+      "locationId": "476907"
     },
     {
       "id": "8359",
@@ -18718,7 +18926,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "424918"
     },
     {
       "id": "9659",
@@ -18874,7 +19083,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.8
         }
-      ]
+      ],
+      "locationId": "30034"
     },
     {
       "id": "9660",
@@ -19030,7 +19240,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.9
         }
-      ]
+      ],
+      "locationId": "402423"
     },
     {
       "id": "9662",
@@ -19186,7 +19397,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "437609"
     },
     {
       "id": "9655",
@@ -19342,7 +19554,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "413672"
     },
     {
       "id": "9658",
@@ -19498,7 +19711,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.8
         }
-      ]
+      ],
+      "locationId": "417173"
     },
     {
       "id": "9656",
@@ -19654,7 +19868,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.9
         }
-      ]
+      ],
+      "locationId": "417219"
     },
     {
       "id": "9657",
@@ -19810,7 +20025,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "58791"
     },
     {
       "id": "9661",
@@ -19966,7 +20182,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "437030"
     },
     {
       "id": "685",
@@ -20122,7 +20339,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.9
         }
-      ]
+      ],
+      "locationId": "lillesupercharger"
     },
     {
       "id": "8718",
@@ -20278,7 +20496,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "34059"
     },
     {
       "id": "8721",
@@ -20434,7 +20653,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.9
         }
-      ]
+      ],
+      "locationId": "29562"
     },
     {
       "id": "9882",
@@ -20590,7 +20810,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "438011"
     },
     {
       "id": "9883",
@@ -20746,7 +20967,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.8
         }
-      ]
+      ],
+      "locationId": "437562"
     },
     {
       "id": "9870",
@@ -20902,7 +21124,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.9
         }
-      ]
+      ],
+      "locationId": "437327"
     },
     {
       "id": "9867",
@@ -21058,7 +21281,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "450161"
     },
     {
       "id": "9876",
@@ -21214,7 +21438,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "34029"
     },
     {
       "id": "9825",
@@ -21370,7 +21595,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "413105"
     },
     {
       "id": "9868",
@@ -21526,7 +21752,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "417275"
     },
     {
       "id": "9885",
@@ -21682,7 +21909,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "436970"
     },
     {
       "id": "9877",
@@ -21838,7 +22066,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.7
         }
-      ]
+      ],
+      "locationId": "444256"
     },
     {
       "id": "9884",
@@ -21994,7 +22223,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "416264"
     },
     {
       "id": "9866",
@@ -22150,7 +22380,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.9
         }
-      ]
+      ],
+      "locationId": "34831"
     },
     {
       "id": "9879",
@@ -22306,7 +22537,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "437561"
     },
     {
       "id": "9872",
@@ -22462,7 +22694,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "58604"
     },
     {
       "id": "9874",
@@ -22618,7 +22851,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "454855"
     },
     {
       "id": "9887",
@@ -22774,7 +23008,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "444455"
     },
     {
       "id": "9878",
@@ -22930,7 +23165,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "444411"
     },
     {
       "id": "9875",
@@ -23086,7 +23322,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.7
         }
-      ]
+      ],
+      "locationId": "444410"
     },
     {
       "id": "9880",
@@ -23242,7 +23479,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "444263"
     },
     {
       "id": "9881",
@@ -23398,7 +23636,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "4008466"
     },
     {
       "id": "9889",
@@ -23554,7 +23793,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "437128"
     },
     {
       "id": "9886",
@@ -23710,7 +23950,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "444261"
     },
     {
       "id": "9888",
@@ -23866,7 +24107,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "457957"
     },
     {
       "id": "9032",
@@ -24022,7 +24264,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "413867"
     },
     {
       "id": "8710",
@@ -24048,14 +24291,14 @@
       "facilityName": "Hôtel / Restauration / Services",
       "dateOpened": "2025-06-26",
       "currentPricing": {
-        "teslaPeak": 0.35,
-        "teslaOffPeak": 0.29,
-        "nonTeslaPeak": 0.48,
-        "nonTeslaOffPeak": 0.38,
-        "peakHours": "16:00 - 20:00",
+        "teslaPeak": 0.36,
+        "teslaOffPeak": 0.16,
+        "nonTeslaPeak": 0.51,
+        "nonTeslaOffPeak": 0.22,
+        "peakHours": "10:00 - 20:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T05:00:00.000Z"
+        "lastUpdated": "2026-09-18T14:05:28.154Z"
       },
       "priceHistory": [
         {
@@ -24177,8 +24420,24 @@
           "source": "Tesla FindUs API & Base Locale",
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
+        },
+        {
+          "id": "8710-2026-09-18",
+          "superchargerId": "8710",
+          "superchargerName": "Lagord, France",
+          "locationSlug": "puilboreausupercharger",
+          "date": "2026-09-18",
+          "teslaPeak": 0.36,
+          "teslaOffPeak": 0.16,
+          "nonTeslaPeak": 0.51,
+          "nonTeslaOffPeak": 0.22,
+          "peakHours": "10:00 - 20:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": -18.7
         }
-      ]
+      ],
+      "locationId": "30204"
     },
     {
       "id": "10106",
@@ -24334,7 +24593,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.7
         }
-      ]
+      ],
+      "locationId": "33184"
     },
     {
       "id": "10107",
@@ -24490,7 +24750,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "30364"
     },
     {
       "id": "10108",
@@ -24646,7 +24907,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.7
         }
-      ]
+      ],
+      "locationId": "417124"
     },
     {
       "id": "7601",
@@ -24802,7 +25064,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.8
         }
-      ]
+      ],
+      "locationId": "26558"
     },
     {
       "id": "1036",
@@ -24958,7 +25221,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.7
         }
-      ]
+      ],
+      "locationId": "cagnessurmersupercharger"
     },
     {
       "id": "7763",
@@ -25114,7 +25378,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "331947"
     },
     {
       "id": "7768",
@@ -25270,7 +25535,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.8
         }
-      ]
+      ],
+      "locationId": "30244"
     },
     {
       "id": "7348",
@@ -25426,7 +25692,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "40030251"
     },
     {
       "id": "1077",
@@ -25582,7 +25849,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "aixenprovencevaldelarcsupercharger"
     },
     {
       "id": "6344",
@@ -25738,7 +26006,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "29905"
     },
     {
       "id": "887",
@@ -26050,7 +26319,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.7
         }
-      ]
+      ],
+      "locationId": "34050"
     },
     {
       "id": "8699",
@@ -26076,14 +26346,14 @@
       "facilityName": "Hôtel Mercure",
       "dateOpened": "2025-07-11",
       "currentPricing": {
-        "teslaPeak": 0.39,
-        "teslaOffPeak": 0.32,
-        "nonTeslaPeak": 0.52,
-        "nonTeslaOffPeak": 0.41,
-        "peakHours": "16:00 - 20:00",
+        "teslaPeak": 0.33,
+        "teslaOffPeak": 0.25,
+        "nonTeslaPeak": 0.46,
+        "nonTeslaOffPeak": 0.35,
+        "peakHours": "08:00 - 22:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T05:00:00.000Z"
+        "lastUpdated": "2026-09-18T14:05:34.013Z"
       },
       "priceHistory": [
         {
@@ -26205,8 +26475,24 @@
           "source": "Tesla FindUs API & Base Locale",
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.9
+        },
+        {
+          "id": "8699-2026-09-18",
+          "superchargerId": "8699",
+          "superchargerName": "Valence, France - Chemin de la Sonacotral",
+          "locationSlug": "valencesupercharger",
+          "date": "2026-09-18",
+          "teslaPeak": 0.33,
+          "teslaOffPeak": 0.25,
+          "nonTeslaPeak": 0.46,
+          "nonTeslaOffPeak": 0.35,
+          "peakHours": "08:00 - 22:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": -18.3
         }
-      ]
+      ],
+      "locationId": "29751"
     },
     {
       "id": "8701",
@@ -26518,7 +26804,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.9
         }
-      ]
+      ],
+      "locationId": "29592"
     },
     {
       "id": "888",
@@ -26700,14 +26987,14 @@
       "facilityName": "Eurotunnel Flexiplus Lounge",
       "dateOpened": "2019-07-10",
       "currentPricing": {
-        "teslaPeak": 0.37,
-        "teslaOffPeak": 0.31,
-        "nonTeslaPeak": 0.5,
-        "nonTeslaOffPeak": 0.4,
-        "peakHours": "16:00 - 20:00",
+        "teslaPeak": 0.35,
+        "teslaOffPeak": 0.29,
+        "nonTeslaPeak": 0.47,
+        "nonTeslaOffPeak": 0.39,
+        "peakHours": "12:00 - 18:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T05:00:00.000Z"
+        "lastUpdated": "2026-09-18T14:05:35.303Z"
       },
       "priceHistory": [
         {
@@ -26829,8 +27116,24 @@
           "source": "Tesla FindUs API & Base Locale",
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
+        },
+        {
+          "id": "2041-2026-09-18",
+          "superchargerId": "2041",
+          "superchargerName": "Eurotunnel, France - Flexiplus",
+          "locationSlug": "eurotunnelloungesupercharger",
+          "date": "2026-09-18",
+          "teslaPeak": 0.35,
+          "teslaOffPeak": 0.29,
+          "nonTeslaPeak": 0.47,
+          "nonTeslaOffPeak": 0.39,
+          "peakHours": "12:00 - 18:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": -5.9
         }
-      ]
+      ],
+      "locationId": "eurotunnelloungesupercharger"
     },
     {
       "id": "2031",
@@ -27142,7 +27445,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "calaiseurotunnelterminalsupercharger"
     },
     {
       "id": "6438",
@@ -27168,14 +27472,14 @@
       "facilityName": "E.Leclerc",
       "dateOpened": "2023-06-30",
       "currentPricing": {
-        "teslaPeak": 0.37,
-        "teslaOffPeak": 0.32,
-        "nonTeslaPeak": 0.5,
-        "nonTeslaOffPeak": 0.41,
-        "peakHours": "16:00 - 20:00",
+        "teslaPeak": 0.36,
+        "teslaOffPeak": 0.25,
+        "nonTeslaPeak": 0.49,
+        "nonTeslaOffPeak": 0.34,
+        "peakHours": "10:00 - 20:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T05:00:00.000Z"
+        "lastUpdated": "2026-09-18T14:05:37.885Z"
       },
       "priceHistory": [
         {
@@ -27297,8 +27601,24 @@
           "source": "Tesla FindUs API & Base Locale",
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
+        },
+        {
+          "id": "6438-2026-09-18",
+          "superchargerId": "6438",
+          "superchargerName": "Limoges, France - Rue Henri Giffard",
+          "locationSlug": "limogessupercharger",
+          "date": "2026-09-18",
+          "teslaPeak": 0.36,
+          "teslaOffPeak": 0.25,
+          "nonTeslaPeak": 0.49,
+          "nonTeslaOffPeak": 0.34,
+          "peakHours": "10:00 - 20:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": -11.6
         }
-      ]
+      ],
+      "locationId": "331759"
     },
     {
       "id": "4552",
@@ -27324,14 +27644,14 @@
       "facilityName": "Hôtel / Restauration / Services",
       "dateOpened": "2022-09-30",
       "currentPricing": {
-        "teslaPeak": 0.35,
-        "teslaOffPeak": 0.29,
-        "nonTeslaPeak": 0.48,
-        "nonTeslaOffPeak": 0.38,
-        "peakHours": "16:00 - 20:00",
+        "teslaPeak": 0.36,
+        "teslaOffPeak": 0.17,
+        "nonTeslaPeak": 0.51,
+        "nonTeslaOffPeak": 0.24,
+        "peakHours": "09:00 - 21:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T05:00:00.000Z"
+        "lastUpdated": "2026-09-18T14:05:38.897Z"
       },
       "priceHistory": [
         {
@@ -27453,8 +27773,24 @@
           "source": "Tesla FindUs API & Base Locale",
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
+        },
+        {
+          "id": "4552-2026-09-18",
+          "superchargerId": "4552",
+          "superchargerName": "Annecy, France",
+          "locationSlug": "seynodsupercharger",
+          "date": "2026-09-18",
+          "teslaPeak": 0.36,
+          "teslaOffPeak": 0.17,
+          "nonTeslaPeak": 0.51,
+          "nonTeslaOffPeak": 0.24,
+          "peakHours": "09:00 - 21:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": -17.2
         }
-      ]
+      ],
+      "locationId": "29508"
     },
     {
       "id": "2531",
@@ -27610,7 +27946,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "montluconfrsupercharger"
     },
     {
       "id": "2618",
@@ -27766,7 +28103,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "9507"
     },
     {
       "id": "3844",
@@ -27922,7 +28260,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "Brestq222"
     },
     {
       "id": "1123",
@@ -27949,13 +28288,13 @@
       "dateOpened": "2017-06-18",
       "currentPricing": {
         "teslaPeak": 0.36,
-        "teslaOffPeak": 0.3,
-        "nonTeslaPeak": 0.49,
-        "nonTeslaOffPeak": 0.39,
-        "peakHours": "16:00 - 20:00",
+        "teslaOffPeak": 0.17,
+        "nonTeslaPeak": 0.52,
+        "nonTeslaOffPeak": 0.25,
+        "peakHours": "08:00 - 21:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T05:00:00.000Z"
+        "lastUpdated": "2026-09-18T14:05:40.837Z"
       },
       "priceHistory": [
         {
@@ -28077,8 +28416,24 @@
           "source": "Tesla FindUs API & Base Locale",
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
+        },
+        {
+          "id": "1123-2026-09-18",
+          "superchargerId": "1123",
+          "superchargerName": "Pau, France",
+          "locationSlug": "pausupercharger",
+          "date": "2026-09-18",
+          "teslaPeak": 0.36,
+          "teslaOffPeak": 0.17,
+          "nonTeslaPeak": 0.52,
+          "nonTeslaOffPeak": 0.25,
+          "peakHours": "08:00 - 21:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": -19.7
         }
-      ]
+      ],
+      "locationId": "pausupercharger"
     },
     {
       "id": "809",
@@ -28234,7 +28589,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "chateauroux"
     },
     {
       "id": "1994",
@@ -28390,7 +28746,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.8
         }
-      ]
+      ],
+      "locationId": "limogesfrsupercharger"
     },
     {
       "id": "275",
@@ -28416,14 +28773,14 @@
       "facilityName": "Tesla Lounge",
       "dateOpened": "2014-07-11",
       "currentPricing": {
-        "teslaPeak": 0.36,
-        "teslaOffPeak": 0.29,
-        "nonTeslaPeak": 0.49,
-        "nonTeslaOffPeak": 0.38,
-        "peakHours": "16:00 - 20:00",
+        "teslaPeak": 0.32,
+        "teslaOffPeak": 0.32,
+        "nonTeslaPeak": 0.43,
+        "nonTeslaOffPeak": 0.43,
+        "peakHours": "09:00 - 20:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T05:00:00.000Z"
+        "lastUpdated": "2026-09-18T14:05:50.971Z"
       },
       "priceHistory": [
         {
@@ -28545,8 +28902,24 @@
           "source": "Tesla FindUs API & Base Locale",
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
+        },
+        {
+          "id": "275-2026-09-18",
+          "superchargerId": "275",
+          "superchargerName": "Mâcon, France",
+          "locationSlug": "maconfrsupercharger",
+          "date": "2026-09-18",
+          "teslaPeak": 0.32,
+          "teslaOffPeak": 0.32,
+          "nonTeslaPeak": 0.43,
+          "nonTeslaOffPeak": 0.43,
+          "peakHours": "09:00 - 20:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": -1.5
         }
-      ]
+      ],
+      "locationId": "maconfrsupercharger"
     },
     {
       "id": "775",
@@ -28702,7 +29075,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "beaunesupercharger"
     },
     {
       "id": "269",
@@ -28728,14 +29102,14 @@
       "facilityName": "Mercure Auxerre Nord",
       "dateOpened": "2020-01-01",
       "currentPricing": {
-        "teslaPeak": 0.37,
-        "teslaOffPeak": 0.3,
-        "nonTeslaPeak": 0.5,
-        "nonTeslaOffPeak": 0.39,
+        "teslaPeak": 0.42,
+        "teslaOffPeak": 0.38,
+        "nonTeslaPeak": 0.56,
+        "nonTeslaOffPeak": 0.51,
         "peakHours": "16:00 - 20:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T05:00:00.000Z"
+        "lastUpdated": "2026-09-18T14:05:52.434Z"
       },
       "priceHistory": [
         {
@@ -28857,8 +29231,24 @@
           "source": "Tesla FindUs API & Base Locale",
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
+        },
+        {
+          "id": "269-2026-09-18",
+          "superchargerId": "269",
+          "superchargerName": "Auxerre, France (old)",
+          "locationSlug": "auxerresupercharger",
+          "date": "2026-09-18",
+          "teslaPeak": 0.42,
+          "teslaOffPeak": 0.38,
+          "nonTeslaPeak": 0.56,
+          "nonTeslaOffPeak": 0.51,
+          "peakHours": "16:00 - 20:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": 19.4
         }
-      ]
+      ],
+      "locationId": "auxerresupercharger"
     },
     {
       "id": "368",
@@ -29014,7 +29404,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "senlissupercharger"
     },
     {
       "id": "307",
@@ -29170,7 +29561,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.9
         }
-      ]
+      ],
+      "locationId": "narbonnesupercharger"
     },
     {
       "id": "367",
@@ -29326,7 +29718,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "archampssupercharger"
     },
     {
       "id": "567",
@@ -29482,7 +29875,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.9
         }
-      ]
+      ],
+      "locationId": "calaissupercharger"
     },
     {
       "id": "668",
@@ -29638,7 +30032,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.9
         }
-      ]
+      ],
+      "locationId": "rungissupercharger"
     },
     {
       "id": "1942",
@@ -29794,7 +30189,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "charlevillemezieressupercharger"
     },
     {
       "id": "759",
@@ -29950,7 +30346,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "nanteslachapellesurerdresupercharger"
     },
     {
       "id": "377",
@@ -30106,7 +30503,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.8
         }
-      ]
+      ],
+      "locationId": "tourssupercharger"
     },
     {
       "id": "799",
@@ -30262,7 +30660,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "chamberybarberazsupercharger"
     },
     {
       "id": "486",
@@ -30418,7 +30817,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "toulousesupercharger"
     },
     {
       "id": "662",
@@ -30574,7 +30974,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "rennessupercharger"
     },
     {
       "id": "638",
@@ -30730,7 +31131,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "chassesurrhonesupercharger"
     },
     {
       "id": "778",
@@ -30886,7 +31288,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "valencesupercharger"
     },
     {
       "id": "767",
@@ -31042,7 +31445,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "aixenprovencesupercharger"
     },
     {
       "id": "316",
@@ -31198,7 +31602,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "matogugeussupercharger"
     },
     {
       "id": "808",
@@ -31354,7 +31759,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "bayonnesupercharger"
     },
     {
       "id": "876",
@@ -31510,7 +31916,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "oregevalsupercharger"
     },
     {
       "id": "1004",
@@ -31666,7 +32073,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "grenoblesupercharger"
     },
     {
       "id": "1056",
@@ -31822,7 +32230,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.9
         }
-      ]
+      ],
+      "locationId": "airedemanissieuxsupercharger"
     },
     {
       "id": "984",
@@ -31848,14 +32257,14 @@
       "facilityName": "Novotel",
       "dateOpened": "2016-12-01",
       "currentPricing": {
-        "teslaPeak": 0.36,
-        "teslaOffPeak": 0.31,
-        "nonTeslaPeak": 0.49,
-        "nonTeslaOffPeak": 0.4,
-        "peakHours": "16:00 - 20:00",
+        "teslaPeak": 0.32,
+        "teslaOffPeak": 0.32,
+        "nonTeslaPeak": 0.44,
+        "nonTeslaOffPeak": 0.44,
+        "peakHours": "09:00 - 20:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T05:00:00.000Z"
+        "lastUpdated": "2026-09-18T14:06:02.170Z"
       },
       "priceHistory": [
         {
@@ -31977,8 +32386,24 @@
           "source": "Tesla FindUs API & Base Locale",
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
+        },
+        {
+          "id": "984-2026-09-18",
+          "superchargerId": "984",
+          "superchargerName": "Poitiers, France - Futuroscope",
+          "locationSlug": "poltierssupercharger",
+          "date": "2026-09-18",
+          "teslaPeak": 0.32,
+          "teslaOffPeak": 0.32,
+          "nonTeslaPeak": 0.44,
+          "nonTeslaOffPeak": 0.44,
+          "peakHours": "09:00 - 20:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": -4.5
         }
-      ]
+      ],
+      "locationId": "poltierssupercharger"
     },
     {
       "id": "1010",
@@ -32134,7 +32559,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "airedurvillerssupercharger"
     },
     {
       "id": "1054",
@@ -32290,7 +32716,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "langon"
     },
     {
       "id": "1049",
@@ -32446,7 +32873,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.7
         }
-      ]
+      ],
+      "locationId": "airedesaintpriestsupercharger"
     },
     {
       "id": "864",
@@ -32602,7 +33030,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "bourgessupercharger"
     },
     {
       "id": "932",
@@ -32758,7 +33187,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "lorientsupercharger"
     },
     {
       "id": "935",
@@ -32914,7 +33344,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.8
         }
-      ]
+      ],
+      "locationId": "aireducaylarsupercharger"
     },
     {
       "id": "863",
@@ -33070,7 +33501,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "mouginssupercharger"
     },
     {
       "id": "1289",
@@ -33226,7 +33658,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "amienssupercharger"
     },
     {
       "id": "1184",
@@ -33382,7 +33815,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "airedelabaiedesommesupercharger"
     },
     {
       "id": "1135",
@@ -33538,7 +33972,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "chateauvillainorgessupercharger"
     },
     {
       "id": "1136",
@@ -33694,7 +34129,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "chateauvillainvalmarnaysupercharger"
     },
     {
       "id": "1183",
@@ -33850,7 +34286,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.7
         }
-      ]
+      ],
+      "locationId": "toulonsupercharger"
     },
     {
       "id": "1155",
@@ -34006,7 +34443,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.9
         }
-      ]
+      ],
+      "locationId": "valenciennessupercharger"
     },
     {
       "id": "1622",
@@ -34162,7 +34600,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.9
         }
-      ]
+      ],
+      "locationId": "montsaintmichelsupercharger"
     },
     {
       "id": "593",
@@ -34318,7 +34757,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.9
         }
-      ]
+      ],
+      "locationId": "mulhousesupercharger"
     },
     {
       "id": "1910",
@@ -34474,7 +34914,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.7
         }
-      ]
+      ],
+      "locationId": "fontainebleausupercharger"
     },
     {
       "id": "1684",
@@ -34630,7 +35071,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "besanconfrsupercharger"
     },
     {
       "id": "276",
@@ -34786,7 +35228,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "Self-ServeDemoDrive"
     },
     {
       "id": "2022",
@@ -34942,7 +35385,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.9
         }
-      ]
+      ],
+      "locationId": "vidaubanfrsupercharger"
     },
     {
       "id": "1580",
@@ -35098,7 +35542,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.7
         }
-      ]
+      ],
+      "locationId": "thiaissupercharger"
     },
     {
       "id": "1366",
@@ -35254,7 +35699,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "airedupouletdebressesupercharger"
     },
     {
       "id": "2059",
@@ -35410,7 +35856,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "airedecambarettesupercharger"
     },
     {
       "id": "974",
@@ -35566,7 +36013,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "marnelavalleesupercharger"
     },
     {
       "id": "488",
@@ -35722,7 +36170,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.9
         }
-      ]
+      ],
+      "locationId": "nancysupercharger"
     },
     {
       "id": "345",
@@ -35878,7 +36327,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "metzsupercharger"
     },
     {
       "id": "416",
@@ -36034,7 +36484,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "saintessupercharger"
     },
     {
       "id": "861",
@@ -36190,7 +36641,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.9
         }
-      ]
+      ],
+      "locationId": "strasbourgsupercharger"
     },
     {
       "id": "2169",
@@ -36346,7 +36798,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.9
         }
-      ]
+      ],
+      "locationId": "buchelaysupercharger"
     },
     {
       "id": "967",
@@ -36502,7 +36955,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "orleanssupercharger"
     },
     {
       "id": "6287",
@@ -36658,7 +37112,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "302487"
     },
     {
       "id": "3906",
@@ -36814,7 +37269,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "airedujurasupercharger"
     },
     {
       "id": "2292",
@@ -36970,7 +37426,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "7322"
     },
     {
       "id": "2447",
@@ -37126,7 +37583,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "lesherbierssupercharger"
     },
     {
       "id": "7101",
@@ -37282,7 +37740,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "295753"
     },
     {
       "id": "2516",
@@ -37438,7 +37897,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "labouheyresupercharger"
     },
     {
       "id": "6506",
@@ -37594,7 +38054,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "309483"
     },
     {
       "id": "2543",
@@ -37750,7 +38211,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "reimstinqueuxsupercharger"
     },
     {
       "id": "3004",
@@ -37906,7 +38368,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "airedugraniersupercharger"
     },
     {
       "id": "2591",
@@ -38062,7 +38525,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "airedelavendeesupercharger"
     },
     {
       "id": "4059",
@@ -38218,7 +38682,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "BordeauxEstFrancesupercharger"
     },
     {
       "id": "6302",
@@ -38374,7 +38839,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "Nantes2Supercharger"
     },
     {
       "id": "4040",
@@ -38530,7 +38996,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "SaintGaudensSupercharger"
     },
     {
       "id": "6391",
@@ -38686,7 +39153,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.7
         }
-      ]
+      ],
+      "locationId": "331795"
     },
     {
       "id": "4313",
@@ -38842,7 +39310,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "montpellierfrsupercharger"
     },
     {
       "id": "3375",
@@ -38998,7 +39467,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.7
         }
-      ]
+      ],
+      "locationId": "BloisFrancesupercharger"
     },
     {
       "id": "3535",
@@ -39154,7 +39624,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.7
         }
-      ]
+      ],
+      "locationId": "Vierzonfrsupercharger"
     },
     {
       "id": "4240",
@@ -39310,7 +39781,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "NeuvilleenFerrainq222"
     },
     {
       "id": "3494",
@@ -39466,7 +39938,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "Valencefrsupercharger"
     },
     {
       "id": "7696",
@@ -39622,7 +40095,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "BourgenBresseSupercharger"
     },
     {
       "id": "4097",
@@ -39778,7 +40252,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "ToulouseBlagnacFrancesupercharger"
     },
     {
       "id": "7662",
@@ -39934,7 +40409,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "407740"
     },
     {
       "id": "4205",
@@ -40090,7 +40566,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.9
         }
-      ]
+      ],
+      "locationId": "chatelleraultsuperchargerq122"
     },
     {
       "id": "5868",
@@ -40246,7 +40723,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "bezierssuperchargerq122"
     },
     {
       "id": "4339",
@@ -40402,7 +40880,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.9
         }
-      ]
+      ],
+      "locationId": "28783"
     },
     {
       "id": "4551",
@@ -40558,7 +41037,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.7
         }
-      ]
+      ],
+      "locationId": "301486"
     },
     {
       "id": "5440",
@@ -40714,7 +41194,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "NoyellesGodaultq222"
     },
     {
       "id": "4559",
@@ -40870,7 +41351,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "bassindarcachonsuperchargerq122"
     },
     {
       "id": "5673",
@@ -40896,14 +41378,14 @@
       "facilityName": "Tesla Lounge",
       "dateOpened": "2024-06-25",
       "currentPricing": {
-        "teslaPeak": 0.35,
-        "teslaOffPeak": 0.3,
-        "nonTeslaPeak": 0.48,
-        "nonTeslaOffPeak": 0.39,
-        "peakHours": "16:00 - 20:00",
+        "teslaPeak": 0.32,
+        "teslaOffPeak": 0.32,
+        "nonTeslaPeak": 0.44,
+        "nonTeslaOffPeak": 0.44,
+        "peakHours": "09:00 - 20:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T05:00:00.000Z"
+        "lastUpdated": "2026-09-18T14:06:30.317Z"
       },
       "priceHistory": [
         {
@@ -41025,8 +41507,24 @@
           "source": "Tesla FindUs API & Base Locale",
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
+        },
+        {
+          "id": "5673-2026-09-18",
+          "superchargerId": "5673",
+          "superchargerName": "Roye, France",
+          "locationSlug": "royesupercharger",
+          "date": "2026-09-18",
+          "teslaPeak": 0.32,
+          "teslaOffPeak": 0.32,
+          "nonTeslaPeak": 0.44,
+          "nonTeslaOffPeak": 0.44,
+          "peakHours": "09:00 - 20:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": -1.5
         }
-      ]
+      ],
+      "locationId": "303792"
     },
     {
       "id": "5477",
@@ -41182,7 +41680,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "299035"
     },
     {
       "id": "5425",
@@ -41338,7 +41837,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "299046"
     },
     {
       "id": "5358",
@@ -41494,7 +41994,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "StrasbourgNordq222"
     },
     {
       "id": "5518",
@@ -41650,7 +42151,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "yvetotsupercharger"
     },
     {
       "id": "5884",
@@ -41806,7 +42308,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "Nmes2Supercharger"
     },
     {
       "id": "5766",
@@ -42118,7 +42621,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.8
         }
-      ]
+      ],
+      "locationId": "302373"
     },
     {
       "id": "4315",
@@ -42274,7 +42778,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "tourssudsuperchargerq122"
     },
     {
       "id": "5479",
@@ -42430,7 +42935,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "331541"
     },
     {
       "id": "5481",
@@ -42586,7 +43092,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.9
         }
-      ]
+      ],
+      "locationId": "301402"
     },
     {
       "id": "527",
@@ -42612,14 +43119,14 @@
       "facilityName": "Hôtel Mercure",
       "dateOpened": "2015-01-20",
       "currentPricing": {
-        "teslaPeak": 0.36,
-        "teslaOffPeak": 0.29,
-        "nonTeslaPeak": 0.49,
-        "nonTeslaOffPeak": 0.38,
-        "peakHours": "16:00 - 20:00",
+        "teslaPeak": 0.32,
+        "teslaOffPeak": 0.32,
+        "nonTeslaPeak": 0.43,
+        "nonTeslaOffPeak": 0.43,
+        "peakHours": "09:00 - 20:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T05:00:00.000Z"
+        "lastUpdated": "2026-09-18T14:06:41.956Z"
       },
       "priceHistory": [
         {
@@ -42741,8 +43248,24 @@
           "source": "Tesla FindUs API & Base Locale",
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
+        },
+        {
+          "id": "527-2026-09-18",
+          "superchargerId": "527",
+          "superchargerName": "Ussac, France",
+          "locationSlug": "brivelagaillardesupercharger",
+          "date": "2026-09-18",
+          "teslaPeak": 0.32,
+          "teslaOffPeak": 0.32,
+          "nonTeslaPeak": 0.43,
+          "nonTeslaOffPeak": 0.43,
+          "peakHours": "09:00 - 20:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": -1.5
         }
-      ]
+      ],
+      "locationId": "brivelagaillardesupercharger"
     },
     {
       "id": "7028",
@@ -42898,7 +43421,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "302346"
     },
     {
       "id": "7134",
@@ -43054,7 +43578,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.7
         }
-      ]
+      ],
+      "locationId": "303296"
     },
     {
       "id": "6682",
@@ -43210,7 +43735,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "300325"
     },
     {
       "id": "6687",
@@ -43236,14 +43762,14 @@
       "facilityName": "Hôtel / Restauration / Services",
       "dateOpened": "2023-09-28",
       "currentPricing": {
-        "teslaPeak": 0.34,
-        "teslaOffPeak": 0.29,
-        "nonTeslaPeak": 0.47,
-        "nonTeslaOffPeak": 0.38,
-        "peakHours": "16:00 - 20:00",
+        "teslaPeak": 0.36,
+        "teslaOffPeak": 0.17,
+        "nonTeslaPeak": 0.5,
+        "nonTeslaOffPeak": 0.24,
+        "peakHours": "10:00 - 20:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T05:00:00.000Z"
+        "lastUpdated": "2026-09-18T14:06:44.174Z"
       },
       "priceHistory": [
         {
@@ -43365,8 +43891,24 @@
           "source": "Tesla FindUs API & Base Locale",
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
+        },
+        {
+          "id": "6687-2026-09-18",
+          "superchargerId": "6687",
+          "superchargerName": "Vannes, France",
+          "locationSlug": "plescopsupercharger",
+          "date": "2026-09-18",
+          "teslaPeak": 0.36,
+          "teslaOffPeak": 0.17,
+          "nonTeslaPeak": 0.5,
+          "nonTeslaOffPeak": 0.24,
+          "peakHours": "10:00 - 20:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": -15.9
         }
-      ]
+      ],
+      "locationId": "296242"
     },
     {
       "id": "6686",
@@ -43522,7 +44064,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "RoissyenFranceFrancesupercharger"
     },
     {
       "id": "798",
@@ -43678,7 +44221,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.9
         }
-      ]
+      ],
+      "locationId": "clermontferrandsupercharger"
     },
     {
       "id": "7204",
@@ -43834,7 +44378,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "340434"
     },
     {
       "id": "5910",
@@ -43990,7 +44535,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "BeynostSupercharger"
     },
     {
       "id": "7207",
@@ -44146,7 +44692,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "295812"
     },
     {
       "id": "7199",
@@ -44302,7 +44849,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "349814"
     },
     {
       "id": "5349",
@@ -44458,7 +45006,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.7
         }
-      ]
+      ],
+      "locationId": "Bronq222"
     },
     {
       "id": "6834",
@@ -44614,7 +45163,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "302573"
     },
     {
       "id": "3005",
@@ -44770,7 +45320,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "airedelabissupercharger"
     },
     {
       "id": "3849",
@@ -44926,7 +45477,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "laxousupercharger"
     },
     {
       "id": "2220",
@@ -45082,7 +45634,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.7
         }
-      ]
+      ],
+      "locationId": "sallanchessupercharger"
     },
     {
       "id": "4570",
@@ -45238,7 +45791,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.8
         }
-      ]
+      ],
+      "locationId": "CentreTeslaParisValdEurope422"
     },
     {
       "id": "401",
@@ -45394,7 +45948,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "orangesupercharger"
     },
     {
       "id": "3252",
@@ -45550,7 +46105,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "Dardillyfrsupercharger"
     },
     {
       "id": "6092",
@@ -45706,7 +46262,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "275228"
     },
     {
       "id": "1170",
@@ -45862,7 +46419,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.7
         }
-      ]
+      ],
+      "locationId": "valdemeusesupercharger"
     },
     {
       "id": "7219",
@@ -46018,7 +46576,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "302519"
     },
     {
       "id": "6942",
@@ -46174,7 +46733,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "302528"
     },
     {
       "id": "7218",
@@ -46330,7 +46890,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.7
         }
-      ]
+      ],
+      "locationId": "302565"
     },
     {
       "id": "7172",
@@ -46486,7 +47047,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "302467"
     },
     {
       "id": "7213",
@@ -46642,7 +47204,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "331551"
     },
     {
       "id": "6154",
@@ -46798,7 +47361,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "RodezSupercharger"
     },
     {
       "id": "7133",
@@ -46954,7 +47518,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "303999"
     },
     {
       "id": "6249",
@@ -47110,7 +47675,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "302423"
     },
     {
       "id": "4200",
@@ -47266,7 +47832,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.9
         }
-      ]
+      ],
+      "locationId": "SaintQuentinq222"
     },
     {
       "id": "1681",
@@ -47422,7 +47989,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "saintparresauxtertressupercharger"
     },
     {
       "id": "1977",
@@ -47578,7 +48146,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "montelimarfrsupercharger"
     },
     {
       "id": "5643",
@@ -47734,7 +48303,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.7
         }
-      ]
+      ],
+      "locationId": "Montbeliard422"
     },
     {
       "id": "1073",
@@ -47890,7 +48460,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "saintbrieucsupercharger"
     },
     {
       "id": "5364",
@@ -48046,7 +48617,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "Albertvilleq222"
     },
     {
       "id": "2616",
@@ -48202,7 +48774,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "niortsupercharger"
     },
     {
       "id": "4210",
@@ -48358,7 +48931,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "27649"
     },
     {
       "id": "4302",
@@ -48384,14 +48958,14 @@
       "facilityName": "Hôtel / Restauration / Services",
       "dateOpened": "2022-07-12",
       "currentPricing": {
-        "teslaPeak": 0.36,
-        "teslaOffPeak": 0.31,
-        "nonTeslaPeak": 0.49,
-        "nonTeslaOffPeak": 0.4,
-        "peakHours": "16:00 - 20:00",
+        "teslaPeak": 0.32,
+        "teslaOffPeak": 0.32,
+        "nonTeslaPeak": 0.43,
+        "nonTeslaOffPeak": 0.43,
+        "peakHours": "09:00 - 20:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T05:00:00.000Z"
+        "lastUpdated": "2026-09-18T14:06:58.125Z"
       },
       "priceHistory": [
         {
@@ -48513,8 +49087,24 @@
           "source": "Tesla FindUs API & Base Locale",
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
+        },
+        {
+          "id": "4302-2026-09-18",
+          "superchargerId": "4302",
+          "superchargerName": "Saintes, France - Cours du Maréchal Leclerc",
+          "locationSlug": "saintesnordsupercharger",
+          "date": "2026-09-18",
+          "teslaPeak": 0.32,
+          "teslaOffPeak": 0.32,
+          "nonTeslaPeak": 0.43,
+          "nonTeslaOffPeak": 0.43,
+          "peakHours": "09:00 - 20:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": -4.5
         }
-      ]
+      ],
+      "locationId": "saintesnordsupercharger"
     },
     {
       "id": "4175",
@@ -48670,7 +49260,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "tournussuperchargerq122"
     },
     {
       "id": "3423",
@@ -48826,7 +49417,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.9
         }
-      ]
+      ],
+      "locationId": "DijonFrancesupercharger"
     },
     {
       "id": "4064",
@@ -48982,7 +49574,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "beaunenordsupercharger"
     },
     {
       "id": "4199",
@@ -49138,7 +49731,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.8
         }
-      ]
+      ],
+      "locationId": "MetzSudfrsupercharger"
     },
     {
       "id": "4282",
@@ -49294,7 +49888,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "saintjulienengenevoissuperchargerq122"
     },
     {
       "id": "4573",
@@ -49450,7 +50045,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "agensuperchargerq122"
     },
     {
       "id": "5088",
@@ -49606,7 +50202,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "chalonsursaonesuperchargerq122"
     },
     {
       "id": "5252",
@@ -49762,7 +50359,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "Cessonq222"
     },
     {
       "id": "5727",
@@ -49918,7 +50516,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.7
         }
-      ]
+      ],
+      "locationId": "BordeauxNordq222"
     },
     {
       "id": "3401",
@@ -50074,7 +50673,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.7
         }
-      ]
+      ],
+      "locationId": "portesdangerssupercharger"
     },
     {
       "id": "7365",
@@ -50100,14 +50700,14 @@
       "facilityName": "La Maison B",
       "dateOpened": "2023-12-29",
       "currentPricing": {
-        "teslaPeak": 0.33,
-        "teslaOffPeak": 0.28,
-        "nonTeslaPeak": 0.46,
-        "nonTeslaOffPeak": 0.37,
-        "peakHours": "16:00 - 20:00",
+        "teslaPeak": 0.36,
+        "teslaOffPeak": 0.22,
+        "nonTeslaPeak": 0.52,
+        "nonTeslaOffPeak": 0.32,
+        "peakHours": "09:00 - 22:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T05:00:00.000Z"
+        "lastUpdated": "2026-09-18T14:07:05.329Z"
       },
       "priceHistory": [
         {
@@ -50229,8 +50829,24 @@
           "source": "Tesla FindUs API & Base Locale",
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.7
+        },
+        {
+          "id": "7365-2026-09-18",
+          "superchargerId": "7365",
+          "superchargerName": "Bourg-en-Bresse, France",
+          "locationSlug": "bourgenbressesupercharger",
+          "date": "2026-09-18",
+          "teslaPeak": 0.36,
+          "teslaOffPeak": 0.22,
+          "nonTeslaPeak": 0.52,
+          "nonTeslaOffPeak": 0.32,
+          "peakHours": "09:00 - 22:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": -4.9
         }
-      ]
+      ],
+      "locationId": "427106"
     },
     {
       "id": "3370",
@@ -50386,7 +51002,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "perpignansupercharger"
     },
     {
       "id": "5478",
@@ -50542,7 +51159,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "Megeveq222"
     },
     {
       "id": "3327",
@@ -50698,7 +51316,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
         }
-      ]
+      ],
+      "locationId": "avallonsupercharger"
     },
     {
       "id": "6941",
@@ -50854,7 +51473,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "309854"
     },
     {
       "id": "5955",
@@ -51010,7 +51630,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "331768"
     },
     {
       "id": "6998",
@@ -51166,7 +51787,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.9
         }
-      ]
+      ],
+      "locationId": "295618"
     },
     {
       "id": "7240",
@@ -51322,7 +51944,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
         }
-      ]
+      ],
+      "locationId": "301829"
     },
     {
       "id": "7562",
@@ -51478,7 +52101,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "331735"
     },
     {
       "id": "7703",
@@ -51634,7 +52258,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "33161"
     },
     {
       "id": "7654",
@@ -51790,7 +52415,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
         }
-      ]
+      ],
+      "locationId": "331819"
     },
     {
       "id": "7650",
@@ -51946,7 +52572,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.9
         }
-      ]
+      ],
+      "locationId": "29498"
     },
     {
       "id": "7651",
@@ -52102,7 +52729,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.7
         }
-      ]
+      ],
+      "locationId": "29713"
     },
     {
       "id": "7755",
@@ -52258,7 +52886,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
         }
-      ]
+      ],
+      "locationId": "33157"
     },
     {
       "id": "7740",
@@ -52414,7 +53043,8 @@
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
         }
-      ]
+      ],
+      "locationId": "30243"
     }
   ],
   "priceSnapshots": [
@@ -92737,6 +93367,306 @@
       "source": "Tesla FindUs API & Base Locale",
       "notes": "Tarifs en vigueur actuels",
       "changePercentage": -5.1
+    },
+    {
+      "id": "6507-2026-09-18",
+      "superchargerId": "6507",
+      "superchargerName": "Rennes, France - Cleunay",
+      "locationSlug": "rennessupercharger",
+      "date": "2026-09-18",
+      "teslaPeak": 0.36,
+      "teslaOffPeak": 0.16,
+      "nonTeslaPeak": 0.53,
+      "nonTeslaOffPeak": 0.22,
+      "peakHours": "09:00 - 20:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé direct officiel via API Tesla findus/get-charger-details",
+      "changePercentage": -48.4
+    },
+    {
+      "id": "7584-2026-09-18",
+      "superchargerId": "7584",
+      "superchargerName": "Champfleury, France",
+      "locationSlug": "champfleurysupercharger",
+      "date": "2026-09-18",
+      "teslaPeak": 0.36,
+      "teslaOffPeak": 0.21,
+      "nonTeslaPeak": 0.49,
+      "nonTeslaOffPeak": 0.29,
+      "peakHours": "09:00 - 20:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": -12.3
+    },
+    {
+      "id": "4266-2026-09-18",
+      "superchargerId": "4266",
+      "superchargerName": "Croutelle, France",
+      "locationSlug": "croutellesupercharger",
+      "date": "2026-09-18",
+      "teslaPeak": 0.32,
+      "teslaOffPeak": 0.32,
+      "nonTeslaPeak": 0.43,
+      "nonTeslaOffPeak": 0.43,
+      "peakHours": "09:00 - 20:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": -1.5
+    },
+    {
+      "id": "886-2026-09-18",
+      "superchargerId": "886",
+      "superchargerName": "Caen, France - Bretteville",
+      "locationSlug": "caensupercharger",
+      "date": "2026-09-18",
+      "teslaPeak": 0.34,
+      "teslaOffPeak": 0.15,
+      "nonTeslaPeak": 0.48,
+      "nonTeslaOffPeak": 0.21,
+      "peakHours": "09:00 - 22:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": -27.9
+    },
+    {
+      "id": "10557-2026-09-18",
+      "superchargerId": "10557",
+      "superchargerName": "Séméac, France",
+      "locationSlug": "semeacsupercharger",
+      "date": "2026-09-18",
+      "teslaPeak": 0.36,
+      "teslaOffPeak": 0.16,
+      "nonTeslaPeak": 0.49,
+      "nonTeslaOffPeak": 0.22,
+      "peakHours": "08:00 - 21:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": -14.8
+    },
+    {
+      "id": "9033-2026-09-18",
+      "superchargerId": "9033",
+      "superchargerName": "Porto-Vecchio, France",
+      "locationSlug": "portovecchiosupercharger",
+      "date": "2026-09-18",
+      "teslaPeak": 0.28,
+      "teslaOffPeak": 0.16,
+      "nonTeslaPeak": 0.29,
+      "nonTeslaOffPeak": 0.29,
+      "peakHours": "10:00 - 20:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": -32.3
+    },
+    {
+      "id": "8710-2026-09-18",
+      "superchargerId": "8710",
+      "superchargerName": "Lagord, France",
+      "locationSlug": "puilboreausupercharger",
+      "date": "2026-09-18",
+      "teslaPeak": 0.36,
+      "teslaOffPeak": 0.16,
+      "nonTeslaPeak": 0.51,
+      "nonTeslaOffPeak": 0.22,
+      "peakHours": "10:00 - 20:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": -18.7
+    },
+    {
+      "id": "8699-2026-09-18",
+      "superchargerId": "8699",
+      "superchargerName": "Valence, France - Chemin de la Sonacotral",
+      "locationSlug": "valencesupercharger",
+      "date": "2026-09-18",
+      "teslaPeak": 0.33,
+      "teslaOffPeak": 0.25,
+      "nonTeslaPeak": 0.46,
+      "nonTeslaOffPeak": 0.35,
+      "peakHours": "08:00 - 22:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": -18.3
+    },
+    {
+      "id": "2041-2026-09-18",
+      "superchargerId": "2041",
+      "superchargerName": "Eurotunnel, France - Flexiplus",
+      "locationSlug": "eurotunnelloungesupercharger",
+      "date": "2026-09-18",
+      "teslaPeak": 0.35,
+      "teslaOffPeak": 0.29,
+      "nonTeslaPeak": 0.47,
+      "nonTeslaOffPeak": 0.39,
+      "peakHours": "12:00 - 18:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": -5.9
+    },
+    {
+      "id": "6438-2026-09-18",
+      "superchargerId": "6438",
+      "superchargerName": "Limoges, France - Rue Henri Giffard",
+      "locationSlug": "limogessupercharger",
+      "date": "2026-09-18",
+      "teslaPeak": 0.36,
+      "teslaOffPeak": 0.25,
+      "nonTeslaPeak": 0.49,
+      "nonTeslaOffPeak": 0.34,
+      "peakHours": "10:00 - 20:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": -11.6
+    },
+    {
+      "id": "4552-2026-09-18",
+      "superchargerId": "4552",
+      "superchargerName": "Annecy, France",
+      "locationSlug": "seynodsupercharger",
+      "date": "2026-09-18",
+      "teslaPeak": 0.36,
+      "teslaOffPeak": 0.17,
+      "nonTeslaPeak": 0.51,
+      "nonTeslaOffPeak": 0.24,
+      "peakHours": "09:00 - 21:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": -17.2
+    },
+    {
+      "id": "1123-2026-09-18",
+      "superchargerId": "1123",
+      "superchargerName": "Pau, France",
+      "locationSlug": "pausupercharger",
+      "date": "2026-09-18",
+      "teslaPeak": 0.36,
+      "teslaOffPeak": 0.17,
+      "nonTeslaPeak": 0.52,
+      "nonTeslaOffPeak": 0.25,
+      "peakHours": "08:00 - 21:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": -19.7
+    },
+    {
+      "id": "275-2026-09-18",
+      "superchargerId": "275",
+      "superchargerName": "Mâcon, France",
+      "locationSlug": "maconfrsupercharger",
+      "date": "2026-09-18",
+      "teslaPeak": 0.32,
+      "teslaOffPeak": 0.32,
+      "nonTeslaPeak": 0.43,
+      "nonTeslaOffPeak": 0.43,
+      "peakHours": "09:00 - 20:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": -1.5
+    },
+    {
+      "id": "269-2026-09-18",
+      "superchargerId": "269",
+      "superchargerName": "Auxerre, France (old)",
+      "locationSlug": "auxerresupercharger",
+      "date": "2026-09-18",
+      "teslaPeak": 0.42,
+      "teslaOffPeak": 0.38,
+      "nonTeslaPeak": 0.56,
+      "nonTeslaOffPeak": 0.51,
+      "peakHours": "16:00 - 20:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": 19.4
+    },
+    {
+      "id": "984-2026-09-18",
+      "superchargerId": "984",
+      "superchargerName": "Poitiers, France - Futuroscope",
+      "locationSlug": "poltierssupercharger",
+      "date": "2026-09-18",
+      "teslaPeak": 0.32,
+      "teslaOffPeak": 0.32,
+      "nonTeslaPeak": 0.44,
+      "nonTeslaOffPeak": 0.44,
+      "peakHours": "09:00 - 20:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": -4.5
+    },
+    {
+      "id": "5673-2026-09-18",
+      "superchargerId": "5673",
+      "superchargerName": "Roye, France",
+      "locationSlug": "royesupercharger",
+      "date": "2026-09-18",
+      "teslaPeak": 0.32,
+      "teslaOffPeak": 0.32,
+      "nonTeslaPeak": 0.44,
+      "nonTeslaOffPeak": 0.44,
+      "peakHours": "09:00 - 20:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": -1.5
+    },
+    {
+      "id": "527-2026-09-18",
+      "superchargerId": "527",
+      "superchargerName": "Ussac, France",
+      "locationSlug": "brivelagaillardesupercharger",
+      "date": "2026-09-18",
+      "teslaPeak": 0.32,
+      "teslaOffPeak": 0.32,
+      "nonTeslaPeak": 0.43,
+      "nonTeslaOffPeak": 0.43,
+      "peakHours": "09:00 - 20:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": -1.5
+    },
+    {
+      "id": "6687-2026-09-18",
+      "superchargerId": "6687",
+      "superchargerName": "Vannes, France",
+      "locationSlug": "plescopsupercharger",
+      "date": "2026-09-18",
+      "teslaPeak": 0.36,
+      "teslaOffPeak": 0.17,
+      "nonTeslaPeak": 0.5,
+      "nonTeslaOffPeak": 0.24,
+      "peakHours": "10:00 - 20:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": -15.9
+    },
+    {
+      "id": "4302-2026-09-18",
+      "superchargerId": "4302",
+      "superchargerName": "Saintes, France - Cours du Maréchal Leclerc",
+      "locationSlug": "saintesnordsupercharger",
+      "date": "2026-09-18",
+      "teslaPeak": 0.32,
+      "teslaOffPeak": 0.32,
+      "nonTeslaPeak": 0.43,
+      "nonTeslaOffPeak": 0.43,
+      "peakHours": "09:00 - 20:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": -4.5
+    },
+    {
+      "id": "7365-2026-09-18",
+      "superchargerId": "7365",
+      "superchargerName": "Bourg-en-Bresse, France",
+      "locationSlug": "bourgenbressesupercharger",
+      "date": "2026-09-18",
+      "teslaPeak": 0.36,
+      "teslaOffPeak": 0.22,
+      "nonTeslaPeak": 0.52,
+      "nonTeslaOffPeak": 0.32,
+      "peakHours": "09:00 - 22:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": -4.9
     }
   ],
   "nationalHistory": [
@@ -92861,5 +93791,5 @@
       "changePercentage": -5.2
     }
   ],
-  "lastSyncTime": "2026-09-18T13:42:44.972Z"
+  "lastSyncTime": "2026-09-18T14:04:19.043Z"
 }

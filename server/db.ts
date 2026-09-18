@@ -383,6 +383,7 @@ export function initDatabase(forceReload = false): DatabaseSchema {
 
     const charger: Supercharger = {
       id: String(site.id),
+      locationId: site.locationId ? String(site.locationId) : undefined,
       locationSlug: slug,
       name: site.name,
       city: cityName,
