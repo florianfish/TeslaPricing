@@ -73,11 +73,67 @@ npm run dev
 Accéder à l'application dans votre navigateur :
 👉 **http://localhost:3000**
 
-### 3. Build & Démarrage en Production
+### 3. Build & Démarrage en Production (Local)
 ```bash
 npm run build
 npm run start
 ```
+
+---
+
+## 🐳 Déploiement Docker sur VPS (Recommandé)
+
+L'application inclut un `Dockerfile` multi-stage optimisé et une configuration `docker-compose.yml` prête pour la production.
+
+### 1. Démarrer avec Docker Compose
+Sur votre VPS, lancez simplement :
+```bash
+docker compose up -d --build
+```
+
+### 2. Gestion et surveillance
+```bash
+# Vérifier l'état du conteneur et du healthcheck
+docker compose ps
+
+# Consulter les logs en temps réel
+docker compose logs -f
+
+# Mettre à jour l'application
+git pull
+docker compose up -d --build
+
+# Arrêter l'application
+docker compose down
+```
+
+### 3. Persistance des Données
+Le volume `./server/data:/app/server/data` garantit que :
+- Votre fichier `superchargers_db.json` contenant les stations et l'historique des prix est stocké directement sur votre VPS.
+- Tous les nouveaux relevés de tarifs ajoutés via l'interface restent conservés lors des mises à jour et redémarrages du conteneur.
+
+### 4. Configuration d'un Reverse Proxy (Nginx / Caddy)
+Pour exposer l'application sur votre domaine avec HTTPS :
+- **Port d'écoute interne** : `3000` (redirection vers `http://localhost:3000` ou via réseau Docker).
+- **Exemple Caddyfile** :
+  ```caddyfile
+  tesla-pricing.votre-domaine.com {
+      reverse_proxy localhost:3000
+  }
+  ```
+- **Exemple Nginx** :
+  ```nginx
+  server {
+      server_name tesla-pricing.votre-domaine.com;
+      location / {
+          proxy_pass http://127.0.0.1:3000;
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+      }
+  }
+  ```
 
 ---
 
