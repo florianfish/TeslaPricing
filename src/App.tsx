@@ -6,6 +6,7 @@ import { SuperchargerDirectory } from './components/SuperchargerDirectory';
 import { PriceEvolutionView } from './components/PriceEvolutionView';
 import { CostSimulator } from './components/CostSimulator';
 import { StationDetailModal } from './components/StationDetailModal';
+import { ReferralEncart } from './components/ReferralEncart';
 import { AlertCircle, RefreshCw, Zap } from 'lucide-react';
 
 export default function App() {
@@ -79,6 +80,9 @@ export default function App() {
 
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* Encart Parrainage 1000 km offerts */}
+        <ReferralEncart className="mb-6" />
+
         {/* Error State */}
         {error && (
           <div className="mb-6 p-4 rounded-2xl bg-red-950/80 border border-red-800 text-red-200 flex items-center justify-between">
@@ -160,7 +164,16 @@ export default function App() {
           <span>
             Données des Superchargeurs Tesla France • Stockage & Évolution en Base de Données Persistante
           </span>
-          <div className="flex items-center space-x-3 text-slate-400">
+          <div className="flex flex-wrap items-center justify-center gap-3 text-slate-400">
+            <a
+              href="https://www.tesla.com/fr_Fr/referral/florian572745"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-red-400 hover:text-red-300 font-semibold transition-colors flex items-center space-x-1"
+            >
+              <span>🎁 1 000 km Tesla offerts</span>
+            </a>
+            <span>•</span>
             <a
               href="https://www.tesla.com/fr_FR/findus/list/superchargers/France"
               target="_blank"

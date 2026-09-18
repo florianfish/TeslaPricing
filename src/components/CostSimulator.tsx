@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { Supercharger, SuperchargerStats } from '../types';
 import { Calculator, Zap, Fuel, DollarSign, Clock, ShieldCheck, Sparkles } from 'lucide-react';
+import { ReferralEncart } from './ReferralEncart';
 
 interface CostSimulatorProps {
   stats: SuperchargerStats | null;
@@ -285,6 +286,9 @@ export const CostSimulator: React.FC<CostSimulatorProps> = ({ stats, supercharge
               *Calcul basé sur une consommation essence moyenne de 6,5 L/100km à 1,85 €/L de SP95-E10 sur autoroute.
             </p>
           </div>
+
+          {/* Encart Parrainage 1000 km offerts */}
+          <ReferralEncart variant="compact" />
         </div>
       </div>
     </div>

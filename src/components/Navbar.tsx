@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Zap, MapPin, TrendingUp, RefreshCw, Calculator, Database, ExternalLink } from 'lucide-react';
+import { Zap, MapPin, TrendingUp, RefreshCw, Calculator, Database, ExternalLink, Gift } from 'lucide-react';
 import type { SuperchargerStats } from '../types';
 
 interface NavbarProps {
@@ -77,6 +77,17 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Actions: Sync & Tab Switcher */}
           <div className="flex items-center space-x-2">
+            <a
+              href="https://www.tesla.com/fr_Fr/referral/florian572745"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Obtenir 1 000 km Tesla offerts"
+              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-red-600/20 via-red-500/15 to-red-600/10 hover:from-red-600/30 hover:to-red-500/25 border border-red-500/40 text-xs font-semibold text-red-300 hover:text-white transition-all shadow-sm shadow-red-950/20"
+            >
+              <Gift className="w-3.5 h-3.5 text-red-400" />
+              <span className="hidden sm:inline">1 000 km offerts</span>
+            </a>
+
             <button
               id="sync-database-btn"
               onClick={handleSyncClick}
