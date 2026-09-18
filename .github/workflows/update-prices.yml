@@ -32,6 +32,7 @@ jobs:
         run: npm run update-prices
 
       - name: Commiter et pousser les modifications sur GitHub
+        id: auto_commit
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "chore(data): actualisation automatique nocturne des Superchargeurs"
@@ -41,6 +42,7 @@ jobs:
           commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
 
       - name: Notifier et synchroniser le VPS
+        if: steps.auto_commit.outputs.changes_detected == 'true'
         env:
           TARGET_URL: ${{ secrets.VPS_WEBHOOK_URL || secrets.VPS_SYNC_WEBHOOK_URL || secrets.VPS_URL || secrets.WEBHOOK_URL }}
         run: |

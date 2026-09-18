@@ -383,8 +383,7 @@ async function runUpdate() {
           `NTSLA ${pricing.nonTeslaPeak}€/${pricing.nonTeslaOffPeak}€ (${changePercentage > 0 ? '+' : ''}${changePercentage}%)`
         );
       } else {
-        // Prix inchangé mais confirmé par l'API Tesla
-        charger.currentPricing.lastUpdated = now.toISOString();
+        // Prix inchangé et confirmé par l'API Tesla
         console.log(
           `${progress} ✅ [CONFIRMÉ] ${charger.name} : ` +
           `TSLA ${current.teslaPeak}€/${current.teslaOffPeak}€ (HP ${current.peakHours})`
@@ -402,11 +401,16 @@ async function runUpdate() {
     await sleep(300);
   }
 
-  // 3. Mettre à jour l'horodatage global de synchronisation
-  db.lastSyncTime = now.toISOString();
+  // 3. Sauvegarder la base de données UNIQUEMENT s'il y a des changements réels
+  const hasChanges = (newStationsCount > 0 || statusChangedCount > 0 || pricesUpdatedCount > 0);
 
-  // Sauvegarder la base de données
-  fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2), 'utf-8');
+  if (hasChanges) {
+    db.lastSyncTime = now.toISOString();
+    fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2), 'utf-8');
+    console.log(`\n💾 Modifications enregistrées dans la base (${pricesUpdatedCount} tarifs actualisés, ${newStationsCount} stations créées, ${statusChangedCount} statuts modifiés).`);
+  } else {
+    console.log('\nℹ️ Aucun changement de tarif ou de station détecté : base de données inchangée (aucun commit requis).');
+  }
 
   const durationSec = Math.round((Date.now() - startTime) / 1000);
 
