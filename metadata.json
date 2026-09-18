@@ -1,0 +1,6 @@
+{
+  "name": "Superchargeurs Tesla France",
+  "description": "Observatoire des superchargeurs Tesla en France, carte interactive et historique d'évolution des prix au kWh.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
