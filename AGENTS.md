@@ -13,7 +13,7 @@ Ce document contient les informations d'architecture, règles techniques, piège
   3. Répertoire de recherche avec filtres avancés et tris instantanés.
   4. Visualisation des tendances macro-économiques (graphiques Recharts depuis 2021).
   5. Simulateur de coût de recharge paramétrable.
-  6. Enregistrement persistant de nouveaux relevés communautaires dans une base locale JSON.
+  6. Historique persistant des tarifs synchronisé et mis à jour automatiquement via le flux nocturne.
 
 ---
 

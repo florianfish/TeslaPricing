@@ -26,9 +26,9 @@ Application web complète permettant de visualiser, répertorier, comparer et hi
   - Calcul comparatif en direct entre Tesla et véhicules non-Tesla (abonnement ou tarif standard).
   - Économies estimées par rapport à un véhicule thermique équivalent (essence/diesel).
 
-- **📝 Enregistrement & Persistance des Prix** :
-  - Modal d'informations complètes par station (adresses, stèles, puissance, frais d'inactivité).
-  - Formulaire permettant d'ajouter un nouveau relevé de tarif (date, HP/HC, source, notes), immédiatement persisté dans la base locale JSON.
+- **📊 Consultation & Fiche Détaillée des Stations** :
+  - Modal d'informations complètes par station (adresses, stèles, puissance, frais d'inactivité, graphique Recharts).
+  - Tarifs actualisés automatiquement de manière centralisée (automatisation nocturne et synchronisation BDD).
 
 - **🔄 Proxy API Tesla FindUs** :
   - Route d'interrogation de l'API officielle Tesla FindUs avec basculement automatique (*graceful fallback*) sur le miroir local en cas de blocage IP (Akamai Edge).

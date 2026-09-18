@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import type { Supercharger, SuperchargerStats, PriceSnapshot } from './types';
+import type { Supercharger, SuperchargerStats } from './types';
 import { Navbar } from './components/Navbar';
 import { FranceMap } from './components/FranceMap';
 import { SuperchargerDirectory } from './components/SuperchargerDirectory';
@@ -57,56 +57,6 @@ export default function App() {
       await fetchData();
     } finally {
       setIsSyncing(false);
-    }
-  };
-
-  // Called when a new price snapshot is added to database
-  const handlePriceAdded = (newSnapshot: PriceSnapshot) => {
-    // Update local state
-    setSuperchargers((prev) =>
-      prev.map((c) => {
-        if (c.id === newSnapshot.superchargerId || c.locationSlug === newSnapshot.locationSlug) {
-          const updatedHistory = [...(c.priceHistory || []), newSnapshot];
-          return {
-            ...c,
-            currentPricing: {
-              ...c.currentPricing,
-              teslaOffPeak: newSnapshot.teslaOffPeak,
-              teslaPeak: newSnapshot.teslaPeak,
-              nonTeslaOffPeak: newSnapshot.nonTeslaOffPeak,
-              nonTeslaPeak: newSnapshot.nonTeslaPeak,
-              lastUpdated: new Date().toISOString(),
-            },
-            priceHistory: updatedHistory,
-          };
-        }
-        return c;
-      })
-    );
-
-    // Refresh stats from backend
-    fetch('/api/prices/stats')
-      .then((res) => res.json())
-      .then((newStats) => setStats(newStats))
-      .catch(console.error);
-
-    // Update selected charger if open
-    if (selectedCharger && (selectedCharger.id === newSnapshot.superchargerId || selectedCharger.locationSlug === newSnapshot.locationSlug)) {
-      setSelectedCharger((prev) => {
-        if (!prev) return null;
-        return {
-          ...prev,
-          currentPricing: {
-            ...prev.currentPricing,
-            teslaOffPeak: newSnapshot.teslaOffPeak,
-            teslaPeak: newSnapshot.teslaPeak,
-            nonTeslaOffPeak: newSnapshot.nonTeslaOffPeak,
-            nonTeslaPeak: newSnapshot.nonTeslaPeak,
-            lastUpdated: new Date().toISOString(),
-          },
-          priceHistory: [...(prev.priceHistory || []), newSnapshot],
-        };
-      });
     }
   };
 
@@ -201,7 +151,6 @@ export default function App() {
         <StationDetailModal
           charger={selectedCharger}
           onClose={() => setSelectedCharger(null)}
-          onPriceAdded={handlePriceAdded}
         />
       )}
 

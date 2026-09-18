@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { Supercharger, PriceSnapshot } from '../types';
+import type { Supercharger } from '../types';
 import {
   X,
   Zap,
@@ -7,11 +7,7 @@ import {
   Clock,
   Navigation,
   ExternalLink,
-  PlusCircle,
   TrendingUp,
-  Database,
-  CheckCircle2,
-  AlertTriangle,
   Code2,
 } from 'lucide-react';
 import {
@@ -27,24 +23,12 @@ import {
 interface StationDetailModalProps {
   charger: Supercharger | null;
   onClose: () => void;
-  onPriceAdded: (newSnapshot: PriceSnapshot) => void;
 }
 
 export const StationDetailModal: React.FC<StationDetailModalProps> = ({
   charger,
   onClose,
-  onPriceAdded,
 }) => {
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [newDate, setNewDate] = useState(new Date().toISOString().split('T')[0]);
-  const [newTeslaOffPeak, setNewTeslaOffPeak] = useState<string>('');
-  const [newTeslaPeak, setNewTeslaPeak] = useState<string>('');
-  const [newNotes, setNewNotes] = useState('');
-  const [newSource, setNewSource] = useState('Relevé Borne / App');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
-
   // Live Tesla API Inspector state
   const [showApiInspector, setShowApiInspector] = useState(false);
   const [apiResponse, setApiResponse] = useState<any>(null);
@@ -66,53 +50,6 @@ export const StationDetailModal: React.FC<StationDetailModalProps> = ({
       setApiResponse({ error: err.message });
     } finally {
       setApiLoading(false);
-    }
-  };
-
-  const handleAddPrice = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setSubmitError(null);
-
-    const offPeak = parseFloat(newTeslaOffPeak);
-    const peak = parseFloat(newTeslaPeak);
-
-    if (isNaN(offPeak) || isNaN(peak)) {
-      setSubmitError('Veuillez saisir des montants valides en euros.');
-      setIsSubmitting(false);
-      return;
-    }
-
-    try {
-      const res = await fetch(`/api/superchargers/${charger.locationSlug}/prices`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          date: newDate,
-          teslaOffPeak: offPeak,
-          teslaPeak: peak,
-          nonTeslaOffPeak: Number((offPeak * 1.3).toFixed(2)),
-          nonTeslaPeak: Number((peak * 1.3).toFixed(2)),
-          notes: newNotes || 'Mise à jour manuelle des prix',
-          source: newSource,
-        }),
-      });
-
-      const result = await res.json();
-      if (!res.ok) {
-        throw new Error(result.error || 'Erreur lors de l\'enregistrement');
-      }
-
-      setSubmitSuccess(true);
-      onPriceAdded(result.snapshot);
-      setTimeout(() => {
-        setSubmitSuccess(false);
-        setShowAddForm(false);
-      }, 1500);
-    } catch (err: any) {
-      setSubmitError(err.message);
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -366,14 +303,6 @@ export const StationDetailModal: React.FC<StationDetailModalProps> = ({
                   Évolution enregistrée en base de données (€/kWh)
                 </p>
               </div>
-
-              <button
-                onClick={() => setShowAddForm(!showAddForm)}
-                className="flex items-center space-x-1 px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-semibold transition-colors"
-              >
-                <PlusCircle className="w-3.5 h-3.5" />
-                <span>Nouveau relevé BDD</span>
-              </button>
             </div>
 
             {/* Recharts chart */}
@@ -414,119 +343,6 @@ export const StationDetailModal: React.FC<StationDetailModalProps> = ({
               </ResponsiveContainer>
             </div>
           </div>
-
-          {/* Form to Add New Price in Database */}
-          {showAddForm && (
-            <form onSubmit={handleAddPrice} className="p-4 rounded-2xl bg-slate-800 border border-slate-700 space-y-4">
-              <div className="flex items-center justify-between">
-                <h5 className="font-bold text-xs uppercase tracking-wider text-slate-300 flex items-center">
-                  <Database className="w-3.5 h-3.5 mr-1.5 text-red-400" />
-                  Enregistrer un nouveau relevé de tarif dans la base
-                </h5>
-                <button
-                  type="button"
-                  onClick={() => setShowAddForm(false)}
-                  className="text-xs text-slate-400 hover:text-white"
-                >
-                  Annuler
-                </button>
-              </div>
-
-              {submitError && (
-                <div className="p-2.5 rounded-lg bg-red-950/80 border border-red-800 text-red-300 text-xs flex items-center">
-                  <AlertTriangle className="w-3.5 h-3.5 mr-1.5" />
-                  {submitError}
-                </div>
-              )}
-
-              {submitSuccess && (
-                <div className="p-2.5 rounded-lg bg-emerald-950/80 border border-emerald-800 text-emerald-300 text-xs flex items-center">
-                  <CheckCircle2 className="w-3.5 h-3.5 mr-1.5" />
-                  Relevé de tarif enregistré en base de données !
-                </div>
-              )}
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div>
-                  <label className="text-xs text-slate-400 block mb-1">Date du relevé</label>
-                  <input
-                    type="date"
-                    required
-                    value={newDate}
-                    onChange={(e) => setNewDate(e.target.value)}
-                    className="w-full px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs text-slate-400 block mb-1">Prix Heures Creuses (€/kWh)</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0.10"
-                    max="1.50"
-                    placeholder="ex: 0.32"
-                    required
-                    value={newTeslaOffPeak}
-                    onChange={(e) => setNewTeslaOffPeak(e.target.value)}
-                    className="w-full px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs text-slate-400 block mb-1">Prix Heures Pleines (€/kWh)</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0.10"
-                    max="1.50"
-                    placeholder="ex: 0.38"
-                    required
-                    value={newTeslaPeak}
-                    onChange={(e) => setNewTeslaPeak(e.target.value)}
-                    className="w-full px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs text-slate-400 block mb-1">Source</label>
-                  <select
-                    value={newSource}
-                    onChange={(e) => setNewSource(e.target.value)}
-                    className="w-full px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white"
-                  >
-                    <option value="Relevé Borne / App">Relevé Borne / App Tesla</option>
-                    <option value="Tesla FindUs API">Tesla FindUs API</option>
-                    <option value="Observatoire Communautaire">Observatoire Communautaire</option>
-                    <option value="Autre">Autre relevé</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="text-xs text-slate-400 block mb-1">Commentaire / Notes</label>
-                  <input
-                    type="text"
-                    placeholder="ex: Constaté sur l'application ce matin"
-                    value={newNotes}
-                    onChange={(e) => setNewNotes(e.target.value)}
-                    className="w-full px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white"
-                  />
-                </div>
-              </div>
-
-              <div className="flex justify-end pt-1">
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold text-xs transition-colors shadow-lg shadow-red-600/30 disabled:opacity-50"
-                >
-                  {isSubmitting ? 'Enregistrement...' : 'Enregistrer en BDD'}
-                </button>
-              </div>
-            </form>
-          )}
 
           {/* Historical Log Table */}
           <div className="space-y-2">
