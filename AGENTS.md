@@ -54,7 +54,7 @@ Le projet adopte une architecture full-stack unifiée servie par un unique proce
 - Gestion des onglets : Vue simple par état React (`activeTab: 'map' | 'list' | 'stats' | 'simulator'`).
 - Style : **Tailwind CSS v4** via `@tailwindcss/vite` (imports dans `src/index.css`).
 - Graphiques : **Recharts** (nécessite `react-is`).
-- Carte : **Leaflet** avec tuiles CartoDB Dark/Light adaptées à la charte sombre.
+- Carte : **Leaflet** avec tuiles libres sans clé API (ESRI Dark Gray Canvas, OpenStreetMap France et Satellite ESRI).
 
 ---
 

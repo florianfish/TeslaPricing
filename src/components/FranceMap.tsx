@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import type { Supercharger } from '../types';
-import { Zap, Filter, Compass, Info } from 'lucide-react';
+import { Zap, Filter, Compass, Info, Layers } from 'lucide-react';
 
 interface FranceMapProps {
   superchargers: Supercharger[];
@@ -17,8 +17,10 @@ export const FranceMap: React.FC<FranceMapProps> = ({
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersLayerRef = useRef<L.LayerGroup | null>(null);
+  const tileLayerGroupRef = useRef<L.LayerGroup | null>(null);
 
   const [mapFilter, setMapFilter] = useState<'ALL' | 'OTHER_EVS' | 'HIGH_POWER' | 'CHEAP'>('ALL');
+  const [mapStyle, setMapStyle] = useState<'dark' | 'osm' | 'satellite'>('dark');
 
   // Filter markers
   const filteredList = React.useMemo(() => {
@@ -43,11 +45,9 @@ export const FranceMap: React.FC<FranceMapProps> = ({
       zoomControl: false,
     });
 
-    // Sleek CartoDB Dark Matter tiles
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-      maxZoom: 19,
-    }).addTo(map);
+    // Layer group for base tiles
+    const tileGroup = L.layerGroup().addTo(map);
+    tileLayerGroupRef.current = tileGroup;
 
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
@@ -60,6 +60,58 @@ export const FranceMap: React.FC<FranceMapProps> = ({
       mapInstanceRef.current = null;
     };
   }, []);
+
+  // Update base tiles when mapStyle changes (100% free, no API key required)
+  useEffect(() => {
+    const tileGroup = tileLayerGroupRef.current;
+    if (!tileGroup) return;
+
+    tileGroup.clearLayers();
+
+    if (mapStyle === 'dark') {
+      // ESRI Dark Gray Canvas (Gratuit & sans clé API)
+      const base = L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+        {
+          attribution: '&copy; <a href="https://www.esri.com/">Esri</a>, HERE, Garmin',
+          maxZoom: 16,
+        }
+      );
+      const reference = L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}',
+        {
+          maxZoom: 16,
+        }
+      );
+      tileGroup.addLayer(base);
+      tileGroup.addLayer(reference);
+    } else if (mapStyle === 'satellite') {
+      // ESRI Satellite Imagery (Gratuit & sans clé API)
+      const sat = L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        {
+          attribution: '&copy; <a href="https://www.esri.com/">Esri</a>, Earthstar Geographics',
+          maxZoom: 19,
+        }
+      );
+      const labels = L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
+        {
+          maxZoom: 19,
+        }
+      );
+      tileGroup.addLayer(sat);
+      tileGroup.addLayer(labels);
+    } else {
+      // OpenStreetMap France (100% libre et gratuit, sans clé API)
+      const osm = L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap France | &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 20,
+        subdomains: 'abc',
+      });
+      tileGroup.addLayer(osm);
+    }
+  }, [mapStyle]);
 
   // Update markers when filteredList changes
   useEffect(() => {
@@ -265,6 +317,47 @@ export const FranceMap: React.FC<FranceMapProps> = ({
         >
           <Compass className="w-3.5 h-3.5 text-red-400" />
           <span>Recentrer</span>
+        </button>
+      </div>
+
+      {/* Top-Right Style Switcher (100% Free & No API Key Required) */}
+      <div className="absolute top-4 right-4 z-10 flex items-center space-x-1 p-1 bg-slate-900/90 backdrop-blur-md rounded-xl border border-slate-700/80 shadow-lg text-xs">
+        <div className="flex items-center px-2 py-1 text-slate-400 font-semibold gap-1.5 border-r border-slate-800 mr-0.5">
+          <Layers className="w-3.5 h-3.5 text-red-400" />
+          <span className="hidden sm:inline">Fond de carte :</span>
+        </div>
+        <button
+          onClick={() => setMapStyle('dark')}
+          className={`px-2.5 py-1 rounded-lg font-medium transition-colors ${
+            mapStyle === 'dark'
+              ? 'bg-red-600 text-white shadow-sm'
+              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+          }`}
+          title="Fond de carte sombre minimaliste"
+        >
+          Sombre
+        </button>
+        <button
+          onClick={() => setMapStyle('osm')}
+          className={`px-2.5 py-1 rounded-lg font-medium transition-colors ${
+            mapStyle === 'osm'
+              ? 'bg-red-600 text-white shadow-sm'
+              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+          }`}
+          title="OpenStreetMap France officiel"
+        >
+          OSM France
+        </button>
+        <button
+          onClick={() => setMapStyle('satellite')}
+          className={`px-2.5 py-1 rounded-lg font-medium transition-colors ${
+            mapStyle === 'satellite'
+              ? 'bg-red-600 text-white shadow-sm'
+              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+          }`}
+          title="Vue satellite haute résolution"
+        >
+          Satellite
         </button>
       </div>
 
