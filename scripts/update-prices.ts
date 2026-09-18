@@ -64,40 +64,56 @@ async function fetchLiveFrenchSites(): Promise<any[]> {
   }
 }
 
-// 2. Interroger l'API officielle Tesla FindUs pour une station
-async function fetchTeslaPricing(locationId: string): Promise<any | null> {
+// 2. Interroger l'API officielle Tesla FindUs pour une station (avec gestion de retries et backoff en cas de 403/429)
+async function fetchTeslaPricing(locationId: string, maxRetries = 2): Promise<any | null> {
   const url = `https://www.tesla.com/api/findus/get-charger-details?locationSlug=${locationId}&programType=supercharger&locale=en-US&isInHkMoTw=false`;
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 8000);
 
-  try {
-    const res = await fetch(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-        'Accept': 'application/json, text/plain, */*',
-        'Accept-Language': 'fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7',
-        'Referer': `https://www.tesla.com/findus/location/supercharger/${locationId}`,
-        'sec-ch-ua': '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
-        'sec-ch-ua-mobile': '?0',
-        'sec-ch-ua-platform': '"Windows"',
-        'sec-fetch-dest': 'empty',
-        'sec-fetch-mode': 'cors',
-        'sec-fetch-site': 'same-origin',
-      },
-      signal: controller.signal,
-    });
-    clearTimeout(timeout);
+  for (let attempt = 1; attempt <= maxRetries + 1; attempt++) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
 
-    if (!res.ok) {
+    try {
+      const res = await fetch(url, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+          'Accept': 'application/json, text/plain, */*',
+          'Accept-Language': 'fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7',
+          'Referer': `https://www.tesla.com/findus/location/supercharger/${locationId}`,
+          'sec-ch-ua': '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
+          'sec-ch-ua-mobile': '?0',
+          'sec-ch-ua-platform': '"Windows"',
+          'sec-fetch-dest': 'empty',
+          'sec-fetch-mode': 'cors',
+          'sec-fetch-site': 'same-origin',
+        },
+        signal: controller.signal,
+      });
+      clearTimeout(timeout);
+
+      if (res.ok) {
+        const json = await res.json();
+        return json?.data?.data || null;
+      }
+
+      // Si Akamai nous renvoie 403 ou 429, on fait une pause progressive (backoff) avant de retenter
+      if ((res.status === 403 || res.status === 429) && attempt <= maxRetries) {
+        const backoffMs = attempt * 2500;
+        await sleep(backoffMs);
+        continue;
+      }
+
+      return null;
+    } catch {
+      clearTimeout(timeout);
+      if (attempt <= maxRetries) {
+        await sleep(attempt * 2000);
+        continue;
+      }
       return null;
     }
-
-    const json = await res.json();
-    return json?.data?.data || null;
-  } catch {
-    clearTimeout(timeout);
-    return null;
   }
+
+  return null;
 }
 
 // 3. Extraire et normaliser les tarifs depuis le schéma Tesla (effectivePricebooks)
@@ -397,8 +413,8 @@ async function runUpdate() {
       );
     }
 
-    // Temporisation de 300ms entre les requêtes pour ménager l'API
-    await sleep(300);
+    // Temporisation de 600ms entre les requêtes pour ménager l'API
+    await sleep(600);
   }
 
   // 3. Sauvegarder la base de données UNIQUEMENT s'il y a des changements réels
