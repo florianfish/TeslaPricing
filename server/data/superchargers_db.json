@@ -11216,14 +11216,14 @@
       "facilityName": "Grand Frais",
       "dateOpened": "2025-11-27",
       "currentPricing": {
-        "teslaPeak": 0.4,
-        "teslaOffPeak": 0.33,
-        "nonTeslaPeak": 0.53,
-        "nonTeslaOffPeak": 0.42,
-        "peakHours": "16:00 - 20:00",
+        "teslaPeak": 0.36,
+        "teslaOffPeak": 0.16,
+        "nonTeslaPeak": 0.5,
+        "nonTeslaOffPeak": 0.22,
+        "peakHours": "09:00 - 20:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T05:00:00.000Z"
+        "lastUpdated": "2026-09-18T14:16:02.909Z"
       },
       "priceHistory": [
         {
@@ -11345,6 +11345,21 @@
           "source": "Tesla FindUs API & Base Locale",
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.8
+        },
+        {
+          "id": "8714-2026-09-18",
+          "superchargerId": "8714",
+          "superchargerName": "Dreux, France",
+          "locationSlug": "dreuxsupercharger",
+          "date": "2026-09-18",
+          "teslaPeak": 0.36,
+          "teslaOffPeak": 0.16,
+          "nonTeslaPeak": 0.5,
+          "nonTeslaOffPeak": 0.22,
+          "peakHours": "09:00 - 20:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": -28.8
         }
       ],
       "locationId": "30245"
@@ -35569,14 +35584,14 @@
       "facilityName": "Hôtel / Restauration / Services",
       "dateOpened": "2017-12-16",
       "currentPricing": {
-        "teslaPeak": 0.36,
-        "teslaOffPeak": 0.3,
-        "nonTeslaPeak": 0.49,
-        "nonTeslaOffPeak": 0.39,
-        "peakHours": "16:00 - 20:00",
+        "teslaPeak": 0.32,
+        "teslaOffPeak": 0.32,
+        "nonTeslaPeak": 0.43,
+        "nonTeslaOffPeak": 0.43,
+        "peakHours": "09:00 - 20:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T05:00:00.000Z"
+        "lastUpdated": "2026-09-18T14:16:50.938Z"
       },
       "priceHistory": [
         {
@@ -35698,6 +35713,21 @@
           "source": "Tesla FindUs API & Base Locale",
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
+        },
+        {
+          "id": "1366-2026-09-18",
+          "superchargerId": "1366",
+          "superchargerName": "Aire du Poulet de Bresse, France",
+          "locationSlug": "airedupouletdebressesupercharger",
+          "date": "2026-09-18",
+          "teslaPeak": 0.32,
+          "teslaOffPeak": 0.32,
+          "nonTeslaPeak": 0.43,
+          "nonTeslaOffPeak": 0.43,
+          "peakHours": "09:00 - 20:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": -3
         }
       ],
       "locationId": "airedupouletdebressesupercharger"
@@ -93667,6 +93697,36 @@
       "source": "Tesla API FindUs (Officiel)",
       "notes": "Relevé automatique temps réel officiel Tesla",
       "changePercentage": -4.9
+    },
+    {
+      "id": "8714-2026-09-18",
+      "superchargerId": "8714",
+      "superchargerName": "Dreux, France",
+      "locationSlug": "dreuxsupercharger",
+      "date": "2026-09-18",
+      "teslaPeak": 0.36,
+      "teslaOffPeak": 0.16,
+      "nonTeslaPeak": 0.5,
+      "nonTeslaOffPeak": 0.22,
+      "peakHours": "09:00 - 20:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": -28.8
+    },
+    {
+      "id": "1366-2026-09-18",
+      "superchargerId": "1366",
+      "superchargerName": "Aire du Poulet de Bresse, France",
+      "locationSlug": "airedupouletdebressesupercharger",
+      "date": "2026-09-18",
+      "teslaPeak": 0.32,
+      "teslaOffPeak": 0.32,
+      "nonTeslaPeak": 0.43,
+      "nonTeslaOffPeak": 0.43,
+      "peakHours": "09:00 - 20:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": -3
     }
   ],
   "nationalHistory": [
@@ -93791,5 +93851,5 @@
       "changePercentage": -5.2
     }
   ],
-  "lastSyncTime": "2026-09-18T14:08:53.885Z"
+  "lastSyncTime": "2026-09-18T14:15:38.053Z"
 }
