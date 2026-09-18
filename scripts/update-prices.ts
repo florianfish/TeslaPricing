@@ -64,13 +64,13 @@ async function fetchLiveFrenchSites(): Promise<any[]> {
   }
 }
 
-// 2. Interroger l'API officielle Tesla FindUs pour une station (avec gestion de retries et backoff en cas de 403/429)
-async function fetchTeslaPricing(locationId: string, maxRetries = 2): Promise<any | null> {
+// 2. Interroger l'API officielle Tesla FindUs pour une station (avec 1 retry rapide en cas de 403/429)
+async function fetchTeslaPricing(locationId: string, maxRetries = 1): Promise<any | null> {
   const url = `https://www.tesla.com/api/findus/get-charger-details?locationSlug=${locationId}&programType=supercharger&locale=en-US&isInHkMoTw=false`;
 
   for (let attempt = 1; attempt <= maxRetries + 1; attempt++) {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 8000);
+    const timeout = setTimeout(() => controller.abort(), 6000);
 
     try {
       const res = await fetch(url, {
@@ -95,10 +95,9 @@ async function fetchTeslaPricing(locationId: string, maxRetries = 2): Promise<an
         return json?.data?.data || null;
       }
 
-      // Si Akamai nous renvoie 403 ou 429, on fait une pause progressive (backoff) avant de retenter
+      // Si 403 ou 429, pause courte de 1.2s puis 1 nouvel essai
       if ((res.status === 403 || res.status === 429) && attempt <= maxRetries) {
-        const backoffMs = attempt * 2500;
-        await sleep(backoffMs);
+        await sleep(1200);
         continue;
       }
 
@@ -106,7 +105,7 @@ async function fetchTeslaPricing(locationId: string, maxRetries = 2): Promise<an
     } catch {
       clearTimeout(timeout);
       if (attempt <= maxRetries) {
-        await sleep(attempt * 2000);
+        await sleep(1000);
         continue;
       }
       return null;
@@ -413,8 +412,8 @@ async function runUpdate() {
       );
     }
 
-    // Temporisation de 600ms entre les requêtes pour ménager l'API
-    await sleep(600);
+    // Temporisation de 250ms entre les requêtes pour un flux fluide
+    await sleep(250);
   }
 
   // 3. Sauvegarder la base de données UNIQUEMENT s'il y a des changements réels
