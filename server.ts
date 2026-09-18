@@ -16,7 +16,7 @@ async function startServer() {
   const app = express();
   const PORT = Number(process.env.PORT) || 3000;
 
-  app.use(express.json());
+  app.use(express.json({ limit: '15mb' }));
 
   // Initialize database
   try {
@@ -148,14 +148,20 @@ async function startServer() {
     }
   });
 
-  // Sync endpoint - Rechargement de la base depuis le disque et réapplication des contributions locales
+  // Sync endpoint - Rechargement ou mise à jour directe depuis le webhook GitHub Actions
   app.post('/api/sync', async (req, res) => {
     try {
+      // Si GitHub Actions transmet la nouvelle base dans le corps de la requête
+      if (req.body && Array.isArray(req.body.superchargers) && req.body.superchargers.length > 0) {
+        saveDatabase(req.body);
+      }
+
       const db = reloadDatabase();
 
       res.json({
         success: true,
-        message: 'Base de données rechargée avec succès',
+        message: 'Base de données synchronisée et rechargée avec succès',
+        totalStations: db.superchargers.length,
         lastSyncTime: db.lastSyncTime,
         stats: getStats(),
       });
