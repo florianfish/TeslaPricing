@@ -20695,14 +20695,14 @@
       "facilityName": "Super U",
       "dateOpened": "2026-02-18",
       "currentPricing": {
-        "teslaPeak": 0.37,
+        "teslaPeak": 0.32,
         "teslaOffPeak": 0.32,
-        "nonTeslaPeak": 0.5,
-        "nonTeslaOffPeak": 0.41,
-        "peakHours": "16:00 - 20:00",
+        "nonTeslaPeak": 0.43,
+        "nonTeslaOffPeak": 0.43,
+        "peakHours": "09:00 - 20:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T05:00:00.000Z"
+        "lastUpdated": "2026-09-19T07:44:21.359Z"
       },
       "priceHistory": [
         {
@@ -20824,6 +20824,21 @@
           "source": "Tesla FindUs API & Base Locale",
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
+        },
+        {
+          "id": "9882-2026-09-19",
+          "superchargerId": "9882",
+          "superchargerName": "Porte-de-Savoie, France",
+          "locationSlug": "portedesavoiesupercharger",
+          "date": "2026-09-19",
+          "teslaPeak": 0.32,
+          "teslaOffPeak": 0.32,
+          "nonTeslaPeak": 0.43,
+          "nonTeslaOffPeak": 0.43,
+          "peakHours": "09:00 - 20:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": -7.2
         }
       ],
       "locationId": "438011"
@@ -26204,14 +26219,14 @@
       "facilityName": "Ace Hôtel",
       "dateOpened": "2024-10-24",
       "currentPricing": {
-        "teslaPeak": 0.33,
-        "teslaOffPeak": 0.28,
-        "nonTeslaPeak": 0.46,
-        "nonTeslaOffPeak": 0.37,
-        "peakHours": "16:00 - 20:00",
+        "teslaPeak": 0.32,
+        "teslaOffPeak": 0.32,
+        "nonTeslaPeak": 0.43,
+        "nonTeslaOffPeak": 0.43,
+        "peakHours": "09:00 - 20:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T05:00:00.000Z"
+        "lastUpdated": "2026-09-19T07:45:05.361Z"
       },
       "priceHistory": [
         {
@@ -26333,6 +26348,21 @@
           "source": "Tesla FindUs API & Base Locale",
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.7
+        },
+        {
+          "id": "8268-2026-09-19",
+          "superchargerId": "8268",
+          "superchargerName": "Bourges, France - Chem. Le Vallon",
+          "locationSlug": "bourgessupercharger",
+          "date": "2026-09-19",
+          "teslaPeak": 0.32,
+          "teslaOffPeak": 0.32,
+          "nonTeslaPeak": 0.43,
+          "nonTeslaOffPeak": 0.43,
+          "peakHours": "09:00 - 20:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": 4.9
         }
       ],
       "locationId": "34050"
@@ -93727,6 +93757,36 @@
       "source": "Tesla API FindUs (Officiel)",
       "notes": "Relevé automatique temps réel officiel Tesla",
       "changePercentage": -3
+    },
+    {
+      "id": "9882-2026-09-19",
+      "superchargerId": "9882",
+      "superchargerName": "Porte-de-Savoie, France",
+      "locationSlug": "portedesavoiesupercharger",
+      "date": "2026-09-19",
+      "teslaPeak": 0.32,
+      "teslaOffPeak": 0.32,
+      "nonTeslaPeak": 0.43,
+      "nonTeslaOffPeak": 0.43,
+      "peakHours": "09:00 - 20:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": -7.2
+    },
+    {
+      "id": "8268-2026-09-19",
+      "superchargerId": "8268",
+      "superchargerName": "Bourges, France - Chem. Le Vallon",
+      "locationSlug": "bourgessupercharger",
+      "date": "2026-09-19",
+      "teslaPeak": 0.32,
+      "teslaOffPeak": 0.32,
+      "nonTeslaPeak": 0.43,
+      "nonTeslaOffPeak": 0.43,
+      "peakHours": "09:00 - 20:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": 4.9
     }
   ],
   "nationalHistory": [
@@ -93851,5 +93911,5 @@
       "changePercentage": -5.2
     }
   ],
-  "lastSyncTime": "2026-09-18T14:15:38.053Z"
+  "lastSyncTime": "2026-09-19T07:41:52.222Z"
 }
