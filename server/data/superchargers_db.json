@@ -338,14 +338,14 @@
       "facilityName": "Grand Frais",
       "dateOpened": "2026-08-25",
       "currentPricing": {
-        "teslaPeak": 0.39,
-        "teslaOffPeak": 0.32,
-        "nonTeslaPeak": 0.52,
-        "nonTeslaOffPeak": 0.41,
-        "peakHours": "16:00 - 20:00",
+        "teslaPeak": 0.42,
+        "teslaOffPeak": 0.15,
+        "nonTeslaPeak": 0.58,
+        "nonTeslaOffPeak": 0.21,
+        "peakHours": "10:00 - 20:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T05:00:00.000Z"
+        "lastUpdated": "2026-09-20T08:09:20.792Z"
       },
       "priceHistory": [
         {
@@ -467,6 +467,21 @@
           "source": "Tesla FindUs API & Base Locale",
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.9
+        },
+        {
+          "id": "10337-2026-09-20",
+          "superchargerId": "10337",
+          "superchargerName": "Férin, France",
+          "locationSlug": "ferinsupercharger",
+          "date": "2026-09-20",
+          "teslaPeak": 0.42,
+          "teslaOffPeak": 0.15,
+          "nonTeslaPeak": 0.58,
+          "nonTeslaOffPeak": 0.21,
+          "peakHours": "10:00 - 20:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": -19.7
         }
       ],
       "locationId": "417319"
@@ -8704,14 +8719,14 @@
       "facilityName": "Hôtel / Restauration / Services",
       "dateOpened": "2024-09-12",
       "currentPricing": {
-        "teslaPeak": 0.34,
-        "teslaOffPeak": 0.27,
-        "nonTeslaPeak": 0.47,
-        "nonTeslaOffPeak": 0.36,
-        "peakHours": "16:00 - 20:00",
+        "teslaPeak": 0.32,
+        "teslaOffPeak": 0.32,
+        "nonTeslaPeak": 0.43,
+        "nonTeslaOffPeak": 0.43,
+        "peakHours": "09:00 - 20:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T05:00:00.000Z"
+        "lastUpdated": "2026-09-20T08:10:26.903Z"
       },
       "priceHistory": [
         {
@@ -8833,6 +8848,21 @@
           "source": "Tesla FindUs API & Base Locale",
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.6
+        },
+        {
+          "id": "8309-2026-09-20",
+          "superchargerId": "8309",
+          "superchargerName": "Argenton-sur-Creuse, France",
+          "locationSlug": "argentonsurcreusesupercharger",
+          "date": "2026-09-20",
+          "teslaPeak": 0.32,
+          "teslaOffPeak": 0.32,
+          "nonTeslaPeak": 0.43,
+          "nonTeslaOffPeak": 0.43,
+          "peakHours": "09:00 - 20:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": 4.9
         }
       ],
       "locationId": "34053"
@@ -37984,14 +38014,14 @@
       "facilityName": "Hôtel / Restauration / Services",
       "dateOpened": "2023-09-20",
       "currentPricing": {
-        "teslaPeak": 0.37,
-        "teslaOffPeak": 0.3,
-        "nonTeslaPeak": 0.5,
-        "nonTeslaOffPeak": 0.39,
-        "peakHours": "16:00 - 20:00",
+        "teslaPeak": 0.32,
+        "teslaOffPeak": 0.32,
+        "nonTeslaPeak": 0.43,
+        "nonTeslaOffPeak": 0.43,
+        "peakHours": "09:00 - 20:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T05:00:00.000Z"
+        "lastUpdated": "2026-09-20T08:14:21.652Z"
       },
       "priceHistory": [
         {
@@ -38113,6 +38143,21 @@
           "source": "Tesla FindUs API & Base Locale",
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
+        },
+        {
+          "id": "6506-2026-09-20",
+          "superchargerId": "6506",
+          "superchargerName": "Varennes-Vauzelles, France",
+          "locationSlug": "varennesvauzellessupercharger",
+          "date": "2026-09-20",
+          "teslaPeak": 0.32,
+          "teslaOffPeak": 0.32,
+          "nonTeslaPeak": 0.43,
+          "nonTeslaOffPeak": 0.43,
+          "peakHours": "09:00 - 20:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": -4.5
         }
       ],
       "locationId": "309483"
@@ -93787,6 +93832,51 @@
       "source": "Tesla API FindUs (Officiel)",
       "notes": "Relevé automatique temps réel officiel Tesla",
       "changePercentage": 4.9
+    },
+    {
+      "id": "10337-2026-09-20",
+      "superchargerId": "10337",
+      "superchargerName": "Férin, France",
+      "locationSlug": "ferinsupercharger",
+      "date": "2026-09-20",
+      "teslaPeak": 0.42,
+      "teslaOffPeak": 0.15,
+      "nonTeslaPeak": 0.58,
+      "nonTeslaOffPeak": 0.21,
+      "peakHours": "10:00 - 20:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": -19.7
+    },
+    {
+      "id": "8309-2026-09-20",
+      "superchargerId": "8309",
+      "superchargerName": "Argenton-sur-Creuse, France",
+      "locationSlug": "argentonsurcreusesupercharger",
+      "date": "2026-09-20",
+      "teslaPeak": 0.32,
+      "teslaOffPeak": 0.32,
+      "nonTeslaPeak": 0.43,
+      "nonTeslaOffPeak": 0.43,
+      "peakHours": "09:00 - 20:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": 4.9
+    },
+    {
+      "id": "6506-2026-09-20",
+      "superchargerId": "6506",
+      "superchargerName": "Varennes-Vauzelles, France",
+      "locationSlug": "varennesvauzellessupercharger",
+      "date": "2026-09-20",
+      "teslaPeak": 0.32,
+      "teslaOffPeak": 0.32,
+      "nonTeslaPeak": 0.43,
+      "nonTeslaOffPeak": 0.43,
+      "peakHours": "09:00 - 20:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": -4.5
     }
   ],
   "nationalHistory": [
@@ -93911,5 +94001,5 @@
       "changePercentage": -5.2
     }
   ],
-  "lastSyncTime": "2026-09-19T07:41:52.222Z"
+  "lastSyncTime": "2026-09-20T08:09:16.737Z"
 }
