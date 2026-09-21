@@ -29,6 +29,9 @@ jobs:
         run: npm ci --legacy-peer-deps
 
       - name: Exécuter le script d'actualisation des stations et prix
+        env:
+          PROXY_USERNAME: ${{ secrets.PROXY_USERNAME || 'FlorianFish5' }}
+          PROXY_PASSWORD: ${{ secrets.PROXY_PASSWORD }}
         run: npm run update-prices
 
       - name: Commiter et pousser les modifications sur GitHub
@@ -36,7 +39,7 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "chore(data): actualisation automatique nocturne des Superchargeurs"
-          file_pattern: "server/data/superchargers_db.json"
+          file_pattern: "server/data/superchargers_db.json server/data/out_stations.json"
           commit_user_name: "github-actions[bot]"
           commit_user_email: "github-actions[bot]@users.noreply.github.com"
           commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"

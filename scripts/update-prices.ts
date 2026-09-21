@@ -1,9 +1,118 @@
+import 'dotenv/config';
 import fs from 'fs';
 import path from 'path';
+import { ProxyAgent, fetch as undiciFetch } from 'undici';
 import type { Supercharger, SuperchargerPricing, PriceSnapshot } from '../src/types.js';
 
 const DATA_DIR = path.join(process.cwd(), 'server', 'data');
 const DB_FILE = path.join(DATA_DIR, 'superchargers_db.json');
+const OUT_STATIONS_FILE = path.join(DATA_DIR, 'out_stations.json');
+
+// --- CONFIGURATION DES PROXYS SEEDBOX ---
+export interface ProxyConfig {
+  country: string;
+  host: string;
+  port: number;
+  note?: string;
+}
+
+export const SEEDBOX_PROXIES: ProxyConfig[] = [
+  { country: 'France', host: 'proxy-fr.seedbox.fr', port: 3128, note: 'Ad Block inclus' },
+  { country: 'Pays-Bas', host: 'proxy-nl.seedbox.fr', port: 3128 },
+  { country: 'Lituanie', host: 'proxy-lt.seedbox.fr', port: 3128 },
+  { country: 'Pologne', host: 'proxy-pl.seedbox.fr', port: 3128 },
+  { country: 'Belgique', host: 'proxy-be.seedbox.fr', port: 3128 },
+  { country: 'Allemagne', host: 'proxy-de.seedbox.fr', port: 3128 },
+  { country: 'République Tchèque', host: 'proxy-cz.seedbox.fr', port: 3128 },
+  { country: 'Espagne', host: 'proxy-es.seedbox.fr', port: 3128 },
+  { country: 'Finlande', host: 'proxy-fi.seedbox.fr', port: 3128 },
+  { country: 'Irlande', host: 'proxy-ie.seedbox.fr', port: 3128 },
+  { country: 'Italie', host: 'proxy-it.seedbox.fr', port: 3128 },
+  { country: 'Portugal', host: 'proxy-pt.seedbox.fr', port: 3128 },
+  { country: 'Royaume-Uni', host: 'proxy-uk.seedbox.fr', port: 3128 },
+];
+
+const PROXY_USERNAME = process.env.PROXY_USERNAME || 'FlorianFish5';
+const PROXY_PASSWORD = process.env.PROXY_PASSWORD || '';
+
+// Pool dynamique de proxys opérationnels pour la session
+let activeProxies: ProxyConfig[] = [...SEEDBOX_PROXIES];
+
+// Cache des instances ProxyAgent pour réutiliser les connexions
+const proxyAgentCache = new Map<string, ProxyAgent>();
+
+function getProxyAgentForProxy(proxy: ProxyConfig): ProxyAgent {
+  const key = `${PROXY_USERNAME}:${PROXY_PASSWORD}@${proxy.host}:${proxy.port}`;
+  if (!proxyAgentCache.has(key)) {
+    const auth = PROXY_PASSWORD
+      ? `${encodeURIComponent(PROXY_USERNAME)}:${encodeURIComponent(PROXY_PASSWORD)}@`
+      : '';
+    const agent = new ProxyAgent({
+      uri: `http://${auth}${proxy.host}:${proxy.port}`,
+    });
+    proxyAgentCache.set(key, agent);
+  }
+  return proxyAgentCache.get(key)!;
+}
+
+function getRandomActiveProxy(): ProxyConfig | null {
+  if (activeProxies.length === 0) return null;
+  const idx = Math.floor(Math.random() * activeProxies.length);
+  return activeProxies[idx];
+}
+
+function disableProxyForSession(proxy: ProxyConfig, reason: string) {
+  activeProxies = activeProxies.filter((p) => p.host !== proxy.host);
+  console.warn(`       ⚠️ [PROXY EXCLU] ${proxy.country} (${proxy.host}:${proxy.port}) exclu pour cette session (${reason}) - Restants : ${activeProxies.length}`);
+}
+
+// --- GESTION DU STATUT DES STATIONS OUT (JUSQU'AU LENDEMAIN) ---
+export interface OutStationInfo {
+  name: string;
+  date: string; // Format YYYY-MM-DD
+  reason: string;
+}
+
+export interface OutStationsState {
+  lastUpdated: string;
+  stations: Record<string, OutStationInfo>;
+}
+
+function loadOutStations(todayIso: string): OutStationsState {
+  if (!fs.existsSync(OUT_STATIONS_FILE)) {
+    return { lastUpdated: todayIso, stations: {} };
+  }
+  try {
+    const raw = fs.readFileSync(OUT_STATIONS_FILE, 'utf-8');
+    const state: OutStationsState = JSON.parse(raw);
+    if (!state.stations) state.stations = {};
+
+    // Purge automatique des stations des jours passés ("jusqu'au lendemain")
+    let purgedCount = 0;
+    for (const [id, info] of Object.entries(state.stations)) {
+      if (info.date !== todayIso) {
+        delete state.stations[id];
+        purgedCount++;
+      }
+    }
+    if (purgedCount > 0) {
+      console.log(`[STATIONS OUT] 🌅 Nouveau jour (${todayIso}) : ${purgedCount} station(s) réactivée(s) pour de nouvelles tentatives.`);
+      saveOutStations(state);
+    }
+    return state;
+  } catch (err: any) {
+    console.warn(`[STATIONS OUT] ⚠️ Erreur lecture ${OUT_STATIONS_FILE} : ${err.message}. Réinitialisation.`);
+    return { lastUpdated: todayIso, stations: {} };
+  }
+}
+
+function saveOutStations(state: OutStationsState) {
+  try {
+    fs.writeFileSync(OUT_STATIONS_FILE, JSON.stringify(state, null, 2), 'utf-8');
+  } catch (err: any) {
+    console.error(`[STATIONS OUT] ❌ Impossible de sauvegarder ${OUT_STATIONS_FILE} : ${err.message}`);
+  }
+}
 
 interface DatabaseSchema {
   superchargers: Supercharger[];
@@ -64,16 +173,35 @@ async function fetchLiveFrenchSites(): Promise<any[]> {
   }
 }
 
-// 2. Interroger l'API officielle Tesla FindUs pour une station (avec 1 retry rapide en cas de 403/429)
-async function fetchTeslaPricing(locationId: string, maxRetries = 1): Promise<any | null> {
+// 2. Interroger l'API officielle Tesla FindUs pour une station avec proxy aléatoire
+export interface TeslaPricingResult {
+  data: any | null;
+  isStationOut: boolean;
+  proxyUsed?: ProxyConfig;
+}
+
+async function fetchTeslaPricing(
+  locationId: string,
+  stationName: string,
+  maxRetries = 2
+): Promise<TeslaPricingResult> {
   const url = `https://www.tesla.com/api/findus/get-charger-details?locationSlug=${locationId}&programType=supercharger&locale=en-US&isInHkMoTw=false`;
 
-  for (let attempt = 1; attempt <= maxRetries + 1; attempt++) {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    const useProxy = Boolean(PROXY_PASSWORD && activeProxies.length > 0);
+    const proxy = useProxy ? getRandomActiveProxy() : null;
+    const dispatcher = proxy ? getProxyAgentForProxy(proxy) : undefined;
+    const proxyDesc = proxy ? `[Proxy: ${proxy.country} - ${proxy.host}:${proxy.port}]` : `[Connexion directe]`;
+
+    // Log à chaque fois du proxy sélectionné
+    console.log(`       🌐 ${proxyDesc} Interrogation de ${stationName} (essai ${attempt}/${maxRetries})...`);
+
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 6000);
+    const timeout = setTimeout(() => controller.abort(), 7000);
 
     try {
-      const res = await fetch(url, {
+      const fetchFn = dispatcher ? undiciFetch : fetch;
+      const res = await (fetchFn as any)(url, {
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
           'Accept': 'application/json, text/plain, */*',
@@ -87,32 +215,53 @@ async function fetchTeslaPricing(locationId: string, maxRetries = 1): Promise<an
           'sec-fetch-site': 'same-origin',
         },
         signal: controller.signal,
+        dispatcher,
       });
       clearTimeout(timeout);
 
       if (res.ok) {
         const json = await res.json();
-        return json?.data?.data || null;
+        const data = json?.data?.data || null;
+        return { data, isStationOut: !data, proxyUsed: proxy || undefined };
       }
 
-      // Si 403 ou 429, pause courte de 1.2s puis 1 nouvel essai
-      if ((res.status === 403 || res.status === 429) && attempt <= maxRetries) {
+      // 404 : la station n'existe plus ou slug invalide sur FindUs
+      if (res.status === 404) {
+        console.warn(`       ⛔ [404 FindUs] ${stationName} (${locationId}) n'est plus répertoriée.`);
+        return { data: null, isStationOut: true, proxyUsed: proxy || undefined };
+      }
+
+      // Si erreur proxy (authentification, passerelle)
+      if (res.status === 407 || res.status === 502 || res.status === 503 || res.status === 504) {
+        if (proxy) disableProxyForSession(proxy, `HTTP ${res.status}`);
+      }
+
+      // Si 403 ou 429, pause courte puis retry
+      if ((res.status === 403 || res.status === 429) && attempt < maxRetries) {
         await sleep(1200);
         continue;
       }
 
-      return null;
-    } catch {
+      return { data: null, isStationOut: attempt === maxRetries, proxyUsed: proxy || undefined };
+    } catch (err: any) {
       clearTimeout(timeout);
-      if (attempt <= maxRetries) {
+      const isAbort = err.name === 'AbortError' || err.message?.includes('aborted');
+      const errReason = isAbort ? 'Timeout (7s)' : (err.message || 'Erreur réseau');
+
+      if (proxy && (errReason.includes('ECONNREFUSED') || errReason.includes('ETIMEDOUT') || errReason.includes('ECONNRESET') || isAbort)) {
+        disableProxyForSession(proxy, errReason);
+      }
+
+      if (attempt < maxRetries) {
         await sleep(1000);
         continue;
       }
-      return null;
+
+      return { data: null, isStationOut: true, proxyUsed: proxy || undefined };
     }
   }
 
-  return null;
+  return { data: null, isStationOut: true };
 }
 
 // 3. Extraire et normaliser les tarifs depuis le schéma Tesla (effectivePricebooks)
@@ -321,17 +470,39 @@ async function runUpdate() {
   console.log('📡 INTERROGATION DIRECTE DE L\'API TESLA (FINDUS PRICING)');
   console.log('----------------------------------------------------------------\n');
 
+  if (PROXY_PASSWORD) {
+    console.log(`[PROXY] 🛡️ Pool actif : ${activeProxies.length}/${SEEDBOX_PROXIES.length} proxys Seedbox (${PROXY_USERNAME}) avec rotation aléatoire.`);
+  } else {
+    console.warn(`[PROXY] ⚠️ Variable PROXY_PASSWORD absente : interrogation directe sans proxy.`);
+  }
+
+  // Chargement et purge journalière des stations marquées OUT
+  const outState = loadOutStations(todayIso);
+  const initialOutCount = Object.keys(outState.stations).length;
+  if (initialOutCount > 0) {
+    console.log(`[STATIONS OUT] ℹ️ ${initialOutCount} station(s) précédemment marquées 'OUT' pour aujourd'hui (${todayIso}) seront ignorées.`);
+  }
+
   let teslaApiSuccess = 0;
   let teslaApiFallback = 0;
   let pricesUpdatedCount = 0;
+  let stationsMarkedOutToday = 0;
 
   const totalStations = db.superchargers.length;
 
   for (let i = 0; i < totalStations; i++) {
     const charger = db.superchargers[i];
     const progress = `[${String(i + 1).padStart(3, ' ')}/${totalStations}] (${Math.round(((i + 1) / totalStations) * 100)}%)`;
+    const stationKey = charger.locationSlug || charger.id;
 
-    // Si la station n'a pas de locationId ou n'est pas encore ouverte
+    // 1. Si la station est déjà marquée OUT aujourd'hui, ne plus la réutiliser jusqu'au lendemain
+    if (outState.stations[stationKey]?.date === todayIso) {
+      console.log(`${progress} ⏸️ [STATION OUT] ${charger.name} : Déjà marquée OUT pour aujourd'hui (${todayIso}) ➔ non réutilisée jusqu'à demain.`);
+      teslaApiFallback++;
+      continue;
+    }
+
+    // 2. Si la station n'a pas de locationId ou n'est pas encore ouverte
     if (!charger.locationId) {
       console.log(`${progress} ⏩ ${charger.name} : Pas de locationId Tesla ➔ Tarifs locaux conservés`);
       teslaApiFallback++;
@@ -344,9 +515,10 @@ async function runUpdate() {
       continue;
     }
 
-    // Interrogation de l'API Tesla
-    const teslaData = await fetchTeslaPricing(charger.locationId);
+    // 3. Interrogation de l'API Tesla FindUs avec proxy aléatoire
+    const { data: teslaData, isStationOut, proxyUsed } = await fetchTeslaPricing(charger.locationId, charger.name);
     const parsed = parseTeslaData(teslaData);
+    const proxyTag = proxyUsed ? `[${proxyUsed.country} - ${proxyUsed.host}]` : `[Direct]`;
 
     if (parsed) {
       teslaApiSuccess++;
@@ -393,23 +565,40 @@ async function runUpdate() {
         if (typeof parsed.otherEVs === 'boolean') charger.otherEVs = parsed.otherEVs;
 
         console.log(
-          `${progress} 🎯 [MISE À JOUR] ${charger.name} : ` +
+          `${progress} 🎯 [MISE À JOUR] ${proxyTag} ${charger.name} : ` +
           `TSLA ${pricing.teslaPeak}€/${pricing.teslaOffPeak}€ | ` +
           `NTSLA ${pricing.nonTeslaPeak}€/${pricing.nonTeslaOffPeak}€ (${changePercentage > 0 ? '+' : ''}${changePercentage}%)`
         );
       } else {
         // Prix inchangé et confirmé par l'API Tesla
         console.log(
-          `${progress} ✅ [CONFIRMÉ] ${charger.name} : ` +
+          `${progress} ✅ [CONFIRMÉ] ${proxyTag} ${charger.name} : ` +
           `TSLA ${current.teslaPeak}€/${current.teslaOffPeak}€ (HP ${current.peakHours})`
         );
       }
     } else {
       teslaApiFallback++;
-      console.log(
-        `${progress} 🛡️ [CONSERVÉ] ${charger.name} (${charger.locationId}) : ` +
-        `Accès API Tesla restreint ➔ Maintien des tarifs en base (${charger.currentPricing.teslaPeak}€ / ${charger.currentPricing.teslaOffPeak}€)`
-      );
+
+      if (isStationOut) {
+        // Station indisponible ou 404 : enregistrer comme OUT jusqu'au lendemain
+        outState.stations[stationKey] = {
+          name: charger.name,
+          date: todayIso,
+          reason: 'Données introuvables ou accès API FindUs restreint',
+        };
+        saveOutStations(outState);
+        stationsMarkedOutToday++;
+
+        console.log(
+          `${progress} ⛔ [MARQUÉE OUT] ${proxyTag} ${charger.name} (${charger.locationId}) : ` +
+          `Indisponible ➔ non réutilisée jusqu'au lendemain (${todayIso}).`
+        );
+      } else {
+        console.log(
+          `${progress} 🛡️ [CONSERVÉ] ${proxyTag} ${charger.name} (${charger.locationId}) : ` +
+          `Accès API Tesla restreint ➔ Maintien des tarifs en base (${charger.currentPricing.teslaPeak}€ / ${charger.currentPricing.teslaOffPeak}€)`
+        );
+      }
     }
 
     // Temporisation de 250ms entre les requêtes pour un flux fluide
@@ -432,18 +621,29 @@ async function runUpdate() {
   console.log('\n================================================================');
   console.log('🏁 BILAN DE L\'ACTUALISATION NOCTURNE');
   console.log('================================================================');
-  console.log(`• Total des stations en base  : ${db.superchargers.length}`);
-  console.log(`• Nouvelles stations créées   : ${newStationsCount}`);
-  console.log(`• Changements de statut       : ${statusChangedCount}`);
-  console.log(`• Réponses API Tesla reçues   : ${teslaApiSuccess}`);
-  console.log(`• Stations en maintien local  : ${teslaApiFallback}`);
-  console.log(`• Tarifs réels mis à jour     : ${pricesUpdatedCount}`);
-  console.log(`• Horodatage de synchronisation : ${db.lastSyncTime}`);
-  console.log(`• Durée totale du traitement  : ${durationSec} secondes`);
+  console.log(`• Total des stations en base       : ${db.superchargers.length}`);
+  console.log(`• Nouvelles stations créées        : ${newStationsCount}`);
+  console.log(`• Changements de statut            : ${statusChangedCount}`);
+  console.log(`• Réponses API Tesla reçues        : ${teslaApiSuccess}`);
+  console.log(`• Stations en maintien local       : ${teslaApiFallback}`);
+  console.log(`• Nouvelles stations marquées OUT  : ${stationsMarkedOutToday}`);
+  console.log(`• Total stations OUT aujourd'hui   : ${Object.keys(outState.stations).length}`);
+  console.log(`• Tarifs réels mis à jour          : ${pricesUpdatedCount}`);
+  console.log(`• Proxys Seedbox actifs restants   : ${activeProxies.length}/${SEEDBOX_PROXIES.length}`);
+  console.log(`• Horodatage de synchronisation    : ${db.lastSyncTime}`);
+  console.log(`• Durée totale du traitement       : ${durationSec} secondes`);
   console.log('================================================================\n');
 }
 
-runUpdate().catch((err) => {
-  console.error('[ERREUR CRITIQUE DANS L\'ACTUALISATION]', err);
-  process.exit(1);
-});
+const isMainScript = process.argv[1] && (
+  process.argv[1].endsWith('update-prices.ts') ||
+  process.argv[1].endsWith('update-prices.js') ||
+  process.argv[1].includes('update-prices')
+);
+
+if (isMainScript) {
+  runUpdate().catch((err) => {
+    console.error('[ERREUR CRITIQUE DANS L\'ACTUALISATION]', err);
+    process.exit(1);
+  });
+}

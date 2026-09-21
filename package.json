@@ -26,6 +26,7 @@
     "react-dom": "^19.0.1",
     "react-is": "^19.3.0",
     "recharts": "^3.10.1",
+    "undici": "^8.10.2",
     "vite": "^8.3.0"
   },
   "devDependencies": {
