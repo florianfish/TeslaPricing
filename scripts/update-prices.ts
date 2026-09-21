@@ -55,15 +55,27 @@ function getProxyAgentForProxy(proxy: ProxyConfig): ProxyAgent {
   return proxyAgentCache.get(key)!;
 }
 
-function getRandomActiveProxy(): ProxyConfig | null {
+function getRandomActiveProxy(excludeHosts: string[] = []): ProxyConfig | null {
   if (activeProxies.length === 0) return null;
-  const idx = Math.floor(Math.random() * activeProxies.length);
-  return activeProxies[idx];
+  const pool = activeProxies.filter((p) => !excludeHosts.includes(p.host));
+  const candidateList = pool.length > 0 ? pool : activeProxies;
+  const idx = Math.floor(Math.random() * candidateList.length);
+  return candidateList[idx];
 }
 
-function disableProxyForSession(proxy: ProxyConfig, reason: string) {
-  activeProxies = activeProxies.filter((p) => p.host !== proxy.host);
-  console.warn(`       ⚠️ [PROXY EXCLU] ${proxy.country} (${proxy.host}:${proxy.port}) exclu pour cette session (${reason}) - Restants : ${activeProxies.length}`);
+const proxyFailureCounts = new Map<string, number>();
+
+function recordProxyFailure(proxy: ProxyConfig, reason: string) {
+  const current = (proxyFailureCounts.get(proxy.host) || 0) + 1;
+  proxyFailureCounts.set(proxy.host, current);
+  if (current >= 3 || reason.includes('407')) {
+    activeProxies = activeProxies.filter((p) => p.host !== proxy.host);
+    console.warn(`       ⚠️ [PROXY DÉSACTIVÉ] ${proxy.country} (${proxy.host}:${proxy.port}) exclu (${reason}, ${current} échecs) - Restants : ${activeProxies.length}`);
+  }
+}
+
+function recordProxySuccess(proxy: ProxyConfig) {
+  proxyFailureCounts.delete(proxy.host);
 }
 
 // --- GESTION DU STATUT DES STATIONS OUT (JUSQU'AU LENDEMAIN) ---
@@ -180,88 +192,110 @@ export interface TeslaPricingResult {
   proxyUsed?: ProxyConfig;
 }
 
+async function queryTeslaSlug(
+  slug: string,
+  proxy: ProxyConfig | null
+): Promise<{ status: number; data: any | null; error?: string }> {
+  const url = `https://www.tesla.com/api/findus/get-charger-details?locationSlug=${slug}&programType=supercharger&locale=en-US&isInHkMoTw=false`;
+  const dispatcher = proxy ? getProxyAgentForProxy(proxy) : undefined;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 12000); // 12 secondes de marge pour les proxys
+
+  try {
+    const fetchFn = dispatcher ? undiciFetch : fetch;
+    const res = await (fetchFn as any)(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+        'Accept': 'application/json, text/plain, */*',
+        'Accept-Language': 'fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7',
+        'Referer': `https://www.tesla.com/findus/location/supercharger/${slug}`,
+        'sec-ch-ua': '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
+        'sec-ch-ua-mobile': '?0',
+        'sec-ch-ua-platform': '"Windows"',
+        'sec-fetch-dest': 'empty',
+        'sec-fetch-mode': 'cors',
+        'sec-fetch-site': 'same-origin',
+      },
+      signal: controller.signal,
+      dispatcher,
+    });
+    clearTimeout(timeout);
+
+    if (res.ok) {
+      const json = await res.json();
+      const data = json?.data?.data || null;
+      return { status: res.status, data };
+    }
+    return { status: res.status, data: null };
+  } catch (err: any) {
+    clearTimeout(timeout);
+    const isAbort = err.name === 'AbortError' || err.message?.includes('aborted');
+    return { status: 0, data: null, error: isAbort ? 'Timeout (12s)' : (err.message || 'Erreur réseau') };
+  }
+}
+
 async function fetchTeslaPricing(
-  locationId: string,
-  stationName: string,
+  primarySlug: string,
+  fallbackSlug?: string,
+  stationName = '',
   maxRetries = 2
 ): Promise<TeslaPricingResult> {
-  const url = `https://www.tesla.com/api/findus/get-charger-details?locationSlug=${locationId}&programType=supercharger&locale=en-US&isInHkMoTw=false`;
+  const slugsToTry = [primarySlug];
+  if (fallbackSlug && fallbackSlug !== primarySlug) {
+    slugsToTry.push(fallbackSlug);
+  }
+
+  const triedHosts: string[] = [];
+  let confirmed404Count = 0;
+  let lastProxyUsed: ProxyConfig | undefined;
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     const useProxy = Boolean(PROXY_PASSWORD && activeProxies.length > 0);
-    const proxy = useProxy ? getRandomActiveProxy() : null;
-    const dispatcher = proxy ? getProxyAgentForProxy(proxy) : undefined;
+    const proxy = useProxy ? getRandomActiveProxy(triedHosts) : null;
+    if (proxy) {
+      triedHosts.push(proxy.host);
+      lastProxyUsed = proxy;
+    }
     const proxyDesc = proxy ? `[Proxy: ${proxy.country} - ${proxy.host}:${proxy.port}]` : `[Connexion directe]`;
 
-    // Log à chaque fois du proxy sélectionné
-    console.log(`       🌐 ${proxyDesc} Interrogation de ${stationName} (essai ${attempt}/${maxRetries})...`);
+    let attemptHadSuccess = false;
 
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 7000);
+    for (const slug of slugsToTry) {
+      console.log(`       🌐 ${proxyDesc} Interrogation de ${stationName} (${slug}) [essai ${attempt}/${maxRetries}]...`);
+      const result = await queryTeslaSlug(slug, proxy);
 
-    try {
-      const fetchFn = dispatcher ? undiciFetch : fetch;
-      const res = await (fetchFn as any)(url, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-          'Accept': 'application/json, text/plain, */*',
-          'Accept-Language': 'fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7',
-          'Referer': `https://www.tesla.com/findus/location/supercharger/${locationId}`,
-          'sec-ch-ua': '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
-          'sec-ch-ua-mobile': '?0',
-          'sec-ch-ua-platform': '"Windows"',
-          'sec-fetch-dest': 'empty',
-          'sec-fetch-mode': 'cors',
-          'sec-fetch-site': 'same-origin',
-        },
-        signal: controller.signal,
-        dispatcher,
-      });
-      clearTimeout(timeout);
-
-      if (res.ok) {
-        const json = await res.json();
-        const data = json?.data?.data || null;
-        return { data, isStationOut: !data, proxyUsed: proxy || undefined };
+      if (result.data) {
+        if (proxy) recordProxySuccess(proxy);
+        return { data: result.data, isStationOut: false, proxyUsed: proxy || undefined };
       }
 
-      // 404 : la station n'existe plus ou slug invalide sur FindUs
-      if (res.status === 404) {
-        console.warn(`       ⛔ [404 FindUs] ${stationName} (${locationId}) n'est plus répertoriée.`);
-        return { data: null, isStationOut: true, proxyUsed: proxy || undefined };
+      if (result.error && proxy) {
+        recordProxyFailure(proxy, result.error);
+      } else if (result.status === 407 && proxy) {
+        recordProxyFailure(proxy, 'HTTP 407 Auth');
       }
 
-      // Si erreur proxy (authentification, passerelle)
-      if (res.status === 407 || res.status === 502 || res.status === 503 || res.status === 504) {
-        if (proxy) disableProxyForSession(proxy, `HTTP ${res.status}`);
-      }
-
-      // Si 403 ou 429, pause courte puis retry
-      if ((res.status === 403 || res.status === 429) && attempt < maxRetries) {
-        await sleep(1200);
+      // Si 404 : slug non répertorié chez Tesla
+      if (result.status === 404) {
+        confirmed404Count++;
         continue;
       }
 
-      return { data: null, isStationOut: attempt === maxRetries, proxyUsed: proxy || undefined };
-    } catch (err: any) {
-      clearTimeout(timeout);
-      const isAbort = err.name === 'AbortError' || err.message?.includes('aborted');
-      const errReason = isAbort ? 'Timeout (7s)' : (err.message || 'Erreur réseau');
-
-      if (proxy && (errReason.includes('ECONNREFUSED') || errReason.includes('ETIMEDOUT') || errReason.includes('ECONNRESET') || isAbort)) {
-        disableProxyForSession(proxy, errReason);
+      // Si 403 / 429 / timeout : blocage anti-bot ou lenteur proxy -> changer de proxy à l'essai suivant
+      if (result.status === 403 || result.status === 429 || result.status === 0) {
+        break;
       }
+    }
 
-      if (attempt < maxRetries) {
-        await sleep(1000);
-        continue;
-      }
-
-      return { data: null, isStationOut: true, proxyUsed: proxy || undefined };
+    if (attempt < maxRetries) {
+      await sleep(1000);
     }
   }
 
-  return { data: null, isStationOut: true };
+  // La station n'est marquée OUT que si TOUS les slugs ont renvoyé 404 (station inexistante/fermée chez Tesla)
+  // Jamais à cause d'un 403 (Accès refusé) ou d'un timeout réseau
+  const isTruly404 = confirmed404Count >= slugsToTry.length * maxRetries;
+  return { data: null, isStationOut: isTruly404, proxyUsed: lastProxyUsed };
 }
 
 // 3. Extraire et normaliser les tarifs depuis le schéma Tesla (effectivePricebooks)
@@ -515,8 +549,12 @@ async function runUpdate() {
       continue;
     }
 
-    // 3. Interrogation de l'API Tesla FindUs avec proxy aléatoire
-    const { data: teslaData, isStationOut, proxyUsed } = await fetchTeslaPricing(charger.locationId, charger.name);
+    // 3. Interrogation de l'API Tesla FindUs avec proxy aléatoire (slug principal + slug textuel de secours)
+    const { data: teslaData, isStationOut, proxyUsed } = await fetchTeslaPricing(
+      charger.locationId,
+      charger.locationSlug,
+      charger.name
+    );
     const parsed = parseTeslaData(teslaData);
     const proxyTag = proxyUsed ? `[${proxyUsed.country} - ${proxyUsed.host}]` : `[Direct]`;
 
@@ -580,20 +618,21 @@ async function runUpdate() {
       teslaApiFallback++;
 
       if (isStationOut) {
-        // Station indisponible ou 404 : enregistrer comme OUT jusqu'au lendemain
+        // Station réellement hors service ou 404 permanent
         outState.stations[stationKey] = {
           name: charger.name,
           date: todayIso,
-          reason: 'Données introuvables ou accès API FindUs restreint',
+          reason: 'Station inexistante ou fermée sur Tesla FindUs (404)',
         };
         saveOutStations(outState);
         stationsMarkedOutToday++;
 
         console.log(
-          `${progress} ⛔ [MARQUÉE OUT] ${proxyTag} ${charger.name} (${charger.locationId}) : ` +
-          `Indisponible ➔ non réutilisée jusqu'au lendemain (${todayIso}).`
+          `${progress} ⛔ [CONFIRMÉ OUT] ${proxyTag} ${charger.name} (${charger.locationId}) : ` +
+          `Station fermée / 404 ➔ non réutilisée jusqu'au lendemain (${todayIso}).`
         );
       } else {
+        // Accès refusé (403), rate limit (429) ou timeout : conservation des tarifs locaux
         console.log(
           `${progress} 🛡️ [CONSERVÉ] ${proxyTag} ${charger.name} (${charger.locationId}) : ` +
           `Accès API Tesla restreint ➔ Maintien des tarifs en base (${charger.currentPricing.teslaPeak}€ / ${charger.currentPricing.teslaOffPeak}€)`
@@ -601,8 +640,8 @@ async function runUpdate() {
       }
     }
 
-    // Temporisation de 250ms entre les requêtes pour un flux fluide
-    await sleep(250);
+    // Temporisation de 500ms entre les requêtes pour ne pas surcharger Akamai/Tesla
+    await sleep(500);
   }
 
   // 3. Sauvegarder la base de données UNIQUEMENT s'il y a des changements réels
