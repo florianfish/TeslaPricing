@@ -4308,14 +4308,14 @@
       "facilityName": "Hôtel / Restauration / Services",
       "dateOpened": "2022-06-09",
       "currentPricing": {
-        "teslaPeak": 0.36,
-        "teslaOffPeak": 0.31,
-        "nonTeslaPeak": 0.49,
-        "nonTeslaOffPeak": 0.4,
-        "peakHours": "16:00 - 20:00",
+        "teslaPeak": 0.32,
+        "teslaOffPeak": 0.32,
+        "nonTeslaPeak": 0.43,
+        "nonTeslaOffPeak": 0.43,
+        "peakHours": "09:00 - 20:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T05:00:00.000Z"
+        "lastUpdated": "2026-09-23T08:09:59.092Z"
       },
       "priceHistory": [
         {
@@ -4437,6 +4437,21 @@
           "source": "Tesla FindUs API & Base Locale",
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
+        },
+        {
+          "id": "4218-2026-09-23",
+          "superchargerId": "4218",
+          "superchargerName": "Chartres, France",
+          "locationSlug": "chartresfrsupercharger",
+          "date": "2026-09-23",
+          "teslaPeak": 0.32,
+          "teslaOffPeak": 0.32,
+          "nonTeslaPeak": 0.43,
+          "nonTeslaOffPeak": 0.43,
+          "peakHours": "09:00 - 20:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": -4.5
         }
       ],
       "locationId": "chartresfrsupercharger"
@@ -23923,7 +23938,7 @@
       "longitude": 2.88053,
       "status": "OPEN",
       "stallCount": 8,
-      "powerKw": 430,
+      "powerKw": 500,
       "stallsBreakdown": {
         "v2": 0,
         "v3": 0,
@@ -26222,14 +26237,14 @@
       "facilityName": "Hôtel / Restauration / Services",
       "dateOpened": "2023-12-22",
       "currentPricing": {
-        "teslaPeak": 0.38,
+        "teslaPeak": 0.32,
         "teslaOffPeak": 0.32,
-        "nonTeslaPeak": 0.51,
-        "nonTeslaOffPeak": 0.41,
-        "peakHours": "16:00 - 20:00",
+        "nonTeslaPeak": 0.43,
+        "nonTeslaOffPeak": 0.43,
+        "peakHours": "09:00 - 20:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T05:00:00.000Z"
+        "lastUpdated": "2026-09-23T08:14:24.847Z"
       },
       "priceHistory": [
         {
@@ -26351,6 +26366,21 @@
           "source": "Tesla FindUs API & Base Locale",
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
+        },
+        {
+          "id": "7348-2026-09-23",
+          "superchargerId": "7348",
+          "superchargerName": "Sisteron, France - Val de Durance",
+          "locationSlug": "sisteronsupercharger",
+          "date": "2026-09-23",
+          "teslaPeak": 0.32,
+          "teslaOffPeak": 0.32,
+          "nonTeslaPeak": 0.43,
+          "nonTeslaOffPeak": 0.43,
+          "peakHours": "09:00 - 20:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": -8.6
         }
       ],
       "locationId": "40030251"
@@ -39602,14 +39632,14 @@
       "facilityName": "Centre commercial",
       "dateOpened": "2022-03-31",
       "currentPricing": {
-        "teslaPeak": 0.38,
-        "teslaOffPeak": 0.33,
+        "teslaPeak": 0.36,
+        "teslaOffPeak": 0.16,
         "nonTeslaPeak": 0.51,
-        "nonTeslaOffPeak": 0.42,
-        "peakHours": "16:00 - 20:00",
+        "nonTeslaOffPeak": 0.23,
+        "peakHours": "09:00 - 22:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T05:00:00.000Z"
+        "lastUpdated": "2026-09-23T08:17:47.475Z"
       },
       "priceHistory": [
         {
@@ -39731,6 +39761,21 @@
           "source": "Tesla FindUs API & Base Locale",
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5
+        },
+        {
+          "id": "4059-2026-09-23",
+          "superchargerId": "4059",
+          "superchargerName": "Bègles, France",
+          "locationSlug": "bordeauxestfrancesupercharger",
+          "date": "2026-09-23",
+          "teslaPeak": 0.36,
+          "teslaOffPeak": 0.16,
+          "nonTeslaPeak": 0.51,
+          "nonTeslaOffPeak": 0.23,
+          "peakHours": "09:00 - 22:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": -26.8
         }
       ],
       "locationId": "BordeauxEstFrancesupercharger"
@@ -52970,14 +53015,14 @@
       "facilityName": "E.Leclerc",
       "dateOpened": "2023-04-05",
       "currentPricing": {
-        "teslaPeak": 0.37,
-        "teslaOffPeak": 0.32,
-        "nonTeslaPeak": 0.5,
-        "nonTeslaOffPeak": 0.41,
-        "peakHours": "16:00 - 20:00",
+        "teslaPeak": 0.33,
+        "teslaOffPeak": 0.26,
+        "nonTeslaPeak": 0.45,
+        "nonTeslaOffPeak": 0.35,
+        "peakHours": "09:00 - 22:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T05:00:00.000Z"
+        "lastUpdated": "2026-09-23T08:21:19.411Z"
       },
       "priceHistory": [
         {
@@ -53099,6 +53144,21 @@
           "source": "Tesla FindUs API & Base Locale",
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
+        },
+        {
+          "id": "5955-2026-09-23",
+          "superchargerId": "5955",
+          "superchargerName": "Le Bosc, France",
+          "locationSlug": "leboscsupercharger",
+          "date": "2026-09-23",
+          "teslaPeak": 0.33,
+          "teslaOffPeak": 0.26,
+          "nonTeslaPeak": 0.45,
+          "nonTeslaOffPeak": 0.35,
+          "peakHours": "09:00 - 22:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": -14.5
         }
       ],
       "locationId": "331768"
@@ -54545,6 +54605,55 @@
         }
       ],
       "locationId": "30243"
+    },
+    {
+      "id": "12020",
+      "locationId": "29654",
+      "locationSlug": "valframbertsupercharger",
+      "name": "Valframbert, France",
+      "city": "Valframbert",
+      "department": "Dép. 61",
+      "region": "Normandy",
+      "street": "Le Pont de Londeau",
+      "postalCode": "61000",
+      "latitude": 48.45139,
+      "longitude": 0.11907,
+      "status": "PLAN",
+      "stallCount": 8,
+      "powerKw": 250,
+      "stallsBreakdown": {
+        "v2": 0,
+        "v3": 0,
+        "v4": 0
+      },
+      "otherEVs": true,
+      "currentPricing": {
+        "teslaPeak": 0.36,
+        "teslaOffPeak": 0.3,
+        "nonTeslaPeak": 0.49,
+        "nonTeslaOffPeak": 0.39,
+        "peakHours": "09:00 - 20:00",
+        "idleFeeStandard": 0.5,
+        "idleFeeCongested": 1,
+        "lastUpdated": "2026-09-23T08:09:11.800Z"
+      },
+      "priceHistory": [
+        {
+          "id": "12020-2026-09-23",
+          "superchargerId": "12020",
+          "superchargerName": "Valframbert, France",
+          "locationSlug": "valframbertsupercharger",
+          "date": "2026-09-23",
+          "teslaPeak": 0.36,
+          "teslaOffPeak": 0.3,
+          "nonTeslaPeak": 0.49,
+          "nonTeslaOffPeak": 0.39,
+          "peakHours": "09:00 - 20:00",
+          "source": "Nouveau référencement",
+          "notes": "Nouvelle station répertoriée",
+          "changePercentage": 0
+        }
+      ]
     }
   ],
   "priceSnapshots": [
@@ -96667,6 +96776,81 @@
       "source": "Tesla API FindUs (Officiel)",
       "notes": "Relevé automatique temps réel officiel Tesla",
       "changePercentage": 1.6
+    },
+    {
+      "id": "12020-2026-09-23",
+      "superchargerId": "12020",
+      "superchargerName": "Valframbert, France",
+      "locationSlug": "valframbertsupercharger",
+      "date": "2026-09-23",
+      "teslaPeak": 0.36,
+      "teslaOffPeak": 0.3,
+      "nonTeslaPeak": 0.49,
+      "nonTeslaOffPeak": 0.39,
+      "peakHours": "09:00 - 20:00",
+      "source": "Nouveau référencement",
+      "notes": "Nouvelle station répertoriée",
+      "changePercentage": 0
+    },
+    {
+      "id": "4218-2026-09-23",
+      "superchargerId": "4218",
+      "superchargerName": "Chartres, France",
+      "locationSlug": "chartresfrsupercharger",
+      "date": "2026-09-23",
+      "teslaPeak": 0.32,
+      "teslaOffPeak": 0.32,
+      "nonTeslaPeak": 0.43,
+      "nonTeslaOffPeak": 0.43,
+      "peakHours": "09:00 - 20:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": -4.5
+    },
+    {
+      "id": "7348-2026-09-23",
+      "superchargerId": "7348",
+      "superchargerName": "Sisteron, France - Val de Durance",
+      "locationSlug": "sisteronsupercharger",
+      "date": "2026-09-23",
+      "teslaPeak": 0.32,
+      "teslaOffPeak": 0.32,
+      "nonTeslaPeak": 0.43,
+      "nonTeslaOffPeak": 0.43,
+      "peakHours": "09:00 - 20:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": -8.6
+    },
+    {
+      "id": "4059-2026-09-23",
+      "superchargerId": "4059",
+      "superchargerName": "Bègles, France",
+      "locationSlug": "bordeauxestfrancesupercharger",
+      "date": "2026-09-23",
+      "teslaPeak": 0.36,
+      "teslaOffPeak": 0.16,
+      "nonTeslaPeak": 0.51,
+      "nonTeslaOffPeak": 0.23,
+      "peakHours": "09:00 - 22:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": -26.8
+    },
+    {
+      "id": "5955-2026-09-23",
+      "superchargerId": "5955",
+      "superchargerName": "Le Bosc, France",
+      "locationSlug": "leboscsupercharger",
+      "date": "2026-09-23",
+      "teslaPeak": 0.33,
+      "teslaOffPeak": 0.26,
+      "nonTeslaPeak": 0.45,
+      "nonTeslaOffPeak": 0.35,
+      "peakHours": "09:00 - 22:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": -14.5
     }
   ],
   "nationalHistory": [
@@ -96791,5 +96975,5 @@
       "changePercentage": -5.2
     }
   ],
-  "lastSyncTime": "2026-09-22T08:06:48.182Z"
+  "lastSyncTime": "2026-09-23T08:09:11.800Z"
 }
