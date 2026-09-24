@@ -17975,14 +17975,14 @@
       "facilityName": "ibis",
       "dateOpened": "2025-05-16",
       "currentPricing": {
-        "teslaPeak": 0.4,
-        "teslaOffPeak": 0.33,
-        "nonTeslaPeak": 0.53,
-        "nonTeslaOffPeak": 0.42,
-        "peakHours": "16:00 - 20:00",
+        "teslaPeak": 0.34,
+        "teslaOffPeak": 0.34,
+        "nonTeslaPeak": 0.46,
+        "nonTeslaOffPeak": 0.46,
+        "peakHours": "09:00 - 20:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T05:00:00.000Z"
+        "lastUpdated": "2026-09-24T08:04:05.142Z"
       },
       "priceHistory": [
         {
@@ -18104,6 +18104,21 @@
           "source": "Tesla FindUs API & Base Locale",
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.8
+        },
+        {
+          "id": "9029-2026-09-24",
+          "superchargerId": "9029",
+          "superchargerName": "Pannes, France",
+          "locationSlug": "pannessupercharger",
+          "date": "2026-09-24",
+          "teslaPeak": 0.34,
+          "teslaOffPeak": 0.34,
+          "nonTeslaPeak": 0.46,
+          "nonTeslaOffPeak": 0.46,
+          "peakHours": "09:00 - 20:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": -6.8
         }
       ],
       "locationId": "5674"
@@ -18461,14 +18476,14 @@
       "facilityName": "Grand Frais",
       "dateOpened": "2026-08-11",
       "currentPricing": {
-        "teslaPeak": 0.37,
-        "teslaOffPeak": 0.16,
-        "nonTeslaPeak": 0.52,
-        "nonTeslaOffPeak": 0.23,
+        "teslaPeak": 0.39,
+        "teslaOffPeak": 0.17,
+        "nonTeslaPeak": 0.54,
+        "nonTeslaOffPeak": 0.24,
         "peakHours": "09:00 - 23:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-21T08:28:59.110Z"
+        "lastUpdated": "2026-09-24T08:04:23.484Z"
       },
       "priceHistory": [
         {
@@ -18605,6 +18620,21 @@
           "source": "Tesla API FindUs (Officiel)",
           "notes": "Relevé automatique temps réel officiel Tesla",
           "changePercentage": -24.3
+        },
+        {
+          "id": "10750-2026-09-24",
+          "superchargerId": "10750",
+          "superchargerName": "Saint-Julien-en-Genevois, France - Route de Lathoy",
+          "locationSlug": "saintjulienengenevoissupercharger",
+          "date": "2026-09-24",
+          "teslaPeak": 0.39,
+          "teslaOffPeak": 0.17,
+          "nonTeslaPeak": 0.54,
+          "nonTeslaOffPeak": 0.24,
+          "peakHours": "09:00 - 23:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": 5.7
         }
       ],
       "locationId": "438010"
@@ -31938,14 +31968,14 @@
       "facilityName": "Novotel",
       "dateOpened": "2015-12-23",
       "currentPricing": {
-        "teslaPeak": 0.36,
-        "teslaOffPeak": 0.21,
-        "nonTeslaPeak": 0.49,
-        "nonTeslaOffPeak": 0.28,
+        "teslaPeak": 0.38,
+        "teslaOffPeak": 0.22,
+        "nonTeslaPeak": 0.51,
+        "nonTeslaOffPeak": 0.3,
         "peakHours": "08:00 - 22:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-21T08:31:57.490Z"
+        "lastUpdated": "2026-09-24T08:07:46.049Z"
       },
       "priceHistory": [
         {
@@ -32082,6 +32112,21 @@
           "source": "Tesla API FindUs (Officiel)",
           "notes": "Relevé automatique temps réel officiel Tesla",
           "changePercentage": -8.1
+        },
+        {
+          "id": "778-2026-09-24",
+          "superchargerId": "778",
+          "superchargerName": "Valence, France",
+          "locationSlug": "valencesupercharger",
+          "date": "2026-09-24",
+          "teslaPeak": 0.38,
+          "teslaOffPeak": 0.22,
+          "nonTeslaPeak": 0.51,
+          "nonTeslaOffPeak": 0.3,
+          "peakHours": "08:00 - 22:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": 5.3
         }
       ],
       "locationId": "valencesupercharger"
@@ -50069,14 +50114,14 @@
       "facilityName": "Hôtel / Restauration / Services",
       "dateOpened": "2020-12-18",
       "currentPricing": {
-        "teslaPeak": 0.32,
-        "teslaOffPeak": 0.32,
-        "nonTeslaPeak": 0.43,
-        "nonTeslaOffPeak": 0.43,
+        "teslaPeak": 0.34,
+        "teslaOffPeak": 0.34,
+        "nonTeslaPeak": 0.45,
+        "nonTeslaOffPeak": 0.45,
         "peakHours": "09:00 - 20:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-22T08:18:49.609Z"
+        "lastUpdated": "2026-09-24T08:13:23.816Z"
       },
       "priceHistory": [
         {
@@ -50213,6 +50258,21 @@
           "source": "Tesla API FindUs (Officiel)",
           "notes": "Relevé automatique temps réel officiel Tesla",
           "changePercentage": -7.2
+        },
+        {
+          "id": "2616-2026-09-24",
+          "superchargerId": "2616",
+          "superchargerName": "Vouillé, France",
+          "locationSlug": "niortsupercharger",
+          "date": "2026-09-24",
+          "teslaPeak": 0.34,
+          "teslaOffPeak": 0.34,
+          "nonTeslaPeak": 0.45,
+          "nonTeslaOffPeak": 0.45,
+          "peakHours": "09:00 - 20:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": 6.3
         }
       ],
       "locationId": "niortsupercharger"
@@ -53673,14 +53733,14 @@
       "facilityName": "Casino Supermarché",
       "dateOpened": "2024-06-13",
       "currentPricing": {
-        "teslaPeak": 0.31,
-        "teslaOffPeak": 0.31,
-        "nonTeslaPeak": 0.41,
-        "nonTeslaOffPeak": 0.41,
+        "teslaPeak": 0.33,
+        "teslaOffPeak": 0.33,
+        "nonTeslaPeak": 0.44,
+        "nonTeslaOffPeak": 0.44,
         "peakHours": "09:00 - 20:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-21T08:37:26.360Z"
+        "lastUpdated": "2026-09-24T08:14:29.391Z"
       },
       "priceHistory": [
         {
@@ -53817,6 +53877,21 @@
           "source": "Tesla API FindUs (Officiel)",
           "notes": "Relevé automatique temps réel officiel Tesla",
           "changePercentage": -7.5
+        },
+        {
+          "id": "7703-2026-09-24",
+          "superchargerId": "7703",
+          "superchargerName": "Briançon, France",
+          "locationSlug": "brianconsupercharger",
+          "date": "2026-09-24",
+          "teslaPeak": 0.33,
+          "teslaOffPeak": 0.33,
+          "nonTeslaPeak": 0.44,
+          "nonTeslaOffPeak": 0.44,
+          "peakHours": "09:00 - 20:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": 6.5
         }
       ],
       "locationId": "33161"
@@ -96851,6 +96926,81 @@
       "source": "Tesla API FindUs (Officiel)",
       "notes": "Relevé automatique temps réel officiel Tesla",
       "changePercentage": -14.5
+    },
+    {
+      "id": "9029-2026-09-24",
+      "superchargerId": "9029",
+      "superchargerName": "Pannes, France",
+      "locationSlug": "pannessupercharger",
+      "date": "2026-09-24",
+      "teslaPeak": 0.34,
+      "teslaOffPeak": 0.34,
+      "nonTeslaPeak": 0.46,
+      "nonTeslaOffPeak": 0.46,
+      "peakHours": "09:00 - 20:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": -6.8
+    },
+    {
+      "id": "10750-2026-09-24",
+      "superchargerId": "10750",
+      "superchargerName": "Saint-Julien-en-Genevois, France - Route de Lathoy",
+      "locationSlug": "saintjulienengenevoissupercharger",
+      "date": "2026-09-24",
+      "teslaPeak": 0.39,
+      "teslaOffPeak": 0.17,
+      "nonTeslaPeak": 0.54,
+      "nonTeslaOffPeak": 0.24,
+      "peakHours": "09:00 - 23:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": 5.7
+    },
+    {
+      "id": "778-2026-09-24",
+      "superchargerId": "778",
+      "superchargerName": "Valence, France",
+      "locationSlug": "valencesupercharger",
+      "date": "2026-09-24",
+      "teslaPeak": 0.38,
+      "teslaOffPeak": 0.22,
+      "nonTeslaPeak": 0.51,
+      "nonTeslaOffPeak": 0.3,
+      "peakHours": "08:00 - 22:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": 5.3
+    },
+    {
+      "id": "2616-2026-09-24",
+      "superchargerId": "2616",
+      "superchargerName": "Vouillé, France",
+      "locationSlug": "niortsupercharger",
+      "date": "2026-09-24",
+      "teslaPeak": 0.34,
+      "teslaOffPeak": 0.34,
+      "nonTeslaPeak": 0.45,
+      "nonTeslaOffPeak": 0.45,
+      "peakHours": "09:00 - 20:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": 6.3
+    },
+    {
+      "id": "7703-2026-09-24",
+      "superchargerId": "7703",
+      "superchargerName": "Briançon, France",
+      "locationSlug": "brianconsupercharger",
+      "date": "2026-09-24",
+      "teslaPeak": 0.33,
+      "teslaOffPeak": 0.33,
+      "nonTeslaPeak": 0.44,
+      "nonTeslaOffPeak": 0.44,
+      "peakHours": "09:00 - 20:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": 6.5
     }
   ],
   "nationalHistory": [
@@ -96975,5 +97125,5 @@
       "changePercentage": -5.2
     }
   ],
-  "lastSyncTime": "2026-09-23T08:09:11.800Z"
+  "lastSyncTime": "2026-09-24T08:00:18.661Z"
 }
