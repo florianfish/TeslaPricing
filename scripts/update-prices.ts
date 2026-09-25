@@ -613,15 +613,9 @@ async function runUpdate() {
   }
 }
 
-const isMainScript = process.argv[1] && (
-  process.argv[1].endsWith('update-prices.ts') ||
-  process.argv[1].endsWith('update-prices.js') ||
-  process.argv[1].includes('update-prices')
-);
+// Exécution directe du script
+runUpdate().catch((err) => {
+  console.error('[ERREUR CRITIQUE DANS L\'ACTUALISATION]', err);
+  process.exit(1);
+});
 
-if (isMainScript) {
-  runUpdate().catch((err) => {
-    console.error('[ERREUR CRITIQUE DANS L\'ACTUALISATION]', err);
-    process.exit(1);
-  });
-}
