@@ -28,10 +28,18 @@ jobs:
       - name: Installer les dépendances
         run: npm ci --legacy-peer-deps
 
+      - name: Préparer le fichier de configuration OpenVPN
+        env:
+          OVPN_CONFIG: ${{ secrets.OVPN_CONFIG }}
+        run: |
+          echo "$OVPN_CONFIG" | base64 -d > /tmp/vpn.ovpn 2>/dev/null \
+            || echo "$OVPN_CONFIG" > /tmp/vpn.ovpn
+          echo "✅ Fichier VPN prêt ($(wc -l < /tmp/vpn.ovpn) lignes)"
+
       - name: Connexion au VPN résidentiel (OpenVPN)
         uses: kota65535/github-openvpn-connect-action@v2
         with:
-          config_file: ${{ secrets.OVPN_CONFIG }}
+          config_file: /tmp/vpn.ovpn
           username: ${{ secrets.VPN_USERNAME }}
           password: ${{ secrets.VPN_PASSWORD }}
 
