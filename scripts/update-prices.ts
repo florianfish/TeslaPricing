@@ -1,82 +1,17 @@
 import 'dotenv/config';
 import fs from 'fs';
 import path from 'path';
-import { ProxyAgent, fetch as undiciFetch } from 'undici';
 import type { Supercharger, SuperchargerPricing, PriceSnapshot } from '../src/types.js';
 
 const DATA_DIR = path.join(process.cwd(), 'server', 'data');
 const DB_FILE = path.join(DATA_DIR, 'superchargers_db.json');
 const OUT_STATIONS_FILE = path.join(DATA_DIR, 'out_stations.json');
 
-// --- CONFIGURATION DES PROXYS SEEDBOX ---
-export interface ProxyConfig {
-  country: string;
-  host: string;
-  port: number;
-  note?: string;
-}
+// Délai de courtoisie entre chaque station (5 secondes pour préserver la connexion résidentielle)
+const REQUEST_INTERVAL_MS = 5000;
 
-export const SEEDBOX_PROXIES: ProxyConfig[] = [
-  { country: 'France', host: 'proxy-fr.seedbox.fr', port: 3128, note: 'Ad Block inclus' },
-  { country: 'Pays-Bas', host: 'proxy-nl.seedbox.fr', port: 3128 },
-  { country: 'Lituanie', host: 'proxy-lt.seedbox.fr', port: 3128 },
-  { country: 'Pologne', host: 'proxy-pl.seedbox.fr', port: 3128 },
-  { country: 'Belgique', host: 'proxy-be.seedbox.fr', port: 3128 },
-  { country: 'Allemagne', host: 'proxy-de.seedbox.fr', port: 3128 },
-  { country: 'République Tchèque', host: 'proxy-cz.seedbox.fr', port: 3128 },
-  { country: 'Espagne', host: 'proxy-es.seedbox.fr', port: 3128 },
-  { country: 'Finlande', host: 'proxy-fi.seedbox.fr', port: 3128 },
-  { country: 'Irlande', host: 'proxy-ie.seedbox.fr', port: 3128 },
-  { country: 'Italie', host: 'proxy-it.seedbox.fr', port: 3128 },
-  { country: 'Portugal', host: 'proxy-pt.seedbox.fr', port: 3128 },
-  { country: 'Royaume-Uni', host: 'proxy-uk.seedbox.fr', port: 3128 },
-];
-
-const PROXY_USERNAME = process.env.PROXY_USERNAME || 'FlorianFish5';
-const PROXY_PASSWORD = process.env.PROXY_PASSWORD || '';
-
-// Pool dynamique de proxys opérationnels pour la session
-let activeProxies: ProxyConfig[] = [...SEEDBOX_PROXIES];
-
-// Cache des instances ProxyAgent pour réutiliser les connexions
-const proxyAgentCache = new Map<string, ProxyAgent>();
-
-function getProxyAgentForProxy(proxy: ProxyConfig): ProxyAgent {
-  const key = `${PROXY_USERNAME}:${PROXY_PASSWORD}@${proxy.host}:${proxy.port}`;
-  if (!proxyAgentCache.has(key)) {
-    const auth = PROXY_PASSWORD
-      ? `${encodeURIComponent(PROXY_USERNAME)}:${encodeURIComponent(PROXY_PASSWORD)}@`
-      : '';
-    const agent = new ProxyAgent({
-      uri: `http://${auth}${proxy.host}:${proxy.port}`,
-    });
-    proxyAgentCache.set(key, agent);
-  }
-  return proxyAgentCache.get(key)!;
-}
-
-function getRandomActiveProxy(excludeHosts: string[] = []): ProxyConfig | null {
-  if (activeProxies.length === 0) return null;
-  const pool = activeProxies.filter((p) => !excludeHosts.includes(p.host));
-  const candidateList = pool.length > 0 ? pool : activeProxies;
-  const idx = Math.floor(Math.random() * candidateList.length);
-  return candidateList[idx];
-}
-
-const proxyFailureCounts = new Map<string, number>();
-
-function recordProxyFailure(proxy: ProxyConfig, reason: string) {
-  const current = (proxyFailureCounts.get(proxy.host) || 0) + 1;
-  proxyFailureCounts.set(proxy.host, current);
-  if (current >= 3 || reason.includes('407')) {
-    activeProxies = activeProxies.filter((p) => p.host !== proxy.host);
-    console.warn(`       ⚠️ [PROXY DÉSACTIVÉ] ${proxy.country} (${proxy.host}:${proxy.port}) exclu (${reason}, ${current} échecs) - Restants : ${activeProxies.length}`);
-  }
-}
-
-function recordProxySuccess(proxy: ProxyConfig) {
-  proxyFailureCounts.delete(proxy.host);
-}
+// Compteur global de 429 (Rate Limit) consécutifs pour arrêt d'urgence
+let consecutive429Count = 0;
 
 // --- GESTION DU STATUT DES STATIONS OUT (JUSQU'AU LENDEMAIN) ---
 export interface OutStationInfo {
@@ -185,25 +120,21 @@ async function fetchLiveFrenchSites(): Promise<any[]> {
   }
 }
 
-// 2. Interroger l'API officielle Tesla FindUs pour une station avec proxy aléatoire
+// 2. Interroger l'API officielle Tesla FindUs pour une station en direct (via VPN résidentiel)
 export interface TeslaPricingResult {
   data: any | null;
   isStationOut: boolean;
-  proxyUsed?: ProxyConfig;
 }
 
 async function queryTeslaSlug(
-  slug: string,
-  proxy: ProxyConfig | null
+  slug: string
 ): Promise<{ status: number; data: any | null; error?: string }> {
   const url = `https://www.tesla.com/api/findus/get-charger-details?locationSlug=${slug}&programType=supercharger&locale=en-US&isInHkMoTw=false`;
-  const dispatcher = proxy ? getProxyAgentForProxy(proxy) : undefined;
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 12000); // 12 secondes de marge pour les proxys
+  const timeout = setTimeout(() => controller.abort(), 12000);
 
   try {
-    const fetchFn = dispatcher ? undiciFetch : fetch;
-    const res = await (fetchFn as any)(url, {
+    const res = await fetch(url, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
         'Accept': 'application/json, text/plain, */*',
@@ -217,7 +148,6 @@ async function queryTeslaSlug(
         'sec-fetch-site': 'same-origin',
       },
       signal: controller.signal,
-      dispatcher,
     });
     clearTimeout(timeout);
 
@@ -245,57 +175,52 @@ async function fetchTeslaPricing(
     slugsToTry.push(fallbackSlug);
   }
 
-  const triedHosts: string[] = [];
   let confirmed404Count = 0;
-  let lastProxyUsed: ProxyConfig | undefined;
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    const useProxy = Boolean(PROXY_PASSWORD && activeProxies.length > 0);
-    const proxy = useProxy ? getRandomActiveProxy(triedHosts) : null;
-    if (proxy) {
-      triedHosts.push(proxy.host);
-      lastProxyUsed = proxy;
-    }
-    const proxyDesc = proxy ? `[Proxy: ${proxy.country} - ${proxy.host}:${proxy.port}]` : `[Connexion directe]`;
-
-    let attemptHadSuccess = false;
-
     for (const slug of slugsToTry) {
-      console.log(`       🌐 ${proxyDesc} Interrogation de ${stationName} (${slug}) [essai ${attempt}/${maxRetries}]...`);
-      const result = await queryTeslaSlug(slug, proxy);
+      console.log(`       🌐 [Direct] Interrogation de ${stationName} (${slug}) [essai ${attempt}/${maxRetries}]...`);
+      const result = await queryTeslaSlug(slug);
 
       if (result.data) {
-        if (proxy) recordProxySuccess(proxy);
-        return { data: result.data, isStationOut: false, proxyUsed: proxy || undefined };
-      }
-
-      if (result.error && proxy) {
-        recordProxyFailure(proxy, result.error);
-      } else if (result.status === 407 && proxy) {
-        recordProxyFailure(proxy, 'HTTP 407 Auth');
+        consecutive429Count = 0;
+        return { data: result.data, isStationOut: false };
       }
 
       // Si 404 : slug non répertorié chez Tesla
       if (result.status === 404) {
+        consecutive429Count = 0;
         confirmed404Count++;
         continue;
       }
 
-      // Si 403 / 429 / timeout : blocage anti-bot ou lenteur proxy -> changer de proxy à l'essai suivant
-      if (result.status === 403 || result.status === 429 || result.status === 0) {
+      // Si 429 (rate limit) : temporisation de sécurité (15 secondes) et détection double 429
+      if (result.status === 429) {
+        consecutive429Count++;
+        console.warn(`       ⚠️ [RATE LIMIT 429] Alerte 429 #${consecutive429Count} reçue de Tesla.`);
+        if (consecutive429Count >= 2) {
+          throw new Error('RATE_LIMIT_DOUBLE_429');
+        }
+        console.warn(`       ⚠️ [RATE LIMIT 429] Pause de 15 secondes avant nouvelle tentative...`);
+        await sleep(15000);
+        break;
+      }
+
+      // Si 403 / timeout : passer à l'essai suivant
+      if (result.status === 403 || result.status === 0) {
         break;
       }
     }
 
     if (attempt < maxRetries) {
-      await sleep(1000);
+      await sleep(1500);
     }
   }
 
   // La station n'est marquée OUT que si TOUS les slugs ont renvoyé 404 (station inexistante/fermée chez Tesla)
   // Jamais à cause d'un 403 (Accès refusé) ou d'un timeout réseau
   const isTruly404 = confirmed404Count >= slugsToTry.length * maxRetries;
-  return { data: null, isStationOut: isTruly404, proxyUsed: lastProxyUsed };
+  return { data: null, isStationOut: isTruly404 };
 }
 
 // 3. Extraire et normaliser les tarifs depuis le schéma Tesla (effectivePricebooks)
@@ -503,12 +428,7 @@ async function runUpdate() {
   console.log('\n----------------------------------------------------------------');
   console.log('📡 INTERROGATION DIRECTE DE L\'API TESLA (FINDUS PRICING)');
   console.log('----------------------------------------------------------------\n');
-
-  if (PROXY_PASSWORD) {
-    console.log(`[PROXY] 🛡️ Pool actif : ${activeProxies.length}/${SEEDBOX_PROXIES.length} proxys Seedbox (${PROXY_USERNAME}) avec rotation aléatoire.`);
-  } else {
-    console.warn(`[PROXY] ⚠️ Variable PROXY_PASSWORD absente : interrogation directe sans proxy.`);
-  }
+  console.log(`[CONNEXION DIRECTE] 🚀 Requêtes directes vers l'API Tesla avec temporisation de ${REQUEST_INTERVAL_MS / 1000}s entre chaque station.`);
 
   // Chargement et purge journalière des stations marquées OUT
   const outState = loadOutStations(todayIso);
@@ -524,124 +444,138 @@ async function runUpdate() {
 
   const totalStations = db.superchargers.length;
 
-  for (let i = 0; i < totalStations; i++) {
-    const charger = db.superchargers[i];
-    const progress = `[${String(i + 1).padStart(3, ' ')}/${totalStations}] (${Math.round(((i + 1) / totalStations) * 100)}%)`;
-    const stationKey = charger.locationSlug || charger.id;
+  let abortReason: string | null = null;
 
-    // 1. Si la station est déjà marquée OUT aujourd'hui, ne plus la réutiliser jusqu'au lendemain
-    if (outState.stations[stationKey]?.date === todayIso) {
-      console.log(`${progress} ⏸️ [STATION OUT] ${charger.name} : Déjà marquée OUT pour aujourd'hui (${todayIso}) ➔ non réutilisée jusqu'à demain.`);
-      teslaApiFallback++;
-      continue;
-    }
+  try {
+    for (let i = 0; i < totalStations; i++) {
+      const charger = db.superchargers[i];
+      const progress = `[${String(i + 1).padStart(3, ' ')}/${totalStations}] (${Math.round(((i + 1) / totalStations) * 100)}%)`;
+      const stationKey = charger.locationSlug || charger.id;
 
-    // 2. Si la station n'a pas de locationId ou n'est pas encore ouverte
-    if (!charger.locationId) {
-      console.log(`${progress} ⏩ ${charger.name} : Pas de locationId Tesla ➔ Tarifs locaux conservés`);
-      teslaApiFallback++;
-      continue;
-    }
-
-    if (charger.status !== 'OPEN') {
-      console.log(`${progress} 🚧 ${charger.name} : Station en ${charger.status} ➔ Tarifs non publiés`);
-      teslaApiFallback++;
-      continue;
-    }
-
-    // 3. Interrogation de l'API Tesla FindUs avec proxy aléatoire (slug principal + slug textuel de secours)
-    const { data: teslaData, isStationOut, proxyUsed } = await fetchTeslaPricing(
-      charger.locationId,
-      charger.locationSlug,
-      charger.name
-    );
-    const parsed = parseTeslaData(teslaData);
-    const proxyTag = proxyUsed ? `[${proxyUsed.country} - ${proxyUsed.host}]` : `[Direct]`;
-
-    if (parsed) {
-      teslaApiSuccess++;
-      const { pricing } = parsed;
-
-      // Détecter un changement de prix
-      const current = charger.currentPricing;
-      const priceChanged =
-        current.teslaPeak !== pricing.teslaPeak ||
-        current.teslaOffPeak !== pricing.teslaOffPeak ||
-        current.nonTeslaPeak !== pricing.nonTeslaPeak ||
-        current.nonTeslaOffPeak !== pricing.nonTeslaOffPeak ||
-        current.peakHours !== pricing.peakHours;
-
-      if (priceChanged) {
-        pricesUpdatedCount++;
-        const oldAvg = (current.teslaPeak + current.teslaOffPeak) / 2;
-        const newAvg = (pricing.teslaPeak + pricing.teslaOffPeak) / 2;
-        const changePercentage = Number((((newAvg - oldAvg) / oldAvg) * 100).toFixed(1));
-
-        const snapshot: PriceSnapshot = {
-          id: `${charger.id}-${todayIso}`,
-          superchargerId: charger.id,
-          superchargerName: charger.name,
-          locationSlug: charger.locationSlug,
-          date: todayIso,
-          teslaPeak: pricing.teslaPeak,
-          teslaOffPeak: pricing.teslaOffPeak,
-          nonTeslaPeak: pricing.nonTeslaPeak,
-          nonTeslaOffPeak: pricing.nonTeslaOffPeak,
-          peakHours: pricing.peakHours,
-          source: 'Tesla API FindUs (Officiel)',
-          notes: 'Relevé automatique temps réel officiel Tesla',
-          changePercentage,
-        };
-
-        if (!charger.priceHistory) charger.priceHistory = [];
-        charger.priceHistory.push(snapshot);
-        db.priceSnapshots.push(snapshot);
-
-        charger.currentPricing = pricing;
-        if (parsed.stallCount) charger.stallCount = parsed.stallCount;
-        if (parsed.powerKw) charger.powerKw = parsed.powerKw;
-        if (typeof parsed.otherEVs === 'boolean') charger.otherEVs = parsed.otherEVs;
-
-        console.log(
-          `${progress} 🎯 [MISE À JOUR] ${proxyTag} ${charger.name} : ` +
-          `TSLA ${pricing.teslaPeak}€/${pricing.teslaOffPeak}€ | ` +
-          `NTSLA ${pricing.nonTeslaPeak}€/${pricing.nonTeslaOffPeak}€ (${changePercentage > 0 ? '+' : ''}${changePercentage}%)`
-        );
-      } else {
-        // Prix inchangé et confirmé par l'API Tesla
-        console.log(
-          `${progress} ✅ [CONFIRMÉ] ${proxyTag} ${charger.name} : ` +
-          `TSLA ${current.teslaPeak}€/${current.teslaOffPeak}€ (HP ${current.peakHours})`
-        );
+      // 1. Si la station est déjà marquée OUT aujourd'hui, ne plus la réutiliser jusqu'au lendemain
+      if (outState.stations[stationKey]?.date === todayIso) {
+        console.log(`${progress} ⏸️ [STATION OUT] ${charger.name} : Déjà marquée OUT pour aujourd'hui (${todayIso}) ➔ non réutilisée jusqu'à demain.`);
+        teslaApiFallback++;
+        continue;
       }
+
+      // 2. Si la station n'a pas de locationId ou n'est pas encore ouverte
+      if (!charger.locationId) {
+        console.log(`${progress} ⏩ ${charger.name} : Pas de locationId Tesla ➔ Tarifs locaux conservés`);
+        teslaApiFallback++;
+        continue;
+      }
+
+      if (charger.status !== 'OPEN') {
+        console.log(`${progress} 🚧 ${charger.name} : Station en ${charger.status} ➔ Tarifs non publiés`);
+        teslaApiFallback++;
+        continue;
+      }
+
+      // 3. Interrogation de l'API Tesla FindUs en direct (slug principal + slug textuel de secours)
+      const { data: teslaData, isStationOut } = await fetchTeslaPricing(
+        charger.locationId,
+        charger.locationSlug,
+        charger.name
+      );
+      const parsed = parseTeslaData(teslaData);
+
+      if (parsed) {
+        teslaApiSuccess++;
+        const { pricing } = parsed;
+
+        // Détecter un changement de prix
+        const current = charger.currentPricing;
+        const priceChanged =
+          current.teslaPeak !== pricing.teslaPeak ||
+          current.teslaOffPeak !== pricing.teslaOffPeak ||
+          current.nonTeslaPeak !== pricing.nonTeslaPeak ||
+          current.nonTeslaOffPeak !== pricing.nonTeslaOffPeak ||
+          current.peakHours !== pricing.peakHours;
+
+        if (priceChanged) {
+          pricesUpdatedCount++;
+          const oldAvg = (current.teslaPeak + current.teslaOffPeak) / 2;
+          const newAvg = (pricing.teslaPeak + pricing.teslaOffPeak) / 2;
+          const changePercentage = Number((((newAvg - oldAvg) / oldAvg) * 100).toFixed(1));
+
+          const snapshot: PriceSnapshot = {
+            id: `${charger.id}-${todayIso}`,
+            superchargerId: charger.id,
+            superchargerName: charger.name,
+            locationSlug: charger.locationSlug,
+            date: todayIso,
+            teslaPeak: pricing.teslaPeak,
+            teslaOffPeak: pricing.teslaOffPeak,
+            nonTeslaPeak: pricing.nonTeslaPeak,
+            nonTeslaOffPeak: pricing.nonTeslaOffPeak,
+            peakHours: pricing.peakHours,
+            source: 'Tesla API FindUs (Officiel)',
+            notes: 'Relevé automatique temps réel officiel Tesla',
+            changePercentage,
+          };
+
+          if (!charger.priceHistory) charger.priceHistory = [];
+          charger.priceHistory.push(snapshot);
+          db.priceSnapshots.push(snapshot);
+
+          charger.currentPricing = pricing;
+          if (parsed.stallCount) charger.stallCount = parsed.stallCount;
+          if (parsed.powerKw) charger.powerKw = parsed.powerKw;
+          if (typeof parsed.otherEVs === 'boolean') charger.otherEVs = parsed.otherEVs;
+
+          console.log(
+            `${progress} 🎯 [MISE À JOUR] ${charger.name} : ` +
+            `TSLA ${pricing.teslaPeak}€/${pricing.teslaOffPeak}€ | ` +
+            `NTSLA ${pricing.nonTeslaPeak}€/${pricing.nonTeslaOffPeak}€ (${changePercentage > 0 ? '+' : ''}${changePercentage}%)`
+          );
+        } else {
+          // Prix inchangé et confirmé par l'API Tesla
+          console.log(
+            `${progress} ✅ [CONFIRMÉ] ${charger.name} : ` +
+            `TSLA ${current.teslaPeak}€/${current.teslaOffPeak}€ (HP ${current.peakHours})`
+          );
+        }
+      } else {
+        teslaApiFallback++;
+
+        if (isStationOut) {
+          // Station réellement hors service ou 404 permanent
+          outState.stations[stationKey] = {
+            name: charger.name,
+            date: todayIso,
+            reason: 'Station inexistante ou fermée sur Tesla FindUs (404)',
+          };
+          saveOutStations(outState);
+          stationsMarkedOutToday++;
+
+          console.log(
+            `${progress} ⛔ [CONFIRMÉ OUT] ${charger.name} (${charger.locationId}) : ` +
+            `Station fermée / 404 ➔ non réutilisée jusqu'au lendemain (${todayIso}).`
+          );
+        } else {
+          // Accès refusé (403), rate limit (429) ou timeout : conservation des tarifs locaux
+          console.log(
+            `${progress} 🛡️ [CONSERVÉ] ${charger.name} (${charger.locationId}) : ` +
+            `Accès API Tesla restreint ➔ Maintien des tarifs en base (${charger.currentPricing.teslaPeak}€ / ${charger.currentPricing.teslaOffPeak}€)`
+          );
+        }
+      }
+
+      // Temporisation de 5 secondes entre les requêtes pour respecter l'API Tesla sur IP résidentielle
+      await sleep(REQUEST_INTERVAL_MS);
+    }
+  } catch (err: any) {
+    if (err.message === 'RATE_LIMIT_DOUBLE_429') {
+      abortReason = 'Double erreur HTTP 429 consécutive (Rate Limit Tesla)';
+      console.error('\n🛑 ================================================================');
+      console.error('🛑 [ARRÊT D\'URGENCE] DOUBLE ERREUR 429 DÉTECTÉE !');
+      console.error('🛑 Deux requêtes consécutives ont été bloquées par Tesla en Rate Limit.');
+      console.error('🛑 Arrêt immédiat pour protéger votre adresse IP résidentielle.');
+      console.error('🛑 ================================================================\n');
     } else {
-      teslaApiFallback++;
-
-      if (isStationOut) {
-        // Station réellement hors service ou 404 permanent
-        outState.stations[stationKey] = {
-          name: charger.name,
-          date: todayIso,
-          reason: 'Station inexistante ou fermée sur Tesla FindUs (404)',
-        };
-        saveOutStations(outState);
-        stationsMarkedOutToday++;
-
-        console.log(
-          `${progress} ⛔ [CONFIRMÉ OUT] ${proxyTag} ${charger.name} (${charger.locationId}) : ` +
-          `Station fermée / 404 ➔ non réutilisée jusqu'au lendemain (${todayIso}).`
-        );
-      } else {
-        // Accès refusé (403), rate limit (429) ou timeout : conservation des tarifs locaux
-        console.log(
-          `${progress} 🛡️ [CONSERVÉ] ${proxyTag} ${charger.name} (${charger.locationId}) : ` +
-          `Accès API Tesla restreint ➔ Maintien des tarifs en base (${charger.currentPricing.teslaPeak}€ / ${charger.currentPricing.teslaOffPeak}€)`
-        );
-      }
+      throw err;
     }
-
-    // Temporisation de 500ms entre les requêtes pour ne pas surcharger Akamai/Tesla
-    await sleep(500);
   }
 
   // 3. Sauvegarder la base de données UNIQUEMENT s'il y a des changements réels
@@ -668,10 +602,15 @@ async function runUpdate() {
   console.log(`• Nouvelles stations marquées OUT  : ${stationsMarkedOutToday}`);
   console.log(`• Total stations OUT aujourd'hui   : ${Object.keys(outState.stations).length}`);
   console.log(`• Tarifs réels mis à jour          : ${pricesUpdatedCount}`);
-  console.log(`• Proxys Seedbox actifs restants   : ${activeProxies.length}/${SEEDBOX_PROXIES.length}`);
+  console.log(`• Mode réseau                      : Connexion directe (${REQUEST_INTERVAL_MS / 1000}s/station)`);
+  console.log(`• Statut final                     : ${abortReason ? `🛑 INTERROMPU (${abortReason})` : '✅ Terminé avec succès'}`);
   console.log(`• Horodatage de synchronisation    : ${db.lastSyncTime}`);
   console.log(`• Durée totale du traitement       : ${durationSec} secondes`);
   console.log('================================================================\n');
+
+  if (abortReason) {
+    process.exit(1);
+  }
 }
 
 const isMainScript = process.argv[1] && (
