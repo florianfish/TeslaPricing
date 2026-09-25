@@ -29,13 +29,17 @@ jobs:
         run: npm ci --legacy-peer-deps
 
       - name: Connexion au VPN L2TP/IPSec résidentiel
-        if: ${{ secrets.VPN_SERVER_IP != '' }}
         env:
           VPN_SERVER: ${{ secrets.VPN_SERVER_IP }}
           VPN_PSK: ${{ secrets.VPN_IPSEC_PSK }}
           VPN_USER: ${{ secrets.VPN_USERNAME }}
           VPN_PASS: ${{ secrets.VPN_PASSWORD }}
         run: |
+          if [ -z "$VPN_SERVER" ]; then
+            echo "Secret VPN_SERVER_IP non configuré : étape ignorée, exécution directe."
+            exit 0
+          fi
+
           echo "Installation des paquets strongswan et xl2tpd..."
           sudo apt-get update -qq && sudo apt-get install -y strongswan strongswan-pki libstrongswan-extra-plugins xl2tpd
 
@@ -130,10 +134,13 @@ jobs:
         run: npm run update-prices
 
       - name: Déconnexion du VPN
-        if: always() && secrets.VPN_SERVER_IP != ''
+        if: always()
         run: |
-          echo "d myvpn" | sudo tee /var/run/xl2tpd/l2tp-control 2>/dev/null || true
-          sudo ipsec down myvpn 2>/dev/null || true
+          if ip link show ppp0 > /dev/null 2>&1; then
+            echo "Fermeture de la session VPN..."
+            echo "d myvpn" | sudo tee /var/run/xl2tpd/l2tp-control 2>/dev/null || true
+            sudo ipsec down myvpn 2>/dev/null || true
+          fi
 
       - name: Commiter et pousser les modifications sur GitHub
         id: auto_commit
