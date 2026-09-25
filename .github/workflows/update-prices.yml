@@ -31,7 +31,7 @@ jobs:
       - name: Connexion au VPN résidentiel (OpenVPN)
         uses: kota65535/github-openvpn-connect-action@v2
         with:
-          config-file: ${{ secrets.OVPN_CONFIG }}
+          config_file: ${{ secrets.OVPN_CONFIG }}
           username: ${{ secrets.VPN_USERNAME }}
           password: ${{ secrets.VPN_PASSWORD }}
 
