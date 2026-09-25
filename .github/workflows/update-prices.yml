@@ -28,190 +28,27 @@ jobs:
       - name: Installer les dépendances
         run: npm ci --legacy-peer-deps
 
-      - name: Connexion au VPN L2TP/IPSec résidentiel
-        timeout-minutes: 4
-        env:
-          VPN_SERVER: ${{ secrets.VPN_SERVER_IP }}
-          VPN_PSK: ${{ secrets.VPN_IPSEC_PSK }}
-          VPN_USER: ${{ secrets.VPN_USERNAME }}
-          VPN_PASS: ${{ secrets.VPN_PASSWORD }}
+      - name: Connexion au VPN résidentiel (OpenVPN)
+        if: ${{ secrets.OVPN_CONFIG != '' }}
+        uses: kota65535/github-openvpn-connect-action@v2
+        with:
+          config-file: ${{ secrets.OVPN_CONFIG }}
+          username: ${{ secrets.VPN_USERNAME }}
+          password: ${{ secrets.VPN_PASSWORD }}
+
+      - name: Vérifier l'IP de sortie et la connectivité Tesla
         run: |
-          if [ -z "$VPN_SERVER" ]; then
-            echo "Secret VPN_SERVER_IP non configuré : étape ignorée, exécution directe."
-            exit 0
-          fi
-
-          echo "=== [1/5] Installation des paquets strongswan et xl2tpd..."
-          sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends strongswan strongswan-pki libstrongswan-extra-plugins libcharon-extra-plugins xl2tpd ppp
-          echo "✅ Paquets installés."
-
-          GATEWAY=$(ip route show default | awk '{print $3}')
-          INTERFACE=$(ip route show default | awk '{print $5}')
-          echo "=== [2/5] Passerelle : $GATEWAY via $INTERFACE"
-
-          SERVER_IP=$(getent ahosts "$VPN_SERVER" | awk '{print $1; exit}')
-          if [ -z "$SERVER_IP" ]; then SERVER_IP="$VPN_SERVER"; fi
-          echo "IP cible du serveur VPN : $SERVER_IP"
-
-          # Route statique vers le serveur VPN via la passerelle physique
-          sudo ip route add "$SERVER_IP" via "$GATEWAY" dev "$INTERFACE" || true
-
-          # Configuration IPsec
-          sudo tee /etc/ipsec.conf > /dev/null <<'EOIPSEC'
-          config setup
-            charondebug="ike 1, knl 1, cfg 0"
-          conn myvpn
-            keyexchange=ikev1
-            authby=secret
-            left=%defaultroute
-            leftprotoport=17/1701
-            right=SERVER_IP_PLACEHOLDER
-            rightid=%any
-            rightprotoport=17/1701
-            type=transport
-            auto=add
-            keyingtries=1
-            ikelifetime=1h
-            lifetime=30m
-            ike=aes256-sha1-modp1024,aes128-sha1-modp1024,3des-sha1-modp1024,aes256-sha256-modp2048!
-            esp=aes256-sha1,aes128-sha1,3des-sha1,aes256-sha256!
-            dpddelay=30
-            dpdtimeout=60
-            dpdaction=clear
-          EOIPSEC
-          sudo sed -i "s/SERVER_IP_PLACEHOLDER/$SERVER_IP/" /etc/ipsec.conf
-
-          printf '%%any %%any : PSK "%s"\n' "$VPN_PSK" | sudo tee /etc/ipsec.secrets > /dev/null
-
-          # Configuration L2TP
-          sudo tee /etc/xl2tpd/xl2tpd.conf > /dev/null <<'EOXL2TP'
-          [global]
-          port = 1701
-
-          [lac myvpn]
-          lns = SERVER_IP_PLACEHOLDER
-          pppoptfile = /etc/ppp/options.xl2tpd.client
-          length bit = yes
-          redial = yes
-          redial timeout = 2
-          max redials = 3
-          EOXL2TP
-          sudo sed -i "s/SERVER_IP_PLACEHOLDER/$SERVER_IP/" /etc/xl2tpd/xl2tpd.conf
-
-          sudo mkdir -p /etc/ppp
-          printf '* * "%s" *\n"%s" * "%s" *\n"%s" myvpn "%s" *\n' \
-            "$VPN_PASS" "$VPN_USER" "$VPN_PASS" "$VPN_USER" "$VPN_PASS" \
-            | sudo tee /etc/ppp/chap-secrets > /dev/null
-          sudo cp /etc/ppp/chap-secrets /etc/ppp/pap-secrets
-          sudo chmod 600 /etc/ppp/chap-secrets /etc/ppp/pap-secrets
-
-          sudo tee /etc/ppp/options.xl2tpd.client > /dev/null <<'EOPPP'
-          ipcp-accept-local
-          ipcp-accept-remote
-          refuse-eap
-          require-mschap-v2
-          noccp
-          noauth
-          idle 1800
-          mtu 1360
-          mru 1360
-          nodefaultroute
-          usepeerdns
-          debug
-          EOPPP
-          printf 'name "%s"\n' "$VPN_USER" | sudo tee -a /etc/ppp/options.xl2tpd.client > /dev/null
-
-          # Démarrage des services
-          echo "=== [3/5] Démarrage strongswan & xl2tpd..."
-          sudo ipsec restart
-          sleep 2
-          sudo systemctl restart xl2tpd
-          sleep 2
-          echo "✅ Services démarrés."
-
-          # Montage IPsec avec timeout strict de 60s
-          echo "=== [4/5] Montage IPsec (timeout 60s)..."
-          if ! timeout 60 sudo ipsec up myvpn; then
-            echo "❌ Timeout ou échec de la négociation IPsec."
-            sudo ipsec statusall || true
-            exit 1
-          fi
-          echo "✅ IPsec établi."
-
-          echo "=== [5/5] Montage de la session L2TP..."
-          sudo mkdir -p /var/run/xl2tpd
-          for w in {1..10}; do
-            if [ -e /var/run/xl2tpd/l2tp-control ]; then break; fi
-            sleep 1
-          done
-          echo "c myvpn" | sudo tee /var/run/xl2tpd/l2tp-control
-
-          echo "Attente de l'attribution d'une IP sur l'interface ppp..."
-          PPP_READY=false
-          PPP_DEV=""
-          for i in {1..30}; do
-            PPP_DEV=$(ip -o -4 addr show | awk '$2 ~ /^ppp/ {print $2; exit}')
-            if [ -n "$PPP_DEV" ]; then
-              echo "Interface $PPP_DEV active et configurée avec IP !"
-              ip addr show dev "$PPP_DEV"
-              PPP_READY=true
-              break
-            fi
-            echo "Tentative $i/30 : en attente de l'interface ppp..."
-            sleep 1
-          done
-
-          if [ "$PPP_READY" = true ]; then
-            # Conserver la route physique vers le serveur VPN pour éviter de casser le tunnel
-            sudo ip route add "$SERVER_IP" via "$GATEWAY" dev "$INTERFACE" 2>/dev/null || true
-            # Forcer les routes vers GitHub via le tunnel VPN
-            for gh_cidr in 140.82.112.0/20 192.30.252.0/22 185.199.108.0/22 143.55.64.0/20; do
-              sudo ip route add "$gh_cidr" dev "$PPP_DEV" 2>/dev/null || true
-            done
-            # Remplacer la route par défaut par le tunnel
-            sudo ip route replace default dev "$PPP_DEV"
-            echo "✅ Trafic redirigé vers le tunnel VPN ($PPP_DEV)."
-          else
-            echo "❌ Erreur : aucune interface ppp avec adresse IP n'est apparue."
-            echo "--- Diagnostic xl2tpd ---"
-            sudo journalctl -u xl2tpd -n 50 --no-pager || true
-            echo "--- Diagnostic ppp ---"
-            sudo journalctl -u pppd -n 30 --no-pager 2>/dev/null || true
-            sudo grep -i -E 'ppp|xl2tpd|chap|auth' /var/log/syslog 2>/dev/null | tail -n 50 || true
-            echo "--- dmesg ppp ---"
-            sudo dmesg | grep -i ppp | tail -n 20 || true
-            exit 1
-          fi
-
-          echo "IP publique de sortie vue depuis le runner :"
-          curl -s --max-time 10 https://api.ipify.org || echo "Vérification IP indisponible"
-
-      - name: Vérifier la connectivité vers Tesla avant le scraping
-        run: |
-          echo "=== Test réseau pre-scraping ==="
-          echo "IP publique actuelle :"
-          curl -s --max-time 5 https://api.ipify.org || echo "ipify indisponible"
+          echo "=== IP publique du runner ==="
+          curl -s --max-time 10 https://api.ipify.org && echo ""
           echo ""
-          echo "Test Tesla API :"
+          echo "=== Test connectivité Tesla API ==="
           curl -s --max-time 10 -o /dev/null -w "HTTP %{http_code} en %{time_total}s\n" \
             "https://www.tesla.com/api/findus/get-charger-details?locationSlug=parissupercharger&programType=supercharger&locale=en-US&isInHkMoTw=false" \
-            -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/124.0.0.0 Safari/537.36' || echo "Tesla API injoignable"
-          echo ""
-          echo "Routes actives :"
-          ip route show
+            -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/124.0.0.0 Safari/537.36' \
+            || echo "Tesla API injoignable"
 
       - name: Exécuter le script d'actualisation des stations et prix
         run: npm run update-prices
-
-      - name: Déconnexion du VPN
-        if: always()
-        run: |
-          if ip link show ppp0 > /dev/null 2>&1; then
-            echo "Fermeture de la session VPN..."
-            echo "d myvpn" | sudo tee /var/run/xl2tpd/l2tp-control 2>/dev/null || true
-            sudo ipsec down myvpn 2>/dev/null || true
-          fi
 
       - name: Commiter et pousser les modifications sur GitHub
         id: auto_commit
