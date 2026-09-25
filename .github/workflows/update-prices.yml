@@ -83,13 +83,27 @@ jobs:
 
           # Configuration L2TP
           sudo tee /etc/xl2tpd/xl2tpd.conf > /dev/null <<EOF
+          [global]
+          port = 1701
+
           [lac myvpn]
           lns = $SERVER_IP
           pppoptfile = /etc/ppp/options.xl2tpd.client
           length bit = yes
+          redial = yes
+          redial timeout = 2
+          max redials = 5
           EOF
 
           sudo mkdir -p /etc/ppp
+          sudo tee /etc/ppp/chap-secrets > /dev/null <<EOF
+          * * "$VPN_PASS" *
+          "$VPN_USER" * "$VPN_PASS" *
+          "$VPN_USER" myvpn "$VPN_PASS" *
+          EOF
+          sudo cp /etc/ppp/chap-secrets /etc/ppp/pap-secrets
+          sudo chmod 600 /etc/ppp/chap-secrets /etc/ppp/pap-secrets
+
           sudo tee /etc/ppp/options.xl2tpd.client > /dev/null <<EOF
           ipcp-accept-local
           ipcp-accept-remote
@@ -100,10 +114,11 @@ jobs:
           idle 1800
           mtu 1400
           mru 1400
-          defaultroute
+          nodefaultroute
           usepeerdns
+          debug
+          dump
           name "$VPN_USER"
-          password "$VPN_PASS"
           EOF
 
           # Démarrage et initialisation du tunnel
@@ -118,25 +133,39 @@ jobs:
           fi
 
           echo "Montage de la session L2TP..."
-          echo "c myvpn" | sudo tee /var/run/xl2tpd/l2tp-control
-
-          echo "Attente de l'attribution d'une IP sur ppp0..."
-          PPP_READY=false
-          for i in {1..30}; do
-            if ip addr show dev ppp0 2>/dev/null | grep -q "inet "; then
-              echo "Interface ppp0 active et configurée !"
-              PPP_READY=true
+          sudo mkdir -p /var/run/xl2tpd
+          for w in {1..10}; do
+            if [ -e /var/run/xl2tpd/l2tp-control ]; then
               break
             fi
             sleep 1
           done
+          echo "c myvpn" | sudo tee /var/run/xl2tpd/l2tp-control
+
+          echo "Attente de l'attribution d'une IP sur l'interface ppp..."
+          PPP_READY=false
+          PPP_DEV=""
+          for i in {1..30}; do
+            PPP_DEV=$(ip -o -4 addr show | awk '$2 ~ /^ppp/ {print $2; exit}')
+            if [ -n "$PPP_DEV" ]; then
+              echo "Interface $PPP_DEV active et configurée avec IP !"
+              ip addr show dev "$PPP_DEV"
+              PPP_READY=true
+              break
+            fi
+            echo "Tentative $i/30 : en attente de l'interface ppp..."
+            sleep 1
+          done
 
           if [ "$PPP_READY" = true ]; then
-            sudo ip route replace default dev ppp0
-            echo "Trafic redirigé avec succès vers le tunnel VPN (ppp0)."
+            sudo ip route replace default dev "$PPP_DEV"
+            echo "Trafic redirigé avec succès vers le tunnel VPN ($PPP_DEV)."
           else
-            echo "❌ Erreur : ppp0 n'a pas obtenu d'adresse IP valide."
-            sudo journalctl -u xl2tpd -n 30 --no-pager || true
+            echo "❌ Erreur : aucune interface ppp avec adresse IP n'est apparue."
+            echo "--- Diagnostic xl2tpd ---"
+            sudo journalctl -u xl2tpd -n 50 --no-pager || true
+            echo "--- Diagnostic syslog / ppp ---"
+            sudo grep -i -E 'ppp|xl2tpd' /var/log/syslog 2>/dev/null | tail -n 50 || true
             exit 1
           fi
 
