@@ -158,14 +158,24 @@ jobs:
           done
 
           if [ "$PPP_READY" = true ]; then
+            # Conserver la route physique vers le serveur VPN pour éviter de casser le tunnel
+            sudo ip route add "$SERVER_IP" via "$GATEWAY" dev "$INTERFACE" 2>/dev/null || true
+            # Forcer les routes vers GitHub via le tunnel VPN
+            for gh_cidr in 140.82.112.0/20 192.30.252.0/22 185.199.108.0/22 143.55.64.0/20; do
+              sudo ip route add "$gh_cidr" dev "$PPP_DEV" 2>/dev/null || true
+            done
+            # Remplacer la route par défaut par le tunnel
             sudo ip route replace default dev "$PPP_DEV"
             echo "Trafic redirigé avec succès vers le tunnel VPN ($PPP_DEV)."
           else
             echo "❌ Erreur : aucune interface ppp avec adresse IP n'est apparue."
             echo "--- Diagnostic xl2tpd ---"
             sudo journalctl -u xl2tpd -n 50 --no-pager || true
-            echo "--- Diagnostic syslog / ppp ---"
-            sudo grep -i -E 'ppp|xl2tpd' /var/log/syslog 2>/dev/null | tail -n 50 || true
+            echo "--- Diagnostic ppp ---"
+            sudo journalctl -u pppd -n 30 --no-pager 2>/dev/null || true
+            sudo grep -i -E 'ppp|xl2tpd|chap|auth' /var/log/syslog 2>/dev/null | tail -n 50 || true
+            echo "--- dmesg ppp ---"
+            sudo dmesg | grep -i ppp | tail -n 20 || true
             exit 1
           fi
 
