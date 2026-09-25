@@ -66,6 +66,7 @@ jobs:
             left=%defaultroute
             leftprotoport=17/1701
             right=$SERVER_IP
+            rightid=%any
             rightprotoport=17/1701
             type=transport
             auto=add
@@ -77,7 +78,7 @@ jobs:
           EOF
 
           sudo tee /etc/ipsec.secrets > /dev/null <<EOF
-          %any $SERVER_IP : PSK "$VPN_PSK"
+          %any %any : PSK "$VPN_PSK"
           EOF
 
           # Configuration L2TP
