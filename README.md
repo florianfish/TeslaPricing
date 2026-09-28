@@ -138,7 +138,7 @@ Pour exposer l'application sur votre domaine avec HTTPS :
 ### 5. Actualisation Nocturne Automatique (GitHub Actions & Synchronisation VPS)
 
 Le workflow `.github/workflows/update-prices.yml` tourne chaque nuit à 03:00 UTC pour :
-1. Récupérer les nouvelles stations et changements de statuts/bornes.
+1. Récupérer les nouvelles stations et changements de statuts/bornes (supercharge.info). Les tarifs sont collectés séparément, voir ci-dessous.
 2. Mettre à jour `server/data/superchargers_db.json`.
 3. Commiter et pousser automatiquement les modifications sur le dépôt GitHub.
 
@@ -148,6 +148,14 @@ Ajoutez une ligne dans la crontab de votre VPS (`crontab -e`) pour récupérer l
 # Chaque nuit à 04:00 UTC : pull des nouveaux prix + rechargement en mémoire sans redémarrer le conteneur
 0 4 * * * cd /chemin/vers/TeslaPricing && git pull origin main && curl -s -X POST http://localhost:3000/api/sync
 ```
+### 6. Collecte des tarifs Tesla depuis le navigateur
+
+L'API Tesla FindUs est protégée par Akamai : les requêtes serveur (GitHub Actions, VPS, `curl`, Node) sont refusées (`403`), même via une IP résidentielle. Seul un vrai navigateur, depuis une connexion personnelle, obtient les tarifs. La collecte se fait donc manuellement :
+
+1. `npm run collector` génère `collector.html` (favori + extrait console, avec la liste à jour des stations).
+2. Ouvrez `collector.html`, glissez le bouton dans vos favoris, puis cliquez dessus sur une page `https://www.tesla.com/fr_FR/findus` (≈ 25 min, 5 s par station).
+3. Importez le fichier téléchargé : `npm run import-prices -- tesla-prices-AAAA-MM-JJ.json` (ajoutez `--sync` pour l'envoyer au VPS via `VPS_SYNC_URL`), puis commitez `server/data/superchargers_db.json`.
+
 > [!TIP]
 > **Zéro conflit Git** : Les relevés de tarifs saisis par les utilisateurs depuis l'interface web sont isolés dans `server/data/user_contributions.json` (ignoré par Git) et ré-appliqués automatiquement par-dessus la base lors du rechargement. Les `git pull` s'exécutent ainsi sans aucun risque de conflit de fusion !
 

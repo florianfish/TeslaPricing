@@ -10,7 +10,9 @@
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit",
-    "update-prices": "tsx scripts/update-prices.ts"
+    "update-prices": "tsx scripts/update-prices.ts",
+    "collector": "tsx scripts/build-collector.ts",
+    "import-prices": "tsx scripts/import-prices.ts"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",

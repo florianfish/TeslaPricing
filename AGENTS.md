@@ -62,7 +62,8 @@ Le projet adopte une architecture full-stack unifiée servie par un unique proce
 - Configuration du port via la variable d'environnement `PORT` (par défaut `3000`).
 
 ### E. Automatisation Nocturne & Conflits Git (`scripts/update-prices.ts`)
-- Un workflow GitHub Actions (`.github/workflows/update-prices.yml`) actualise chaque nuit la liste des stations et tarifs depuis le flux de référence et commite directement sur le dépôt GitHub.
+- Un workflow GitHub Actions (`.github/workflows/update-prices.yml`) actualise chaque nuit la liste des stations (supercharge.info) et commite directement sur le dépôt GitHub.
+- **Tarifs Tesla** : l'API FindUs est bloquée par Akamai pour tout client non-navigateur (runners, VPS, `curl`, Node — même via IP résidentielle ou VPN). Ne pas réintroduire d'appel serveur à Tesla : la collecte passe par le favori navigateur `scripts/collector.js` (page générée par `npm run collector`) puis `npm run import-prices -- <fichier>`. La logique d'analyse des tarifs est partagée dans `scripts/lib/tesla-pricing.ts`.
 - **Résolution des conflits sur VPS** : Les relevés communautaires saisis depuis le Web sont sauvegardés dans `server/data/user_contributions.json` (ignoré par Git) et ré-appliqués à chaud au démarrage et lors de l'appel à `reloadDatabase()` via `POST /api/sync`. Ainsi, les `git pull` sur le VPS ne provoquent jamais de conflit de fusion.
 
 ---

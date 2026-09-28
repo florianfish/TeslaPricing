@@ -28,136 +28,15 @@ jobs:
       - name: Installer les dépendances
         run: npm ci --legacy-peer-deps
 
-      - name: Installer le client L2TP/IPsec
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends strongswan xl2tpd ppp
-
-      - name: Connexion au VPN résidentiel (L2TP/IPsec)
-        timeout-minutes: 3
-        env:
-          VPN_SERVER_IP: ${{ secrets.VPN_SERVER_IP || vars.VPN_SERVER_IP }}
-          VPN_USERNAME: ${{ secrets.VPN_USERNAME }}
-          VPN_PASSWORD: ${{ secrets.VPN_PASSWORD }}
-          VPN_IPSEC_PSK: ${{ secrets.VPN_IPSEC_PSK }}
-        run: |
-          set -e
-          for v in VPN_SERVER_IP VPN_USERNAME VPN_PASSWORD VPN_IPSEC_PSK; do
-            [ -n "${!v}" ] || { echo "❌ Secret $v manquant"; exit 1; }
-          done
-
-          # --- IPsec (strongSwan, IKEv1 + PSK, mode transport pour L2TP) ---
-          sudo tee /etc/ipsec.conf > /dev/null <<CONF
-          config setup
-
-          conn L2TP-PSK
-            auto=add
-            keyexchange=ikev1
-            authby=secret
-            type=transport
-            left=%defaultroute
-            leftprotoport=17/1701
-            right=$VPN_SERVER_IP
-            # Le routeur est derrière la box (DMZ) : il s'annonce avec son IP privée
-            rightid=%any
-            rightprotoport=17/1701
-            ike=aes256-sha256-modp2048,aes128-sha256-modp2048,aes256-sha1-modp2048,aes128-sha1-modp2048,aes256-sha1-modp1024,aes128-sha1-modp1024,3des-sha1-modp1024!
-            esp=aes256-sha256,aes128-sha256,aes256-sha1,aes128-sha1,3des-sha1!
-          CONF
-          printf ': PSK "%s"\n' "$VPN_IPSEC_PSK" | sudo tee /etc/ipsec.secrets > /dev/null
-          sudo chmod 600 /etc/ipsec.secrets
-
-          # --- L2TP (xl2tpd) + PPP ---
-          sudo tee /etc/xl2tpd/xl2tpd.conf > /dev/null <<CONF
-          [lac homevpn]
-          lns = $VPN_SERVER_IP
-          ppp debug = yes
-          pppoptfile = /etc/ppp/options.l2tpd.client
-          length bit = yes
-          CONF
-          {
-            echo "ipcp-accept-local"
-            echo "ipcp-accept-remote"
-            echo "refuse-eap"
-            echo "noccp"
-            echo "noauth"
-            echo "mtu 1280"
-            echo "mru 1280"
-            echo "noipdefault"
-            echo "connect-delay 5000"
-            echo "name \"$VPN_USERNAME\""
-            echo "password \"$VPN_PASSWORD\""
-          } | sudo tee /etc/ppp/options.l2tpd.client > /dev/null
-          sudo chmod 600 /etc/ppp/options.l2tpd.client
-
-          # --- Connexion ---
-          sudo mkdir -p /var/run/xl2tpd
-          sudo touch /var/run/xl2tpd/l2tp-control
-          sudo ipsec restart
-          sudo systemctl restart xl2tpd
-          sleep 3
-
-          fail() {
-            echo "❌ $1"
-            echo "=== ipsec statusall ==="; sudo ipsec statusall || true
-            echo "=== journal strongSwan ==="; sudo journalctl -u strongswan-starter --no-pager -n 80 || true
-            echo "=== journal xl2tpd ==="; sudo journalctl -u xl2tpd --no-pager -n 60 || true
-            echo "=== journal pppd ==="; sudo journalctl -t pppd --no-pager -n 60 || true
-            exit 1
-          }
-
-          sudo ipsec up L2TP-PSK || fail "Échec de la négociation IPsec"
-          echo "c homevpn" | sudo tee /var/run/xl2tpd/l2tp-control > /dev/null
-
-          for i in $(seq 1 30); do
-            ip link show ppp0 > /dev/null 2>&1 && ip -4 addr show ppp0 | grep -q inet && break
-            sleep 2
-          done
-          ip -4 addr show ppp0 | grep -q inet || fail "L'interface ppp0 n'est pas montée (authentification L2TP/PPP ?)"
-
-          # --- Routage : seuls Tesla (et ipify pour le contrôle d'IP) passent par le VPN ---
-          # (router tout le trafic couperait la liaison du runner avec GitHub)
-          # On fige les IP résolues dans /etc/hosts pour que les requêtes utilisent
-          # exactement celles routées via ppp0.
-          for host in www.tesla.com api.ipify.org; do
-            IPS=$(for i in 1 2 3; do getent ahostsv4 "$host" | awk '{print $1}'; done | sort -u)
-            [ -n "$IPS" ] || fail "Impossible de résoudre $host"
-            for ip in $IPS; do
-              sudo ip route replace "$ip/32" dev ppp0
-              echo "$ip $host" | sudo tee -a /etc/hosts > /dev/null
-              echo "↪ $ip ($host) routé via le VPN"
-            done
-          done
-          echo "✅ VPN L2TP/IPsec connecté"
-
-      - name: Vérifier l'IP de sortie et la connectivité Tesla
-        run: |
-          echo "=== IP publique du runner ==="
-          curl -s --max-time 10 https://api.ipify.org && echo ""
-          echo ""
-          echo "=== Test connectivité Tesla API ==="
-          curl -s --max-time 10 -o /dev/null -w "HTTP %{http_code} en %{time_total}s\n" \
-            "https://www.tesla.com/api/findus/get-charger-details?locationSlug=parissupercharger&programType=supercharger&locale=en-US&isInHkMoTw=false" \
-            -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/124.0.0.0 Safari/537.36' \
-            || echo "Tesla API injoignable"
-
-      - name: Diagnostic Tesla (fetch Node vs navigateur Playwright)
-        continue-on-error: true
-        timeout-minutes: 8
-        run: |
-          npm i --no-save --legacy-peer-deps playwright
-          npx playwright install --with-deps chromium chrome
-          xvfb-run -a --server-args="-screen 0 1366x768x24" node scripts/probe-tesla.mjs
-
-      - name: Exécuter le script d'actualisation des stations et prix
+      - name: Actualiser la liste des stations (supercharge.info)
         run: npm run update-prices
 
       - name: Commiter et pousser les modifications sur GitHub
         id: auto_commit
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "chore(data): actualisation automatique nocturne des Superchargeurs"
-          file_pattern: "server/data/superchargers_db.json server/data/out_stations.json"
+          commit_message: "chore(data): actualisation automatique nocturne de la liste des Superchargeurs"
+          file_pattern: "server/data/superchargers_db.json"
           commit_user_name: "github-actions[bot]"
           commit_user_email: "github-actions[bot]@users.noreply.github.com"
           commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
@@ -176,10 +55,3 @@ jobs:
           else
             echo "Aucune URL de webhook configurée, étape ignorée."
           fi
-
-      - name: Déconnexion du VPN
-        if: always()
-        run: |
-          echo "d homevpn" | sudo tee /var/run/xl2tpd/l2tp-control > /dev/null 2>&1 || true
-          sudo ipsec down L2TP-PSK 2>/dev/null || true
-          sudo rm -f /etc/ipsec.secrets /etc/ppp/options.l2tpd.client

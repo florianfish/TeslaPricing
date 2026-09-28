@@ -7,3 +7,5 @@ coverage/
 .env*
 !.env.example
 server/data/user_contributions.json
+collector.html
+tesla-prices-*.json
