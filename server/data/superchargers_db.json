@@ -3852,14 +3852,14 @@
       "facilityName": "Hôtel / Restauration / Services",
       "dateOpened": "2017-02-15",
       "currentPricing": {
-        "teslaPeak": 0.35,
-        "teslaOffPeak": 0.28,
-        "nonTeslaPeak": 0.48,
-        "nonTeslaOffPeak": 0.37,
-        "peakHours": "16:00 - 20:00",
+        "teslaPeak": 0.34,
+        "teslaOffPeak": 0.34,
+        "nonTeslaPeak": 0.45,
+        "nonTeslaOffPeak": 0.45,
+        "peakHours": "09:00 - 20:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T05:00:00.000Z"
+        "lastUpdated": "2026-09-28T09:17:45.543Z"
       },
       "priceHistory": [
         {
@@ -3981,6 +3981,21 @@
           "source": "Tesla FindUs API & Base Locale",
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.4
+        },
+        {
+          "id": "1037-2026-09-28",
+          "superchargerId": "1037",
+          "superchargerName": "Sisteron, France",
+          "locationSlug": "sisteronsupercharger",
+          "date": "2026-09-28",
+          "teslaPeak": 0.34,
+          "teslaOffPeak": 0.34,
+          "nonTeslaPeak": 0.45,
+          "nonTeslaOffPeak": 0.45,
+          "peakHours": "09:00 - 20:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": 7.9
         }
       ],
       "locationId": "sisteronsupercharger"
@@ -37240,14 +37255,14 @@
       "facilityName": "ibis",
       "dateOpened": "2014-12-18",
       "currentPricing": {
-        "teslaPeak": 0.39,
-        "teslaOffPeak": 0.32,
-        "nonTeslaPeak": 0.52,
-        "nonTeslaOffPeak": 0.41,
-        "peakHours": "16:00 - 20:00",
+        "teslaPeak": 0.37,
+        "teslaOffPeak": 0.17,
+        "nonTeslaPeak": 0.53,
+        "nonTeslaOffPeak": 0.24,
+        "peakHours": "08:00 - 23:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T05:00:00.000Z"
+        "lastUpdated": "2026-09-28T09:43:01.144Z"
       },
       "priceHistory": [
         {
@@ -37369,6 +37384,21 @@
           "source": "Tesla FindUs API & Base Locale",
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -4.9
+        },
+        {
+          "id": "488-2026-09-28",
+          "superchargerId": "488",
+          "superchargerName": "Houdemont, France",
+          "locationSlug": "nancysupercharger",
+          "date": "2026-09-28",
+          "teslaPeak": 0.37,
+          "teslaOffPeak": 0.17,
+          "nonTeslaPeak": 0.53,
+          "nonTeslaOffPeak": 0.24,
+          "peakHours": "08:00 - 23:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": -23.9
         }
       ],
       "locationId": "nancysupercharger"
@@ -49539,14 +49569,14 @@
       "facilityName": "Centre commercial",
       "dateOpened": "2018-07-20",
       "currentPricing": {
-        "teslaPeak": 0.32,
-        "teslaOffPeak": 0.32,
-        "nonTeslaPeak": 0.43,
-        "nonTeslaOffPeak": 0.43,
+        "teslaPeak": 0.34,
+        "teslaOffPeak": 0.34,
+        "nonTeslaPeak": 0.45,
+        "nonTeslaOffPeak": 0.45,
         "peakHours": "09:00 - 20:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-22T08:18:32.530Z"
+        "lastUpdated": "2026-09-28T09:54:11.732Z"
       },
       "priceHistory": [
         {
@@ -49683,6 +49713,21 @@
           "source": "Tesla API FindUs (Officiel)",
           "notes": "Relevé automatique temps réel officiel Tesla",
           "changePercentage": 3.2
+        },
+        {
+          "id": "1681-2026-09-28",
+          "superchargerId": "1681",
+          "superchargerName": "Saint-Parres-aux-Tertres, France",
+          "locationSlug": "saintparresauxtertressupercharger",
+          "date": "2026-09-28",
+          "teslaPeak": 0.34,
+          "teslaOffPeak": 0.34,
+          "nonTeslaPeak": 0.45,
+          "nonTeslaOffPeak": 0.45,
+          "peakHours": "09:00 - 20:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": 6.3
         }
       ],
       "locationId": "saintparresauxtertressupercharger"
@@ -97541,6 +97586,51 @@
       "source": "Tesla API FindUs (Officiel)",
       "notes": "Relevé automatique temps réel officiel Tesla",
       "changePercentage": 4.4
+    },
+    {
+      "id": "1037-2026-09-28",
+      "superchargerId": "1037",
+      "superchargerName": "Sisteron, France",
+      "locationSlug": "sisteronsupercharger",
+      "date": "2026-09-28",
+      "teslaPeak": 0.34,
+      "teslaOffPeak": 0.34,
+      "nonTeslaPeak": 0.45,
+      "nonTeslaOffPeak": 0.45,
+      "peakHours": "09:00 - 20:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": 7.9
+    },
+    {
+      "id": "488-2026-09-28",
+      "superchargerId": "488",
+      "superchargerName": "Houdemont, France",
+      "locationSlug": "nancysupercharger",
+      "date": "2026-09-28",
+      "teslaPeak": 0.37,
+      "teslaOffPeak": 0.17,
+      "nonTeslaPeak": 0.53,
+      "nonTeslaOffPeak": 0.24,
+      "peakHours": "08:00 - 23:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": -23.9
+    },
+    {
+      "id": "1681-2026-09-28",
+      "superchargerId": "1681",
+      "superchargerName": "Saint-Parres-aux-Tertres, France",
+      "locationSlug": "saintparresauxtertressupercharger",
+      "date": "2026-09-28",
+      "teslaPeak": 0.34,
+      "teslaOffPeak": 0.34,
+      "nonTeslaPeak": 0.45,
+      "nonTeslaOffPeak": 0.45,
+      "peakHours": "09:00 - 20:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": 6.3
     }
   ],
   "nationalHistory": [
@@ -97665,5 +97755,5 @@
       "changePercentage": -5.2
     }
   ],
-  "lastSyncTime": "2026-09-28T08:23:13.436Z"
+  "lastSyncTime": "2026-09-28T09:15:39.598Z"
 }
