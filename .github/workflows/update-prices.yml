@@ -42,11 +42,40 @@ jobs:
           echo "✅ Fichier VPN prêt ($(wc -l < /tmp/vpn.ovpn) lignes)"
 
       - name: Connexion au VPN résidentiel (OpenVPN)
-        uses: kota65535/github-openvpn-connect-action@v2
-        with:
-          config_file: /tmp/vpn.ovpn
-          username: ${{ secrets.VPN_USERNAME }}
-          password: ${{ secrets.VPN_PASSWORD }}
+        timeout-minutes: 3
+        env:
+          VPN_USERNAME: ${{ secrets.VPN_USERNAME }}
+          VPN_PASSWORD: ${{ secrets.VPN_PASSWORD }}
+        run: |
+          CONF=/tmp/vpn.ovpn
+          # Fins de ligne Windows (CRLF) -> LF
+          sed -i 's/\r$//' "$CONF"
+
+          # Identifiants : on remplace toute directive auth-user-pass existante
+          if [ -n "$VPN_USERNAME" ]; then
+            printf '%s\n%s\n' "$VPN_USERNAME" "$VPN_PASSWORD" > /tmp/vpn-auth.txt
+            chmod 600 /tmp/vpn-auth.txt
+            sed -i '/^[[:space:]]*auth-user-pass/d' "$CONF"
+            echo "auth-user-pass /tmp/vpn-auth.txt" >> "$CONF"
+          fi
+
+          sudo openvpn --config "$CONF" --daemon \
+            --log /tmp/openvpn.log --writepid /tmp/openvpn.pid
+
+          for i in $(seq 1 60); do
+            if sudo grep -q "Initialization Sequence Completed" /tmp/openvpn.log; then
+              echo "✅ VPN connecté"
+              exit 0
+            fi
+            if [ -f /tmp/openvpn.pid ] && ! sudo kill -0 "$(sudo cat /tmp/openvpn.pid)" 2>/dev/null; then
+              echo "❌ Le processus OpenVPN s'est arrêté"
+              break
+            fi
+            sleep 2
+          done
+          echo "❌ Échec de connexion VPN — journal OpenVPN :"
+          sudo cat /tmp/openvpn.log
+          exit 1
 
       - name: Vérifier l'IP de sortie et la connectivité Tesla
         run: |
@@ -86,3 +115,11 @@ jobs:
           else
             echo "Aucune URL de webhook configurée, étape ignorée."
           fi
+
+      - name: Déconnexion du VPN
+        if: always()
+        run: |
+          if [ -f /tmp/openvpn.pid ]; then
+            sudo kill "$(sudo cat /tmp/openvpn.pid)" 2>/dev/null || true
+          fi
+          rm -f /tmp/vpn-auth.txt /tmp/vpn.ovpn
