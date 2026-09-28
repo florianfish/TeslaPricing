@@ -28,54 +28,99 @@ jobs:
       - name: Installer les dépendances
         run: npm ci --legacy-peer-deps
 
-      - name: Installer OpenVPN
+      - name: Installer le client L2TP/IPsec
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends openvpn openvpn-systemd-resolved
+          sudo apt-get install -y --no-install-recommends strongswan xl2tpd ppp
 
-      - name: Préparer le fichier de configuration OpenVPN
-        env:
-          OVPN_CONFIG: ${{ secrets.OVPN_CONFIG }}
-        run: |
-          echo "$OVPN_CONFIG" | base64 -d > /tmp/vpn.ovpn 2>/dev/null \
-            || echo "$OVPN_CONFIG" > /tmp/vpn.ovpn
-          echo "✅ Fichier VPN prêt ($(wc -l < /tmp/vpn.ovpn) lignes)"
-
-      - name: Connexion au VPN résidentiel (OpenVPN)
+      - name: Connexion au VPN résidentiel (L2TP/IPsec)
         timeout-minutes: 3
         env:
+          VPN_SERVER_IP: ${{ secrets.VPN_SERVER_IP || vars.VPN_SERVER_IP }}
           VPN_USERNAME: ${{ secrets.VPN_USERNAME }}
           VPN_PASSWORD: ${{ secrets.VPN_PASSWORD }}
+          VPN_IPSEC_PSK: ${{ secrets.VPN_IPSEC_PSK }}
         run: |
-          CONF=/tmp/vpn.ovpn
-          # Fins de ligne Windows (CRLF) -> LF
-          sed -i 's/\r$//' "$CONF"
+          set -e
+          for v in VPN_SERVER_IP VPN_USERNAME VPN_PASSWORD VPN_IPSEC_PSK; do
+            [ -n "${!v}" ] || { echo "❌ Secret $v manquant"; exit 1; }
+          done
 
-          # Identifiants : on remplace toute directive auth-user-pass existante
-          if [ -n "$VPN_USERNAME" ]; then
-            printf '%s\n%s\n' "$VPN_USERNAME" "$VPN_PASSWORD" > /tmp/vpn-auth.txt
-            chmod 600 /tmp/vpn-auth.txt
-            sed -i '/^[[:space:]]*auth-user-pass/d' "$CONF"
-            echo "auth-user-pass /tmp/vpn-auth.txt" >> "$CONF"
-          fi
+          # --- IPsec (strongSwan, IKEv1 + PSK, mode transport pour L2TP) ---
+          sudo tee /etc/ipsec.conf > /dev/null <<CONF
+          config setup
 
-          sudo openvpn --config "$CONF" --daemon \
-            --log /tmp/openvpn.log --writepid /tmp/openvpn.pid
+          conn L2TP-PSK
+            auto=add
+            keyexchange=ikev1
+            authby=secret
+            type=transport
+            left=%defaultroute
+            leftprotoport=17/1701
+            right=$VPN_SERVER_IP
+            rightprotoport=17/1701
+            ike=aes256-sha256-modp2048,aes128-sha256-modp2048,aes256-sha1-modp2048,aes128-sha1-modp2048,aes256-sha1-modp1024,aes128-sha1-modp1024,3des-sha1-modp1024!
+            esp=aes256-sha256,aes128-sha256,aes256-sha1,aes128-sha1,3des-sha1!
+          CONF
+          printf '%%any %s : PSK "%s"\n' "$VPN_SERVER_IP" "$VPN_IPSEC_PSK" | sudo tee /etc/ipsec.secrets > /dev/null
+          sudo chmod 600 /etc/ipsec.secrets
 
-          for i in $(seq 1 60); do
-            if sudo grep -q "Initialization Sequence Completed" /tmp/openvpn.log; then
-              echo "✅ VPN connecté"
-              exit 0
-            fi
-            if [ -f /tmp/openvpn.pid ] && ! sudo kill -0 "$(sudo cat /tmp/openvpn.pid)" 2>/dev/null; then
-              echo "❌ Le processus OpenVPN s'est arrêté"
-              break
-            fi
+          # --- L2TP (xl2tpd) + PPP ---
+          sudo tee /etc/xl2tpd/xl2tpd.conf > /dev/null <<CONF
+          [lac homevpn]
+          lns = $VPN_SERVER_IP
+          ppp debug = yes
+          pppoptfile = /etc/ppp/options.l2tpd.client
+          length bit = yes
+          CONF
+          {
+            echo "ipcp-accept-local"
+            echo "ipcp-accept-remote"
+            echo "refuse-eap"
+            echo "noccp"
+            echo "noauth"
+            echo "mtu 1280"
+            echo "mru 1280"
+            echo "noipdefault"
+            echo "connect-delay 5000"
+            echo "name \"$VPN_USERNAME\""
+            echo "password \"$VPN_PASSWORD\""
+          } | sudo tee /etc/ppp/options.l2tpd.client > /dev/null
+          sudo chmod 600 /etc/ppp/options.l2tpd.client
+
+          # --- Connexion ---
+          sudo mkdir -p /var/run/xl2tpd
+          sudo touch /var/run/xl2tpd/l2tp-control
+          sudo ipsec restart
+          sudo systemctl restart xl2tpd
+          sleep 3
+
+          fail() {
+            echo "❌ $1"
+            echo "=== ipsec statusall ==="; sudo ipsec statusall || true
+            echo "=== journal strongSwan ==="; sudo journalctl -u strongswan-starter --no-pager -n 80 || true
+            echo "=== journal xl2tpd ==="; sudo journalctl -u xl2tpd --no-pager -n 60 || true
+            echo "=== journal pppd ==="; sudo journalctl -t pppd --no-pager -n 60 || true
+            exit 1
+          }
+
+          sudo ipsec up L2TP-PSK || fail "Échec de la négociation IPsec"
+          echo "c homevpn" | sudo tee /var/run/xl2tpd/l2tp-control > /dev/null
+
+          for i in $(seq 1 30); do
+            ip link show ppp0 > /dev/null 2>&1 && ip -4 addr show ppp0 | grep -q inet && break
             sleep 2
           done
-          echo "❌ Échec de connexion VPN — journal OpenVPN :"
-          sudo cat /tmp/openvpn.log
-          exit 1
+          ip -4 addr show ppp0 | grep -q inet || fail "L'interface ppp0 n'est pas montée (authentification L2TP/PPP ?)"
+
+          # --- Routage : tout le trafic Internet via le VPN ---
+          GW=$(ip route show default | awk '{print $3; exit}')
+          # Garder l'accès direct au serveur VPN et au DNS Azure du runner
+          sudo ip route add "$VPN_SERVER_IP" via "$GW"
+          sudo ip route add 168.63.129.16 via "$GW"
+          sudo ip route add 0.0.0.0/1 dev ppp0
+          sudo ip route add 128.0.0.0/1 dev ppp0
+          echo "✅ VPN L2TP/IPsec connecté"
 
       - name: Vérifier l'IP de sortie et la connectivité Tesla
         run: |
@@ -119,7 +164,6 @@ jobs:
       - name: Déconnexion du VPN
         if: always()
         run: |
-          if [ -f /tmp/openvpn.pid ]; then
-            sudo kill "$(sudo cat /tmp/openvpn.pid)" 2>/dev/null || true
-          fi
-          rm -f /tmp/vpn-auth.txt /tmp/vpn.ovpn
+          echo "d homevpn" | sudo tee /var/run/xl2tpd/l2tp-control > /dev/null 2>&1 || true
+          sudo ipsec down L2TP-PSK 2>/dev/null || true
+          sudo rm -f /etc/ipsec.secrets /etc/ppp/options.l2tpd.client
