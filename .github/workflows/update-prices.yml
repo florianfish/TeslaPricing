@@ -143,11 +143,11 @@ jobs:
 
       - name: Diagnostic Tesla (fetch Node vs navigateur Playwright)
         continue-on-error: true
-        timeout-minutes: 5
+        timeout-minutes: 8
         run: |
           npm i --no-save --legacy-peer-deps playwright
-          npx playwright install --with-deps chromium
-          node scripts/probe-tesla.mjs
+          npx playwright install --with-deps chromium chrome
+          xvfb-run -a --server-args="-screen 0 1366x768x24" node scripts/probe-tesla.mjs
 
       - name: Exécuter le script d'actualisation des stations et prix
         run: npm run update-prices
