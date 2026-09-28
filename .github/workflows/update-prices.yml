@@ -141,6 +141,14 @@ jobs:
             -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/124.0.0.0 Safari/537.36' \
             || echo "Tesla API injoignable"
 
+      - name: Diagnostic Tesla (fetch Node vs navigateur Playwright)
+        continue-on-error: true
+        timeout-minutes: 5
+        run: |
+          npm i --no-save --legacy-peer-deps playwright
+          npx playwright install --with-deps chromium
+          node scripts/probe-tesla.mjs
+
       - name: Exécuter le script d'actualisation des stations et prix
         run: npm run update-prices
 
