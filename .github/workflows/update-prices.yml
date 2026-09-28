@@ -58,11 +58,13 @@ jobs:
             left=%defaultroute
             leftprotoport=17/1701
             right=$VPN_SERVER_IP
+            # Le routeur est derrière la box (DMZ) : il s'annonce avec son IP privée
+            rightid=%any
             rightprotoport=17/1701
             ike=aes256-sha256-modp2048,aes128-sha256-modp2048,aes256-sha1-modp2048,aes128-sha1-modp2048,aes256-sha1-modp1024,aes128-sha1-modp1024,3des-sha1-modp1024!
             esp=aes256-sha256,aes128-sha256,aes256-sha1,aes128-sha1,3des-sha1!
           CONF
-          printf '%%any %s : PSK "%s"\n' "$VPN_SERVER_IP" "$VPN_IPSEC_PSK" | sudo tee /etc/ipsec.secrets > /dev/null
+          printf ': PSK "%s"\n' "$VPN_IPSEC_PSK" | sudo tee /etc/ipsec.secrets > /dev/null
           sudo chmod 600 /etc/ipsec.secrets
 
           # --- L2TP (xl2tpd) + PPP ---
