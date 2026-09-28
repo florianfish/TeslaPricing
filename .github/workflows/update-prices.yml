@@ -115,13 +115,19 @@ jobs:
           done
           ip -4 addr show ppp0 | grep -q inet || fail "L'interface ppp0 n'est pas montée (authentification L2TP/PPP ?)"
 
-          # --- Routage : tout le trafic Internet via le VPN ---
-          GW=$(ip route show default | awk '{print $3; exit}')
-          # Garder l'accès direct au serveur VPN et au DNS Azure du runner
-          sudo ip route add "$VPN_SERVER_IP" via "$GW"
-          sudo ip route add 168.63.129.16 via "$GW"
-          sudo ip route add 0.0.0.0/1 dev ppp0
-          sudo ip route add 128.0.0.0/1 dev ppp0
+          # --- Routage : seuls Tesla (et ipify pour le contrôle d'IP) passent par le VPN ---
+          # (router tout le trafic couperait la liaison du runner avec GitHub)
+          # On fige les IP résolues dans /etc/hosts pour que les requêtes utilisent
+          # exactement celles routées via ppp0.
+          for host in www.tesla.com api.ipify.org; do
+            IPS=$(for i in 1 2 3; do getent ahostsv4 "$host" | awk '{print $1}'; done | sort -u)
+            [ -n "$IPS" ] || fail "Impossible de résoudre $host"
+            for ip in $IPS; do
+              sudo ip route replace "$ip/32" dev ppp0
+              echo "$ip $host" | sudo tee -a /etc/hosts > /dev/null
+              echo "↪ $ip ($host) routé via le VPN"
+            done
+          done
           echo "✅ VPN L2TP/IPsec connecté"
 
       - name: Vérifier l'IP de sortie et la connectivité Tesla
