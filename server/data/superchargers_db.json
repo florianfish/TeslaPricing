@@ -4495,14 +4495,14 @@
       "facilityName": "Hôtel / Restauration / Services",
       "dateOpened": "2022-06-29",
       "currentPricing": {
-        "teslaPeak": 0.32,
-        "teslaOffPeak": 0.32,
-        "nonTeslaPeak": 0.43,
-        "nonTeslaOffPeak": 0.43,
+        "teslaPeak": 0.34,
+        "teslaOffPeak": 0.34,
+        "nonTeslaPeak": 0.45,
+        "nonTeslaOffPeak": 0.45,
         "peakHours": "09:00 - 20:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T14:04:30.726Z"
+        "lastUpdated": "2026-09-28T08:25:37.900Z"
       },
       "priceHistory": [
         {
@@ -4639,6 +4639,21 @@
           "source": "Tesla API FindUs (Officiel)",
           "notes": "Relevé automatique temps réel officiel Tesla",
           "changePercentage": -1.5
+        },
+        {
+          "id": "4266-2026-09-28",
+          "superchargerId": "4266",
+          "superchargerName": "Croutelle, France",
+          "locationSlug": "croutellesupercharger",
+          "date": "2026-09-28",
+          "teslaPeak": 0.34,
+          "teslaOffPeak": 0.34,
+          "nonTeslaPeak": 0.45,
+          "nonTeslaOffPeak": 0.45,
+          "peakHours": "09:00 - 20:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": 6.3
         }
       ],
       "locationId": "28778"
@@ -7100,7 +7115,7 @@
       "latitude": 46.330778,
       "longitude": 2.975572,
       "status": "OPEN",
-      "stallCount": 28,
+      "stallCount": 16,
       "powerKw": 250,
       "stallsBreakdown": {
         "v2": 0,
@@ -11591,14 +11606,14 @@
       "facilityName": "Grand Frais",
       "dateOpened": "2025-11-27",
       "currentPricing": {
-        "teslaPeak": 0.36,
+        "teslaPeak": 0.38,
         "teslaOffPeak": 0.16,
-        "nonTeslaPeak": 0.5,
+        "nonTeslaPeak": 0.53,
         "nonTeslaOffPeak": 0.22,
         "peakHours": "09:00 - 20:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T14:16:02.909Z"
+        "lastUpdated": "2026-09-28T08:30:48.520Z"
       },
       "priceHistory": [
         {
@@ -11735,6 +11750,21 @@
           "source": "Tesla API FindUs (Officiel)",
           "notes": "Relevé automatique temps réel officiel Tesla",
           "changePercentage": -28.8
+        },
+        {
+          "id": "8714-2026-09-28",
+          "superchargerId": "8714",
+          "superchargerName": "Dreux, France",
+          "locationSlug": "dreuxsupercharger",
+          "date": "2026-09-28",
+          "teslaPeak": 0.38,
+          "teslaOffPeak": 0.16,
+          "nonTeslaPeak": 0.53,
+          "nonTeslaOffPeak": 0.22,
+          "peakHours": "09:00 - 20:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": 3.8
         }
       ],
       "locationId": "30245"
@@ -24869,14 +24899,14 @@
       "facilityName": "Hôtel / Restauration / Services",
       "dateOpened": "2025-05-23",
       "currentPricing": {
-        "teslaPeak": 0.36,
-        "teslaOffPeak": 0.29,
-        "nonTeslaPeak": 0.49,
-        "nonTeslaOffPeak": 0.38,
-        "peakHours": "16:00 - 20:00",
+        "teslaPeak": 0.3,
+        "teslaOffPeak": 0.23,
+        "nonTeslaPeak": 0.42,
+        "nonTeslaOffPeak": 0.32,
+        "peakHours": "10:00 - 20:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T05:00:00.000Z"
+        "lastUpdated": "2026-09-28T08:38:08.879Z"
       },
       "priceHistory": [
         {
@@ -24998,6 +25028,21 @@
           "source": "Tesla FindUs API & Base Locale",
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.3
+        },
+        {
+          "id": "9032-2026-09-28",
+          "superchargerId": "9032",
+          "superchargerName": "Montauban, France - Route De Saint-Martial",
+          "locationSlug": "montaubansupercharger",
+          "date": "2026-09-28",
+          "teslaPeak": 0.3,
+          "teslaOffPeak": 0.23,
+          "nonTeslaPeak": 0.42,
+          "nonTeslaOffPeak": 0.32,
+          "peakHours": "10:00 - 20:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": -18.5
         }
       ],
       "locationId": "413867"
@@ -38152,14 +38197,14 @@
       "facilityName": "E.Leclerc",
       "dateOpened": "2023-06-13",
       "currentPricing": {
-        "teslaPeak": 0.36,
+        "teslaPeak": 0.39,
         "teslaOffPeak": 0.18,
-        "nonTeslaPeak": 0.49,
+        "nonTeslaPeak": 0.53,
         "nonTeslaOffPeak": 0.24,
         "peakHours": "10:00 - 20:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-22T08:15:22.682Z"
+        "lastUpdated": "2026-09-28T08:48:41.905Z"
       },
       "priceHistory": [
         {
@@ -38296,6 +38341,21 @@
           "source": "Tesla API FindUs (Officiel)",
           "notes": "Relevé automatique temps réel officiel Tesla",
           "changePercentage": -14.3
+        },
+        {
+          "id": "6287-2026-09-28",
+          "superchargerId": "6287",
+          "superchargerName": "Albi, France",
+          "locationSlug": "lescuredalbigeoissupercharger",
+          "date": "2026-09-28",
+          "teslaPeak": 0.39,
+          "teslaOffPeak": 0.18,
+          "nonTeslaPeak": 0.53,
+          "nonTeslaOffPeak": 0.24,
+          "peakHours": "10:00 - 20:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": 5.6
         }
       ],
       "locationId": "302487"
@@ -43529,13 +43589,13 @@
       "dateOpened": "2023-03-31",
       "currentPricing": {
         "teslaPeak": 0.37,
-        "teslaOffPeak": 0.31,
+        "teslaOffPeak": 0.34,
         "nonTeslaPeak": 0.5,
-        "nonTeslaOffPeak": 0.4,
-        "peakHours": "16:00 - 20:00",
+        "nonTeslaOffPeak": 0.46,
+        "peakHours": "09:00 - 21:00",
         "idleFeeStandard": 0.5,
         "idleFeeCongested": 1,
-        "lastUpdated": "2026-09-18T05:00:00.000Z"
+        "lastUpdated": "2026-09-28T08:53:10.415Z"
       },
       "priceHistory": [
         {
@@ -43657,6 +43717,21 @@
           "source": "Tesla FindUs API & Base Locale",
           "notes": "Tarifs en vigueur actuels",
           "changePercentage": -5.1
+        },
+        {
+          "id": "5884-2026-09-28",
+          "superchargerId": "5884",
+          "superchargerName": "Nîmes, France - Rue Jean Lauret",
+          "locationSlug": "nmes2supercharger",
+          "date": "2026-09-28",
+          "teslaPeak": 0.37,
+          "teslaOffPeak": 0.34,
+          "nonTeslaPeak": 0.5,
+          "nonTeslaOffPeak": 0.46,
+          "peakHours": "09:00 - 21:00",
+          "source": "Tesla API FindUs (Officiel)",
+          "notes": "Relevé automatique temps réel officiel Tesla",
+          "changePercentage": 4.4
         }
       ],
       "locationId": "Nmes2Supercharger"
@@ -97391,6 +97466,81 @@
       "source": "Tesla API FindUs (Officiel)",
       "notes": "Relevé automatique temps réel officiel Tesla",
       "changePercentage": 6.3
+    },
+    {
+      "id": "4266-2026-09-28",
+      "superchargerId": "4266",
+      "superchargerName": "Croutelle, France",
+      "locationSlug": "croutellesupercharger",
+      "date": "2026-09-28",
+      "teslaPeak": 0.34,
+      "teslaOffPeak": 0.34,
+      "nonTeslaPeak": 0.45,
+      "nonTeslaOffPeak": 0.45,
+      "peakHours": "09:00 - 20:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": 6.3
+    },
+    {
+      "id": "8714-2026-09-28",
+      "superchargerId": "8714",
+      "superchargerName": "Dreux, France",
+      "locationSlug": "dreuxsupercharger",
+      "date": "2026-09-28",
+      "teslaPeak": 0.38,
+      "teslaOffPeak": 0.16,
+      "nonTeslaPeak": 0.53,
+      "nonTeslaOffPeak": 0.22,
+      "peakHours": "09:00 - 20:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": 3.8
+    },
+    {
+      "id": "9032-2026-09-28",
+      "superchargerId": "9032",
+      "superchargerName": "Montauban, France - Route De Saint-Martial",
+      "locationSlug": "montaubansupercharger",
+      "date": "2026-09-28",
+      "teslaPeak": 0.3,
+      "teslaOffPeak": 0.23,
+      "nonTeslaPeak": 0.42,
+      "nonTeslaOffPeak": 0.32,
+      "peakHours": "10:00 - 20:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": -18.5
+    },
+    {
+      "id": "6287-2026-09-28",
+      "superchargerId": "6287",
+      "superchargerName": "Albi, France",
+      "locationSlug": "lescuredalbigeoissupercharger",
+      "date": "2026-09-28",
+      "teslaPeak": 0.39,
+      "teslaOffPeak": 0.18,
+      "nonTeslaPeak": 0.53,
+      "nonTeslaOffPeak": 0.24,
+      "peakHours": "10:00 - 20:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": 5.6
+    },
+    {
+      "id": "5884-2026-09-28",
+      "superchargerId": "5884",
+      "superchargerName": "Nîmes, France - Rue Jean Lauret",
+      "locationSlug": "nmes2supercharger",
+      "date": "2026-09-28",
+      "teslaPeak": 0.37,
+      "teslaOffPeak": 0.34,
+      "nonTeslaPeak": 0.5,
+      "nonTeslaOffPeak": 0.46,
+      "peakHours": "09:00 - 21:00",
+      "source": "Tesla API FindUs (Officiel)",
+      "notes": "Relevé automatique temps réel officiel Tesla",
+      "changePercentage": 4.4
     }
   ],
   "nationalHistory": [
@@ -97515,5 +97665,5 @@
       "changePercentage": -5.2
     }
   ],
-  "lastSyncTime": "2026-09-25T08:24:27.646Z"
+  "lastSyncTime": "2026-09-28T08:23:13.436Z"
 }
