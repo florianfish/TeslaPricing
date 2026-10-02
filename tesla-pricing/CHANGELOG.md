@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.1
+
+- Nouvel onglet « Mises à jour » : derniers changements de tarif par station, avec l'ancien et le nouveau prix.
+
 ## 1.1.0
 
 - Import des tarifs Tesla collectés par l'extension navigateur (`POST /api/prices/import`), protégé par l'option `import_key`.
