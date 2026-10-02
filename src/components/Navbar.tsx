@@ -1,35 +1,18 @@
-import React, { useState } from 'react';
-import { Zap, MapPin, TrendingUp, RefreshCw, Calculator, Database, ExternalLink, Gift, History } from 'lucide-react';
+import React from 'react';
+import { Zap, MapPin, TrendingUp, Calculator, Database, ExternalLink, Gift, History } from 'lucide-react';
 import type { SuperchargerStats } from '../types';
 
 interface NavbarProps {
   activeTab: 'map' | 'list' | 'stats' | 'updates' | 'simulator';
   onTabChange: (tab: 'map' | 'list' | 'stats' | 'updates' | 'simulator') => void;
   stats: SuperchargerStats | null;
-  onSync: () => Promise<void>;
-  isSyncing: boolean;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   activeTab,
   onTabChange,
   stats,
-  onSync,
-  isSyncing,
 }) => {
-  const [syncNotice, setSyncNotice] = useState<string | null>(null);
-
-  const handleSyncClick = async () => {
-    try {
-      await onSync();
-      setSyncNotice('Base synchronisée avec succès !');
-      setTimeout(() => setSyncNotice(null), 3000);
-    } catch {
-      setSyncNotice('Erreur de synchronisation');
-      setTimeout(() => setSyncNotice(null), 3000);
-    }
-  };
-
   return (
     <header className="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -75,7 +58,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           )}
 
-          {/* Actions: Sync & Tab Switcher */}
+          {/* Actions */}
           <div className="flex items-center space-x-2">
             <a
               href="https://www.tesla.com/fr_Fr/referral/florian572745"
@@ -87,17 +70,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               <Gift className="w-3.5 h-3.5 text-red-400" />
               <span className="hidden sm:inline">1 000 km offerts</span>
             </a>
-
-            <button
-              id="sync-database-btn"
-              onClick={handleSyncClick}
-              disabled={isSyncing}
-              title="Synchroniser la base de données locale"
-              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-medium text-slate-200 transition-colors disabled:opacity-50"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 text-red-400 ${isSyncing ? 'animate-spin' : ''}`} />
-              <span className="hidden md:inline">Synchroniser BDD</span>
-            </button>
 
             <a
               href="https://www.tesla.com/fr_FR/findus/list/superchargers/France"
@@ -179,13 +151,6 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
         </div>
       </div>
-
-      {/* Sync toast notification */}
-      {syncNotice && (
-        <div className="bg-emerald-600 text-white text-xs font-semibold px-4 py-1.5 text-center animate-in fade-in slide-in-from-top">
-          {syncNotice}
-        </div>
-      )}
     </header>
   );
 };

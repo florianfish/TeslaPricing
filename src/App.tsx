@@ -8,7 +8,7 @@ import { CostSimulator } from './components/CostSimulator';
 import { PriceUpdatesView } from './components/PriceUpdatesView';
 import { StationDetailModal } from './components/StationDetailModal';
 import { ReferralEncart } from './components/ReferralEncart';
-import { AlertCircle, RefreshCw, Zap } from 'lucide-react';
+import { AlertCircle, Zap } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<'map' | 'list' | 'stats' | 'updates' | 'simulator'>('map');
@@ -16,7 +16,6 @@ export default function App() {
   const [stats, setStats] = useState<SuperchargerStats | null>(null);
   const [selectedCharger, setSelectedCharger] = useState<Supercharger | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isSyncing, setIsSyncing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Fetch all superchargers & stats
@@ -50,18 +49,6 @@ export default function App() {
     fetchData();
   }, [fetchData]);
 
-  // Sync handler
-  const handleSync = async () => {
-    setIsSyncing(true);
-    try {
-      const res = await fetch('api/sync', { method: 'POST' });
-      if (!res.ok) throw new Error('Erreur de synchronisation');
-      await fetchData();
-    } finally {
-      setIsSyncing(false);
-    }
-  };
-
   // View on map action
   const handleViewOnMap = (charger: Supercharger) => {
     setSelectedCharger(charger);
@@ -75,8 +62,6 @@ export default function App() {
         activeTab={activeTab}
         onTabChange={setActiveTab}
         stats={stats}
-        onSync={handleSync}
-        isSyncing={isSyncing}
       />
 
       {/* Main Container */}
