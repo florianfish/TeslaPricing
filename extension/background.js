@@ -5,16 +5,18 @@
 // ces fetch, ouvre directement chaque URL JSON dans l'onglet — puis envoie le relevé à
 // l'add-on Home Assistant (POST /api/prices/import).
 //
-// Le rythme (une requête toutes les 5 s) est tenu ici et non dans l'onglet : Chrome ralentit
-// fortement les minuteries des onglets en arrière-plan.
+// Le rythme (une requête toutes les N s, réglable) est tenu ici et non dans l'onglet : Chrome
+// ralentit fortement les minuteries des onglets en arrière-plan. Il est mesuré entre deux débuts
+// de requête (le temps de réponse compte dans le délai) et ralentit de lui-même sur HTTP 429.
 
 const TESLA_URL = 'https://www.tesla.com/fr_FR/findus';
-const INTERVAL_MS = 5000;
+const MAX_DELAY_MS = 30000;
 const CHECK_PERIOD_MIN = 60;
 const RETRY_AFTER_FAILURE_MS = 6 * 3600 * 1000;
 const STALE_RUN_MS = 2 * 3600 * 1000;
 const KEEP = ['effectivePricebooks', 'publicStallCount', 'maxPowerKw', 'openToNonTeslas'];
-const DEFAULTS = { haUrl: '', importKey: '', intervalDays: 7 };
+// mode : 'auto' (fetch puis navigation si Akamai refuse), 'fetch' ou 'json' (navigation directe)
+const DEFAULTS = { haUrl: '', importKey: '', intervalDays: 7, delaySec: 5, mode: 'auto' };
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -151,39 +153,71 @@ async function collect(trigger) {
   const results = {};
   let abortReason = null;
   let tabId = null;
-  // Fetch depuis la page d'abord ; bascule définitive en navigation si Akamai refuse le fetch
-  let mode = 'fetch';
+  const settings = await getSettings();
+  // En auto : fetch depuis la page d'abord, bascule définitive en navigation si Akamai refuse le fetch
+  const autoMode = settings.mode === 'auto';
+  let mode = settings.mode === 'json' ? 'navigation' : 'fetch';
+  let delayMs = Math.min(MAX_DELAY_MS, Math.max(1000, Number(settings.delaySec) * 1000 || 5000));
+
+  // Une requête au plus toutes les delayMs, comptées de début à début
+  let nextRequestAt = 0;
+  const pace = async () => {
+    const wait = nextRequestAt - Date.now();
+    if (wait > 0) await sleep(wait);
+    nextRequestAt = Date.now() + delayMs;
+  };
+
+  // Identifiant (locationId ou slug) qui a répondu lors des collectes précédentes : essayé en premier
+  const { knownCandidates = {} } = await chrome.storage.local.get('knownCandidates');
 
   try {
-    const { haUrl } = await getSettings();
-    const base = haUrl.replace(/\/+$/, '');
+    const base = settings.haUrl.replace(/\/+$/, '');
 
     const stationsRes = await fetch(`${base}/api/prices/collector-stations`);
     if (!stationsRes.ok) throw new Error(`Liste des stations indisponible (HTTP ${stationsRes.status})`);
     const stations = (await stationsRes.json()).data;
 
-    const tab = await chrome.tabs.create({ url: TESLA_URL, active: false });
+    // La page FindUs pose les cookies de session Akamai. Indispensable au fetch ; en mode JSON,
+    // les URL sont ouvertes directement et la page n'est chargée qu'en secours (refus 403).
+    const openFindUs = async () => {
+      const loaded = waitForTabComplete(tabId, 60000, false);
+      await chrome.tabs.update(tabId, { url: TESLA_URL });
+      await loaded;
+      await sleep(3000); // laisser la page poser ses cookies de session
+      warmedUp = true;
+    };
+    let warmedUp = false;
+    const tab = await chrome.tabs.create({ url: 'about:blank', active: false });
     tabId = tab.id;
     await waitForTabComplete(tabId);
-    await sleep(3000); // laisser la page poser ses cookies de session
+    if (mode === 'fetch') await openFindUs();
 
     let consecutive429 = 0;
     for (let i = 0; i < stations.length; i++) {
       const [id, locationId, slug] = stations[i];
       setBadge(String(Math.round((i / stations.length) * 100)), '#2563eb');
-      await saveProgress({ running: true, trigger, startedAt, index: i, total: stations.length, counts, mode });
+      await saveProgress({ running: true, trigger, startedAt, index: i, total: stations.length, counts, mode, delaySec: delayMs / 1000 });
 
       let r = { status: 404 };
-      for (const candidate of [locationId, slug].filter((v, k, a) => v && a.indexOf(v) === k)) {
+      const candidates = [knownCandidates[id], locationId, slug].filter((v, k, a) => v && a.indexOf(v) === k);
+      for (const candidate of candidates) {
+        await pace();
         try {
           r = mode === 'fetch' ? await queryByFetch(tabId, candidate) : await queryByNavigation(tabId, candidate);
         } catch (e) {
           throw new Error(`Onglet Tesla fermé ou inaccessible (${e.message})`);
         }
+        if (r.status === 200) knownCandidates[id] = candidate;
         if (r.status !== 404) break;
       }
 
-      if (r.status === 403 && mode === 'fetch' && counts.ok === 0) {
+      if (r.status === 403 && mode === 'navigation' && !warmedUp && counts.ok === 0) {
+        await openFindUs();
+        i--; // réessayer la même station avec les cookies de la page FindUs
+        continue;
+      }
+
+      if (r.status === 403 && autoMode && mode === 'fetch' && counts.ok === 0) {
         mode = 'navigation';
         i--; // réessayer la même station en navigation directe
         continue;
@@ -191,6 +225,8 @@ async function collect(trigger) {
 
       if (r.status === 429) {
         if (++consecutive429 >= 2) { abortReason = 'Double HTTP 429 (limite de requêtes Tesla)'; break; }
+        // Ralentir pour le reste de la collecte
+        delayMs = Math.min(MAX_DELAY_MS, delayMs * 2);
         await sleep(60000);
         i--; // réessayer la même station
         continue;
@@ -205,20 +241,19 @@ async function collect(trigger) {
 
       // Trop de refus d'affilée : la protection Akamai bloque la session
       if (counts.ok === 0 && counts.blocked >= 5) { abortReason = 'Accès refusé (403) par Tesla dès le début'; break; }
-
-      await sleep(INTERVAL_MS);
     }
   } catch (e) {
     abortReason = e.message;
   }
 
   if (tabId !== null) chrome.tabs.remove(tabId).catch(() => {});
+  await chrome.storage.local.set({ knownCandidates });
 
   // Envoyer ce qui a été collecté, même partiellement
   let imported = null;
   if (counts.ok > 0) {
     try {
-      const { haUrl, importKey } = await getSettings();
+      const { haUrl, importKey } = settings;
       const res = await fetch(`${haUrl.replace(/\/+$/, '')}/api/prices/import`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${importKey}` },
@@ -239,7 +274,7 @@ async function collect(trigger) {
   }
 
   const success = counts.ok > 0 && imported?.success;
-  const summary = { at: Date.now(), trigger, mode, durationSec: Math.round((Date.now() - startedAt) / 1000), counts, abortReason, imported };
+  const summary = { at: Date.now(), trigger, mode, delaySec: delayMs / 1000, durationSec: Math.round((Date.now() - startedAt) / 1000), counts, abortReason, imported };
   await chrome.storage.local.set({
     lastRun: summary,
     progress: { running: false },

@@ -1,4 +1,4 @@
-const FIELDS = { haUrl: '', importKey: '', intervalDays: 7 };
+const FIELDS = { haUrl: '', importKey: '', intervalDays: 7, delaySec: 5, mode: 'auto' };
 const $ = (id) => document.getElementById(id);
 const say = (text) => { $('message').textContent = text; };
 const fmtDate = (ms) => new Date(ms).toLocaleString('fr-FR');
@@ -7,6 +7,8 @@ const readForm = () => ({
   haUrl: $('haUrl').value.trim().replace(/\/+$/, ''),
   importKey: $('importKey').value.trim(),
   intervalDays: Math.max(1, Number($('intervalDays').value) || 7),
+  delaySec: Math.min(30, Math.max(1, Number($('delaySec').value) || 5)),
+  mode: $('mode').value,
 });
 
 // L'accès à l'adresse de l'add-on est demandé à l'utilisateur (permission optionnelle)
@@ -31,7 +33,7 @@ async function renderStatus() {
   const lines = [];
   if (progress?.running) {
     const c = progress.counts;
-    lines.push(`⏳ Collecte ${progress.trigger} en cours (mode ${progress.mode}) : ${progress.index + 1}/${progress.total}` +
+    lines.push(`⏳ Collecte ${progress.trigger} en cours (mode ${progress.mode}, ${progress.delaySec ?? '?'} s) : ${progress.index + 1}/${progress.total}` +
       ` — ✅ ${c.ok} · 404 ${c.notFound} · ⛔ ${c.blocked} · ⚠️ ${c.error}`);
   }
   if (lastRun) {

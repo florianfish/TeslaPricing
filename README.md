@@ -156,7 +156,7 @@ Ajoutez une ligne dans la crontab de votre VPS (`crontab -e`) pour récupérer l
 
 L'API Tesla FindUs est protégée par Akamai : les requêtes serveur (GitHub Actions, VPS, `curl`, Node) sont refusées (`403`), même via une IP résidentielle. Seul un vrai navigateur, depuis une connexion personnelle, obtient les tarifs. (L'API GraphQL de l'app mobile Tesla, testée en octobre 2026, n'est pas bloquée mais ne renvoie aucune donnée hors de l'app.)
 
-**Automatique — extension Chrome (`extension/`)** : à intervalle régulier (7 jours par défaut), l'extension ouvre un onglet `www.tesla.com` en arrière-plan, interroge l'API depuis la page — ou, si Akamai refuse ces requêtes, ouvre directement chaque URL JSON `get-charger-details` dans l'onglet (≈ 30 min, 5 s par station) et envoie le relevé à l'add-on Home Assistant.
+**Automatique — extension Chrome (`extension/`)** : à intervalle régulier (7 jours par défaut), l'extension ouvre un onglet `www.tesla.com` en arrière-plan, interroge l'API depuis la page — ou, si Akamai refuse ces requêtes, ouvre directement chaque URL JSON `get-charger-details` dans l'onglet (≈ 30 min avec le délai par défaut de 5 s par requête, réglable de 1 à 30 s ; le mode auto / fetch / JSON se choisit aussi dans les options) et envoie le relevé à l'add-on Home Assistant.
 
 1. Dans l'add-on, renseigner l'option **Clé d'import** et un port direct (onglet **Réseau**), puis redémarrer.
 2. Dans Chrome/Edge/Brave : `chrome://extensions` → **Mode développeur** → **Charger l'extension non empaquetée** → dossier `extension/`.
