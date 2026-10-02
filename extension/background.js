@@ -1,8 +1,9 @@
 // Collecteur de tarifs Tesla — service worker de l'extension.
 // L'API FindUs est protégée par Akamai : seul un vrai navigateur sur une IP résidentielle
 // obtient les tarifs. L'extension ouvre donc un onglet www.tesla.com en arrière-plan,
-// interroge l'API depuis la page (même origine, cookies du navigateur), puis envoie le
-// relevé à l'add-on Home Assistant (POST /api/prices/import).
+// interroge l'API depuis la page (même origine, cookies du navigateur) — ou, si Akamai refuse
+// ces fetch, ouvre directement chaque URL JSON dans l'onglet — puis envoie le relevé à
+// l'add-on Home Assistant (POST /api/prices/import).
 //
 // Le rythme (une requête toutes les 5 s) est tenu ici et non dans l'onglet : Chrome ralentit
 // fortement les minuteries des onglets en arrière-plan.
@@ -52,35 +53,72 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
 
 // --- Collecte ----------------------------------------------------------------
 
-// Exécutée dans la page www.tesla.com (monde MAIN) : mêmes requêtes que le site lui-même
-async function queryStation(id, keep) {
-  const url = `/api/findus/get-charger-details?locationSlug=${encodeURIComponent(id)}` +
-    '&programType=supercharger&locale=en-US&isInHkMoTw=false';
+const apiUrl = (id) =>
+  `https://www.tesla.com/api/findus/get-charger-details?locationSlug=${encodeURIComponent(id)}` +
+  '&programType=supercharger&locale=fr-FR&isInHkMoTw=false';
+
+// Ne garder que les champs utiles de la réponse FindUs
+function keepFields(json, keep) {
+  const data = json?.data?.data;
+  if (!data) return { status: 204 };
+  const kept = {};
+  for (const k of keep) if (k in data) kept[k] = data[k];
+  return { status: 200, data: kept };
+}
+
+// Mode « fetch » — exécuté dans la page www.tesla.com (monde MAIN), comme le site lui-même.
+// Fonction injectée : elle doit être autonome (pas d'eval possible avec la CSP de tesla.com).
+async function fetchInPage(url) {
   try {
     const res = await fetch(url, { headers: { Accept: 'application/json, text/plain, */*' }, credentials: 'include' });
     if (!res.ok) return { status: res.status };
-    const json = await res.json();
-    const data = json?.data?.data;
-    if (!data) return { status: 204 };
-    const kept = {};
-    for (const k of keep) if (k in data) kept[k] = data[k];
-    return { status: 200, data: kept };
+    return { status: 200, json: await res.json() };
   } catch (e) {
     return { status: 0, error: String((e && e.message) || e) };
   }
 }
 
-const queryInTab = async (tabId, id) => {
+const queryByFetch = async (tabId, id) => {
   const [injection] = await chrome.scripting.executeScript({
     target: { tabId },
     world: 'MAIN',
-    func: queryStation,
-    args: [id, KEEP],
+    func: fetchInPage,
+    args: [apiUrl(id)],
   });
-  return injection.result;
+  const r = injection.result;
+  return r.status === 200 ? keepFields(r.json, KEEP) : r;
 };
 
-const waitForTabComplete = (tabId, timeoutMs = 60000) =>
+// Mode « navigation » — l'onglet ouvre directement l'URL JSON, comme une visite manuelle.
+// Akamai accepte des navigations qu'il refuse parfois en fetch. Le code HTTP est lu via webRequest.
+const lastStatusByTab = new Map();
+chrome.webRequest.onCompleted.addListener(
+  (details) => { if (details.tabId >= 0) lastStatusByTab.set(details.tabId, details.statusCode); },
+  { urls: ['https://www.tesla.com/api/findus/*'], types: ['main_frame'] }
+);
+
+const readJsonDocument = () => {
+  const text = (document.querySelector('pre') || document.body)?.textContent || '';
+  try {
+    return { json: JSON.parse(text) };
+  } catch {
+    return { denied: /access denied/i.test(document.title + ' ' + text) };
+  }
+};
+
+const queryByNavigation = async (tabId, id) => {
+  lastStatusByTab.delete(tabId);
+  const loaded = waitForTabComplete(tabId, 60000, false);
+  await chrome.tabs.update(tabId, { url: apiUrl(id) });
+  await loaded;
+  const [injection] = await chrome.scripting.executeScript({ target: { tabId }, func: readJsonDocument });
+  const { json, denied } = injection.result || {};
+  const status = lastStatusByTab.get(tabId);
+  if (json && (status === undefined || status === 200)) return keepFields(json, KEEP);
+  return { status: status && status !== 200 ? status : denied ? 403 : 0 };
+};
+
+const waitForTabComplete = (tabId, timeoutMs = 60000, checkCurrent = true) =>
   new Promise((resolve, reject) => {
     const timer = setTimeout(() => {
       chrome.tabs.onUpdated.removeListener(onUpdated);
@@ -95,7 +133,9 @@ const waitForTabComplete = (tabId, timeoutMs = 60000) =>
     };
     chrome.tabs.onUpdated.addListener(onUpdated);
     // La page a pu finir de charger avant l'ajout de l'écouteur
-    chrome.tabs.get(tabId).then((tab) => tab.status === 'complete' && onUpdated(tabId, { status: 'complete' }), () => {});
+    if (checkCurrent) {
+      chrome.tabs.get(tabId).then((tab) => tab.status === 'complete' && onUpdated(tabId, { status: 'complete' }), () => {});
+    }
   });
 
 const saveProgress = (progress) => chrome.storage.local.set({ progress });
@@ -111,6 +151,8 @@ async function collect(trigger) {
   const results = {};
   let abortReason = null;
   let tabId = null;
+  // Fetch depuis la page d'abord ; bascule définitive en navigation si Akamai refuse le fetch
+  let mode = 'fetch';
 
   try {
     const { haUrl } = await getSettings();
@@ -129,16 +171,22 @@ async function collect(trigger) {
     for (let i = 0; i < stations.length; i++) {
       const [id, locationId, slug] = stations[i];
       setBadge(String(Math.round((i / stations.length) * 100)), '#2563eb');
-      await saveProgress({ running: true, trigger, startedAt, index: i, total: stations.length, counts });
+      await saveProgress({ running: true, trigger, startedAt, index: i, total: stations.length, counts, mode });
 
       let r = { status: 404 };
       for (const candidate of [locationId, slug].filter((v, k, a) => v && a.indexOf(v) === k)) {
         try {
-          r = await queryInTab(tabId, candidate);
+          r = mode === 'fetch' ? await queryByFetch(tabId, candidate) : await queryByNavigation(tabId, candidate);
         } catch (e) {
           throw new Error(`Onglet Tesla fermé ou inaccessible (${e.message})`);
         }
         if (r.status !== 404) break;
+      }
+
+      if (r.status === 403 && mode === 'fetch' && counts.ok === 0) {
+        mode = 'navigation';
+        i--; // réessayer la même station en navigation directe
+        continue;
       }
 
       if (r.status === 429) {
@@ -178,6 +226,7 @@ async function collect(trigger) {
           collectedAt: new Date(startedAt).toISOString(),
           durationSec: Math.round((Date.now() - startedAt) / 1000),
           abortReason,
+          mode,
           counts,
           results,
         }),
@@ -190,7 +239,7 @@ async function collect(trigger) {
   }
 
   const success = counts.ok > 0 && imported?.success;
-  const summary = { at: Date.now(), trigger, durationSec: Math.round((Date.now() - startedAt) / 1000), counts, abortReason, imported };
+  const summary = { at: Date.now(), trigger, mode, durationSec: Math.round((Date.now() - startedAt) / 1000), counts, abortReason, imported };
   await chrome.storage.local.set({
     lastRun: summary,
     progress: { running: false },

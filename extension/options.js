@@ -31,12 +31,12 @@ async function renderStatus() {
   const lines = [];
   if (progress?.running) {
     const c = progress.counts;
-    lines.push(`⏳ Collecte ${progress.trigger} en cours : ${progress.index + 1}/${progress.total}` +
+    lines.push(`⏳ Collecte ${progress.trigger} en cours (mode ${progress.mode}) : ${progress.index + 1}/${progress.total}` +
       ` — ✅ ${c.ok} · 404 ${c.notFound} · ⛔ ${c.blocked} · ⚠️ ${c.error}`);
   }
   if (lastRun) {
     const c = lastRun.counts;
-    lines.push(`Dernière collecte (${lastRun.trigger}) : ${fmtDate(lastRun.at)}, ${Math.round(lastRun.durationSec / 60)} min` +
+    lines.push(`Dernière collecte (${lastRun.trigger}, mode ${lastRun.mode || 'fetch'}) : ${fmtDate(lastRun.at)}, ${Math.round(lastRun.durationSec / 60)} min` +
       ` — ✅ ${c.ok} · 404 ${c.notFound} · ⛔ ${c.blocked} · ⚠️ ${c.error}`);
     if (lastRun.imported?.success) {
       lines.push(`Import Home Assistant : ${lastRun.imported.updated} tarif(s) modifié(s), ${lastRun.imported.confirmed} inchangé(s)`);
