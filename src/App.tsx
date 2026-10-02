@@ -178,6 +178,16 @@ export default function App() {
             </a>
             <span>•</span>
             <span>Tarifs en € TTC / kWh</span>
+            <span>•</span>
+            <a
+              href="https://github.com/florianfish/TeslaPricing/blob/main/tesla-pricing/CHANGELOG.md"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Version de l'add-on — notes de version"
+              className="hover:text-red-400 transition-colors font-mono"
+            >
+              v{__APP_VERSION__}
+            </a>
           </div>
         </div>
       </footer>

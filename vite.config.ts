@@ -1,10 +1,19 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
+import fs from 'fs';
 import path from 'path';
 import {defineConfig} from 'vite';
 
+// Version de l'add-on Home Assistant : l'image publiée est construite depuis ce même fichier
+const addonVersion =
+  fs.readFileSync(path.join(import.meta.dirname, 'tesla-pricing', 'config.yaml'), 'utf-8')
+    .match(/^version:\s*"?([^"\s]+)"?/m)?.[1] ?? 'dev';
+
 export default defineConfig(() => {
   return {
+    define: {
+      __APP_VERSION__: JSON.stringify(addonVersion),
+    },
     // Chemins relatifs : requis pour être servi sous un préfixe (Ingress Home Assistant)
     base: './',
     plugins: [react(), tailwindcss()],
