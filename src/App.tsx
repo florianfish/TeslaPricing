@@ -5,12 +5,13 @@ import { FranceMap } from './components/FranceMap';
 import { SuperchargerDirectory } from './components/SuperchargerDirectory';
 import { PriceEvolutionView } from './components/PriceEvolutionView';
 import { CostSimulator } from './components/CostSimulator';
+import { PriceUpdatesView } from './components/PriceUpdatesView';
 import { StationDetailModal } from './components/StationDetailModal';
 import { ReferralEncart } from './components/ReferralEncart';
 import { AlertCircle, RefreshCw, Zap } from 'lucide-react';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'map' | 'list' | 'stats' | 'simulator'>('map');
+  const [activeTab, setActiveTab] = useState<'map' | 'list' | 'stats' | 'updates' | 'simulator'>('map');
   const [superchargers, setSuperchargers] = useState<Supercharger[]>([]);
   const [stats, setStats] = useState<SuperchargerStats | null>(null);
   const [selectedCharger, setSelectedCharger] = useState<Supercharger | null>(null);
@@ -139,7 +140,15 @@ export default function App() {
               />
             )}
 
-            {/* View 4: Charging Cost Simulator */}
+            {/* View 4: Latest price updates */}
+            {activeTab === 'updates' && (
+              <PriceUpdatesView
+                superchargers={superchargers}
+                onSelectSupercharger={(charger) => setSelectedCharger(charger)}
+              />
+            )}
+
+            {/* View 5: Charging Cost Simulator */}
             {activeTab === 'simulator' && (
               <CostSimulator
                 stats={stats}

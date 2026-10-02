@@ -25,6 +25,14 @@ export interface PriceSnapshot {
   changePercentage?: number; // % variation vs previous snapshot
 }
 
+// Mise à jour de tarif : un relevé et les tarifs du relevé précédent de la même station
+export interface PriceUpdate {
+  snapshot: PriceSnapshot;
+  previous: Pick<PriceSnapshot, 'date' | 'teslaPeak' | 'teslaOffPeak' | 'nonTeslaPeak' | 'nonTeslaOffPeak' | 'peakHours'> | null;
+  city: string;
+  region: string;
+}
+
 export interface Supercharger {
   id: string;
   locationId?: string;       // Tesla internal locationId (e.g. "300313")

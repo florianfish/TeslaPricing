@@ -14,6 +14,7 @@ import {
   getImportKey,
   getCollectorStations,
   importCollectedPrices,
+  getRecentPriceUpdates,
 } from './server/db.js';
 
 async function startServer() {
@@ -147,6 +148,16 @@ async function startServer() {
         message: 'Relevé de prix enregistré avec succès en base de données',
         snapshot: result.snapshot,
       });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  // Dernières mises à jour de tarif (relevé + relevé précédent de la station)
+  app.get('/api/prices/updates', (req, res) => {
+    try {
+      const limit = Math.min(Math.max(Number(req.query.limit) || 200, 1), 1000);
+      res.json({ data: getRecentPriceUpdates(limit) });
     } catch (err: any) {
       res.status(500).json({ error: err.message });
     }

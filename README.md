@@ -21,6 +21,10 @@ Application web complète permettant de visualiser, répertorier, comparer et hi
   - Comparaison directe : Heures Pleines vs Heures Creuses, Propriétaires Tesla vs Autres Véhicules Électriques.
   - Historique individuel propre à chaque station.
 
+- **🕒 Mises à jour de tarif** :
+  - Liste chronologique des derniers changements de prix, station par station, avec l'ancien et le nouveau tarif (HC/HP, Tesla/non-Tesla).
+  - Filtres par station/ville/région et par sens (hausses / baisses).
+
 - **🔋 Simulateur de Coût de Recharge** :
   - Estimation du coût d'un plein ou d'un trajet selon la capacité de batterie (kWh) et le niveau de charge initial/cible.
   - Calcul comparatif en direct entre Tesla et véhicules non-Tesla (abonnement ou tarif standard).
@@ -152,7 +156,7 @@ Ajoutez une ligne dans la crontab de votre VPS (`crontab -e`) pour récupérer l
 
 L'API Tesla FindUs est protégée par Akamai : les requêtes serveur (GitHub Actions, VPS, `curl`, Node) sont refusées (`403`), même via une IP résidentielle. Seul un vrai navigateur, depuis une connexion personnelle, obtient les tarifs. (L'API GraphQL de l'app mobile Tesla, testée en octobre 2026, n'est pas bloquée mais ne renvoie aucune donnée hors de l'app.)
 
-**Automatique — extension Chrome (`extension/`)** : à intervalle régulier (7 jours par défaut), l'extension ouvre un onglet `www.tesla.com` en arrière-plan, interroge l'API depuis la page (≈ 30 min, 5 s par station) et envoie le relevé à l'add-on Home Assistant.
+**Automatique — extension Chrome (`extension/`)** : à intervalle régulier (7 jours par défaut), l'extension ouvre un onglet `www.tesla.com` en arrière-plan, interroge l'API depuis la page — ou, si Akamai refuse ces requêtes, ouvre directement chaque URL JSON `get-charger-details` dans l'onglet (≈ 30 min, 5 s par station) et envoie le relevé à l'add-on Home Assistant.
 
 1. Dans l'add-on, renseigner l'option **Clé d'import** et un port direct (onglet **Réseau**), puis redémarrer.
 2. Dans Chrome/Edge/Brave : `chrome://extensions` → **Mode développeur** → **Charger l'extension non empaquetée** → dossier `extension/`.
@@ -191,6 +195,7 @@ Les données sont persistées dans `/data` (variable `DATA_DIR`), donc incluses 
 | `GET` | `/api/superchargers/:slug/prices` | Historique complet des relevés de prix d'une station |
 | `POST` | `/api/superchargers/:slug/prices` | Ajout d'un nouveau relevé de tarif (persisté dans la base JSON) |
 | `GET` | `/api/prices/stats` | Statistiques globales nationales (moyennes HP/HC, station la moins chère, etc.) |
+| `GET` | `/api/prices/updates?limit=200` | Dernières mises à jour de tarif, avec le relevé précédent de chaque station |
 | `GET` | `/api/prices/collector-stations` | Stations à interroger par le collecteur (`[id, locationId, locationSlug]`) |
 | `POST` | `/api/prices/import` | Import d'un relevé du collecteur (en-tête `Authorization: Bearer <clé d'import>`) |
 | `POST` | `/api/sync` | Met à jour le timestamp de synchronisation de la base |
@@ -223,6 +228,7 @@ TeslaPricing/
         ├── SuperchargerDirectory.tsx# Répertoire, filtres et cartes de stations
         ├── PriceEvolutionView.tsx   # Graphiques et historique national des prix
         ├── CostSimulator.tsx        # Simulateur interactif de coût de recharge
+        ├── PriceUpdatesView.tsx     # Onglet « Mises à jour » : derniers changements de tarif par station
         └── StationDetailModal.tsx   # Modal de détail & formulaire d'ajout de relevé
 ```
 

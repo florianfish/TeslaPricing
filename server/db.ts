@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import type { Supercharger, PriceSnapshot, SuperchargerStats, SuperchargerPricing } from '../src/types.js';
+import type { Supercharger, PriceSnapshot, SuperchargerStats, SuperchargerPricing, PriceUpdate } from '../src/types.js';
 import { applyTeslaData } from '../scripts/lib/tesla-pricing.js';
 
 // Données livrées avec l'application (seed). DATA_DIR permet de persister ailleurs (ex: /data pour l'add-on Home Assistant)
@@ -535,6 +535,47 @@ export function getPriceHistoryForCharger(slugOrId: string): PriceSnapshot[] {
   return db.priceSnapshots.filter(
     p => p.superchargerId === charger.id || p.locationSlug === charger.locationSlug
   ).sort((a, b) => a.date.localeCompare(b.date));
+}
+
+// Dernières mises à jour de tarif, toutes stations confondues, avec le relevé précédent de chaque station
+export function getRecentPriceUpdates(limit = 200): PriceUpdate[] {
+  const db = initDatabase();
+  const stations = new Map(db.superchargers.map((s) => [s.id, s]));
+  const byStation = new Map<string, PriceSnapshot[]>();
+  for (const snap of db.priceSnapshots) {
+    if (!stations.has(snap.superchargerId)) continue;
+    const list = byStation.get(snap.superchargerId) || [];
+    list.push(snap);
+    byStation.set(snap.superchargerId, list);
+  }
+
+  const updates: PriceUpdate[] = [];
+  for (const [id, list] of byStation) {
+    list.sort((a, b) => a.date.localeCompare(b.date));
+    const station = stations.get(id)!;
+    list.forEach((snapshot, i) => {
+      const prev = list[i - 1];
+      updates.push({
+        snapshot,
+        previous: prev
+          ? {
+              date: prev.date,
+              teslaPeak: prev.teslaPeak,
+              teslaOffPeak: prev.teslaOffPeak,
+              nonTeslaPeak: prev.nonTeslaPeak,
+              nonTeslaOffPeak: prev.nonTeslaOffPeak,
+              peakHours: prev.peakHours,
+            }
+          : null,
+        city: station.city,
+        region: station.region,
+      });
+    });
+  }
+
+  return updates
+    .sort((a, b) => b.snapshot.date.localeCompare(a.snapshot.date) || a.snapshot.superchargerName.localeCompare(b.snapshot.superchargerName))
+    .slice(0, limit);
 }
 
 export function addPriceSnapshot(data: {

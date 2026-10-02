@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Zap, MapPin, TrendingUp, RefreshCw, Calculator, Database, ExternalLink, Gift } from 'lucide-react';
+import { Zap, MapPin, TrendingUp, RefreshCw, Calculator, Database, ExternalLink, Gift, History } from 'lucide-react';
 import type { SuperchargerStats } from '../types';
 
 interface NavbarProps {
-  activeTab: 'map' | 'list' | 'stats' | 'simulator';
-  onTabChange: (tab: 'map' | 'list' | 'stats' | 'simulator') => void;
+  activeTab: 'map' | 'list' | 'stats' | 'updates' | 'simulator';
+  onTabChange: (tab: 'map' | 'list' | 'stats' | 'updates' | 'simulator') => void;
   stats: SuperchargerStats | null;
   onSync: () => Promise<void>;
   isSyncing: boolean;
@@ -150,6 +150,19 @@ export const Navbar: React.FC<NavbarProps> = ({
           >
             <TrendingUp className="w-4 h-4" />
             <span>Évolution des Prix</span>
+          </button>
+
+          <button
+            id="tab-updates"
+            onClick={() => onTabChange('updates')}
+            className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
+              activeTab === 'updates'
+                ? 'bg-red-600 text-white shadow-md shadow-red-600/30'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+            }`}
+          >
+            <History className="w-4 h-4" />
+            <span>Mises à jour</span>
           </button>
 
           <button

@@ -51,7 +51,7 @@ Le projet adopte une architecture full-stack unifiée servie par un unique proce
 
 ### C. Frontend (`src/`)
 - Entrée : `src/main.tsx` montant `src/App.tsx`.
-- Gestion des onglets : Vue simple par état React (`activeTab: 'map' | 'list' | 'stats' | 'simulator'`).
+- Gestion des onglets : Vue simple par état React (`activeTab: 'map' | 'list' | 'stats' | 'updates' | 'simulator'`).
 - Style : **Tailwind CSS v4** via `@tailwindcss/vite` (imports dans `src/index.css`).
 - Graphiques : **Recharts** (nécessite `react-is`).
 - Carte : **Leaflet** avec tuiles libres sans clé API (ESRI Dark Gray Canvas, OpenStreetMap France et Satellite ESRI).
