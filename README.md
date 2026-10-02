@@ -161,6 +161,16 @@ L'API Tesla FindUs est protégée par Akamai : les requêtes serveur (GitHub Act
 
 ---
 
+## 🏠 Add-on Home Assistant
+
+Le dépôt est aussi un dépôt d'add-ons Home Assistant (`repository.yaml` + dossier `tesla-pricing/`). L'interface s'affiche dans la barre latérale de HA via Ingress.
+
+1. **Paramètres → Modules complémentaires → Boutique → ⋮ → Dépôts**, ajouter `https://github.com/florianfish/TeslaPricing`.
+2. Installer **Tesla Pricing** et le démarrer.
+3. Optionnel : définir un port d'accès direct dans l'onglet **Réseau** de l'add-on (désactivé par défaut).
+
+Les données sont persistées dans `/data` (variable `DATA_DIR`), donc incluses dans les sauvegardes HA. L'image (`amd64` / `aarch64`) est publiée sur GHCR par `.github/workflows/addon-image.yml` à chaque changement de `version` dans `tesla-pricing/config.yaml`. Voir [tesla-pricing/DOCS.md](tesla-pricing/DOCS.md).
+
 ## 📡 Documentation des Endpoints API
 
 | Méthode | Route | Description |

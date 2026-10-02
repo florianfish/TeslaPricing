@@ -24,8 +24,8 @@ export default function App() {
     setError(null);
     try {
       const [chargersRes, statsRes] = await Promise.all([
-        fetch('/api/superchargers'),
-        fetch('/api/prices/stats'),
+        fetch('api/superchargers'),
+        fetch('api/prices/stats'),
       ]);
 
       if (!chargersRes.ok || !statsRes.ok) {
@@ -53,7 +53,7 @@ export default function App() {
   const handleSync = async () => {
     setIsSyncing(true);
     try {
-      const res = await fetch('/api/sync', { method: 'POST' });
+      const res = await fetch('api/sync', { method: 'POST' });
       if (!res.ok) throw new Error('Erreur de synchronisation');
       await fetchData();
     } finally {

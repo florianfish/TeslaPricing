@@ -1,0 +1,2 @@
+network:
+  3000/tcp: Port de l'interface web pour un accès direct (laisser vide pour n'utiliser que la barre latérale Home Assistant)

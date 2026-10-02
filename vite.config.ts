@@ -5,6 +5,8 @@ import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
   return {
+    // Chemins relatifs : requis pour être servi sous un préfixe (Ingress Home Assistant)
+    base: './',
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {

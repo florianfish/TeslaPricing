@@ -15,7 +15,7 @@ interface CollectorFile {
   results: Record<string, { status: number; data?: any; error?: string }>;
 }
 
-const DB_FILE = path.join(process.cwd(), 'server', 'data', 'superchargers_db.json');
+const DB_FILE = path.join(process.env.DATA_DIR || path.join(process.cwd(), 'server', 'data'), 'superchargers_db.json');
 
 async function main() {
   const args = process.argv.slice(2);

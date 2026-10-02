@@ -1,0 +1,2 @@
+network:
+  3000/tcp: Web UI port for direct access (leave empty to only use the Home Assistant sidebar)

@@ -2,9 +2,12 @@ import fs from 'fs';
 import path from 'path';
 import type { Supercharger, PriceSnapshot, SuperchargerStats, SuperchargerPricing } from '../src/types.js';
 
-const DATA_DIR = path.join(process.cwd(), 'server', 'data');
+// Données livrées avec l'application (seed). DATA_DIR permet de persister ailleurs (ex: /data pour l'add-on Home Assistant)
+const SEED_DIR = path.join(process.cwd(), 'server', 'data');
+const DATA_DIR = process.env.DATA_DIR || SEED_DIR;
 const DB_FILE = path.join(DATA_DIR, 'superchargers_db.json');
-const RAW_FILE = path.join(DATA_DIR, 'france_sites_raw.json');
+const SEED_DB_FILE = path.join(SEED_DIR, 'superchargers_db.json');
+const RAW_FILE = path.join(SEED_DIR, 'france_sites_raw.json');
 const USER_CONTRIBUTIONS_FILE = path.join(DATA_DIR, 'user_contributions.json');
 
 interface DatabaseSchema {
@@ -314,6 +317,12 @@ export function initDatabase(forceReload = false): DatabaseSchema {
   if (dbInstance && !forceReload) return dbInstance;
 
   fs.mkdirSync(DATA_DIR, { recursive: true });
+
+  // Premier démarrage sur un dossier de données vide : repartir de la base livrée avec l'application
+  if (!fs.existsSync(DB_FILE) && DB_FILE !== SEED_DB_FILE && fs.existsSync(SEED_DB_FILE)) {
+    fs.copyFileSync(SEED_DB_FILE, DB_FILE);
+    console.log(`Base initialisée dans ${DATA_DIR} depuis la base livrée.`);
+  }
 
   if (fs.existsSync(DB_FILE)) {
     try {

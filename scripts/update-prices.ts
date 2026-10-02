@@ -4,7 +4,7 @@ import path from 'path';
 import type { Supercharger, SuperchargerPricing, PriceSnapshot } from '../src/types.js';
 import type { DatabaseSchema } from './lib/tesla-pricing.js';
 
-const DATA_DIR = path.join(process.cwd(), 'server', 'data');
+const DATA_DIR = process.env.DATA_DIR || path.join(process.cwd(), 'server', 'data');
 const DB_FILE = path.join(DATA_DIR, 'superchargers_db.json');
 
 // Clean slug generator

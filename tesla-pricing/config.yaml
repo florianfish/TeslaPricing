@@ -1,0 +1,24 @@
+name: Tesla Pricing
+version: "1.0.0"
+slug: tesla_pricing
+description: Observatoire des Superchargeurs Tesla en France (carte, tarifs, historique, simulateur)
+url: https://github.com/florianfish/TeslaPricing
+arch:
+  - amd64
+  - aarch64
+image: ghcr.io/florianfish/teslapricing-{arch}
+startup: application
+boot: auto
+init: false
+ingress: true
+ingress_port: 3000
+panel_icon: mdi:ev-station
+panel_title: Tesla Pricing
+# Accès direct optionnel hors Ingress : désactivé par défaut, port hôte réglable dans l'onglet « Réseau »
+ports:
+  3000/tcp: null
+ports_description:
+  3000/tcp: Interface web (accès direct sans passer par Home Assistant)
+environment:
+  DATA_DIR: /data
+watchdog: http://[HOST]:[PORT:3000]/api/health

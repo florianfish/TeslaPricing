@@ -43,7 +43,7 @@ export const StationDetailModal: React.FC<StationDetailModalProps> = ({
     setShowApiInspector(true);
     setApiLoading(true);
     try {
-      const res = await fetch(`/api/tesla/proxy-details?locationSlug=${encodeURIComponent(charger.locationSlug)}`);
+      const res = await fetch(`api/tesla/proxy-details?locationSlug=${encodeURIComponent(charger.locationSlug)}`);
       const data = await res.json();
       setApiResponse(data);
     } catch (err: any) {
