@@ -9,3 +9,5 @@ coverage/
 server/data/user_contributions.json
 collector.html
 tesla-prices-*.json
+.tesla_token
+tesla-probe-*.json

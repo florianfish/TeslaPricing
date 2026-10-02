@@ -1,2 +1,6 @@
 network:
   3000/tcp: Port de l'interface web pour un accès direct (laisser vide pour n'utiliser que la barre latérale Home Assistant)
+configuration:
+  import_key:
+    name: Clé d'import
+    description: Clé partagée avec l'extension navigateur « Collecteur Tesla » pour importer les tarifs. Laisser vide pour désactiver l'import.

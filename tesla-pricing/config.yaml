@@ -1,5 +1,5 @@
 name: Tesla Pricing
-version: "1.0.1"
+version: "1.1.0"
 slug: tesla_pricing
 description: Observatoire des Superchargeurs Tesla en France (carte, tarifs, historique, simulateur)
 url: https://github.com/florianfish/TeslaPricing
@@ -19,6 +19,11 @@ ports:
   3000/tcp: null
 ports_description:
   3000/tcp: Interface web (accès direct sans passer par Home Assistant)
+# Clé partagée avec l'extension navigateur pour importer les tarifs collectés (vide = import désactivé)
+options:
+  import_key: ""
+schema:
+  import_key: password?
 environment:
   DATA_DIR: /data
 watchdog: http://[HOST]:[PORT:3000]/api/health

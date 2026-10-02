@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.0
+
+- Import des tarifs Tesla collectés par l'extension navigateur (`POST /api/prices/import`), protégé par l'option `import_key`.
+
 ## 1.0.1
 
 - Écoute en IPv4 et IPv6 : le proxy Nginx de Home Assistant joint les add-ons en IPv6.

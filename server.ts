@@ -1,4 +1,5 @@
 import express from 'express';
+import crypto from 'crypto';
 import path from 'path';
 import { createServer as createViteServer } from 'vite';
 import {
@@ -10,6 +11,9 @@ import {
   addPriceSnapshot,
   getStats,
   saveDatabase,
+  getImportKey,
+  getCollectorStations,
+  importCollectedPrices,
 } from './server/db.js';
 
 async function startServer() {
@@ -145,6 +149,31 @@ async function startServer() {
       });
     } catch (err: any) {
       res.status(500).json({ error: err.message });
+    }
+  });
+
+  // Stations à interroger par le collecteur de tarifs (extension navigateur)
+  app.get('/api/prices/collector-stations', (req, res) => {
+    res.json({ data: getCollectorStations() });
+  });
+
+  // Import d'un relevé du collecteur, protégé par la clé d'import (Authorization: Bearer <clé>)
+  app.post('/api/prices/import', (req, res) => {
+    const key = getImportKey();
+    if (!key) {
+      return res.status(403).json({ error: "Import désactivé : définir la clé d'import (option import_key ou IMPORT_KEY)" });
+    }
+    const given = Buffer.from(String(req.headers.authorization || '').replace(/^Bearer\s+/i, ''));
+    const expected = Buffer.from(key);
+    if (given.length !== expected.length || !crypto.timingSafeEqual(given, expected)) {
+      return res.status(401).json({ error: "Clé d'import invalide" });
+    }
+    try {
+      const counts = importCollectedPrices(req.body);
+      console.log(`Relevé du collecteur importé (${req.body.collectedAt}) :`, counts);
+      res.json({ success: true, ...counts });
+    } catch (err: any) {
+      res.status(400).json({ error: err.message });
     }
   });
 

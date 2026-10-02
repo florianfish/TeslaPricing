@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import type { Supercharger, PriceSnapshot, SuperchargerStats, SuperchargerPricing } from '../src/types.js';
+import { applyTeslaData } from '../scripts/lib/tesla-pricing.js';
 
 // Données livrées avec l'application (seed). DATA_DIR permet de persister ailleurs (ex: /data pour l'add-on Home Assistant)
 const SEED_DIR = path.join(process.cwd(), 'server', 'data');
@@ -9,6 +10,8 @@ const DB_FILE = path.join(DATA_DIR, 'superchargers_db.json');
 const SEED_DB_FILE = path.join(SEED_DIR, 'superchargers_db.json');
 const RAW_FILE = path.join(SEED_DIR, 'france_sites_raw.json');
 const USER_CONTRIBUTIONS_FILE = path.join(DATA_DIR, 'user_contributions.json');
+// Options de l'add-on Home Assistant (écrites par le Supervisor)
+const ADDON_OPTIONS_FILE = path.join(DATA_DIR, 'options.json');
 
 interface DatabaseSchema {
   superchargers: Supercharger[];
@@ -590,6 +593,51 @@ export function addPriceSnapshot(data: {
   saveUserContribution(newSnapshot);
   saveDatabase(db);
   return { success: true, snapshot: newSnapshot };
+}
+
+// Clé d'import des relevés du collecteur : variable IMPORT_KEY, sinon option « import_key » de l'add-on
+export function getImportKey(): string {
+  if (process.env.IMPORT_KEY) return process.env.IMPORT_KEY;
+  try {
+    return String(JSON.parse(fs.readFileSync(ADDON_OPTIONS_FILE, 'utf-8')).import_key || '');
+  } catch {
+    return '';
+  }
+}
+
+// Stations à interroger par le collecteur : [id, locationId, locationSlug]
+export function getCollectorStations(): [string, string, string][] {
+  return initDatabase()
+    .superchargers.filter((s) => s.status === 'OPEN' && (s.locationId || s.locationSlug))
+    .map((s) => [s.id, s.locationId || '', s.locationSlug || '']);
+}
+
+// Importer un relevé du collecteur (extension navigateur ou favori) : { collectedAt, results: { [id]: { status, data } } }
+export function importCollectedPrices(payload: any): { updated: number; confirmed: number; skipped: number } {
+  if (!payload?.collectedAt || !payload?.results || typeof payload.results !== 'object') {
+    throw new Error('Relevé invalide : collectedAt et results sont requis');
+  }
+  const db = initDatabase();
+  const dateIso = String(payload.collectedAt).slice(0, 10);
+  const counts = { updated: 0, confirmed: 0, skipped: 0 };
+
+  for (const [id, result] of Object.entries<any>(payload.results)) {
+    const charger = db.superchargers.find((s) => s.id === id);
+    if (!charger || result?.status !== 200 || !result.data) {
+      counts.skipped++;
+      continue;
+    }
+    const { outcome } = applyTeslaData(db, charger, result.data, dateIso);
+    if (outcome === 'updated') counts.updated++;
+    else if (outcome === 'confirmed') counts.confirmed++;
+    else counts.skipped++;
+  }
+
+  if (counts.updated > 0) {
+    db.lastSyncTime = new Date().toISOString();
+    saveDatabase(db);
+  }
+  return counts;
 }
 
 // Recharger la base en mémoire (depuis superchargers_db.json + user_contributions.json)

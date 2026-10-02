@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "Collecteur Tesla Pricing",
+  "version": "1.0.0",
+  "description": "Collecte périodiquement les tarifs des Superchargeurs Tesla depuis le navigateur et les envoie à l'add-on Home Assistant Tesla Pricing.",
+  "permissions": ["alarms", "storage", "scripting"],
+  "host_permissions": ["https://www.tesla.com/*"],
+  "optional_host_permissions": ["http://*/*", "https://*/*"],
+  "background": { "service_worker": "background.js" },
+  "action": { "default_title": "Collecteur Tesla Pricing" },
+  "options_page": "options.html"
+}

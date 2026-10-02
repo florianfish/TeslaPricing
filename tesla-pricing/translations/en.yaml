@@ -1,2 +1,6 @@
 network:
   3000/tcp: Web UI port for direct access (leave empty to only use the Home Assistant sidebar)
+configuration:
+  import_key:
+    name: Import key
+    description: Key shared with the "Collecteur Tesla" browser extension to import prices. Leave empty to disable importing.

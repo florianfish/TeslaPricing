@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Collecteur Tesla Pricing</title>
+<style>
+  body { margin: 0; padding: 32px 16px; background: #020617; color: #e2e8f0; font: 14px/1.6 system-ui, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; }
+  h1 { color: #f87171; font-size: 20px; margin: 0 0 4px; }
+  h2 { font-size: 15px; margin: 28px 0 8px; }
+  .muted { color: #94a3b8; }
+  label { display: block; margin: 14px 0 4px; font-weight: 600; }
+  input { width: 100%; box-sizing: border-box; padding: 8px 10px; background: #0f172a; color: #e2e8f0; border: 1px solid #334155; border-radius: 8px; font: inherit; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 18px; }
+  button { background: #dc2626; color: #fff; border: 0; border-radius: 8px; padding: 8px 14px; font: inherit; font-weight: 600; cursor: pointer; }
+  button.secondary { background: #1e293b; border: 1px solid #334155; }
+  button:disabled { opacity: .5; cursor: default; }
+  #message, #status { margin-top: 14px; padding: 10px 12px; background: #0f172a; border: 1px solid #1e293b; border-radius: 8px; white-space: pre-line; }
+  #message:empty { display: none; }
+</style>
+</head>
+<body>
+<main>
+  <h1>⚡ Collecteur Tesla Pricing</h1>
+  <p class="muted">Collecte les tarifs des Superchargeurs depuis ce navigateur (un onglet tesla.com s'ouvre en arrière-plan
+    pendant ~30 min) et les envoie à l'add-on Home Assistant.</p>
+
+  <label for="haUrl">Adresse de l'add-on (port direct)</label>
+  <input id="haUrl" placeholder="http://homeassistant.local:3000">
+  <label for="importKey">Clé d'import (option « Clé d'import » de l'add-on)</label>
+  <input id="importKey" type="password">
+  <label for="intervalDays">Fréquence de collecte (jours)</label>
+  <input id="intervalDays" type="number" min="1" max="60">
+
+  <div class="row">
+    <button id="save">Enregistrer</button>
+    <button id="test" class="secondary">Tester la connexion</button>
+    <button id="collect" class="secondary">Collecter maintenant</button>
+  </div>
+  <div id="message"></div>
+
+  <h2>État</h2>
+  <div id="status">—</div>
+</main>
+<script src="options.js"></script>
+</body>
+</html>

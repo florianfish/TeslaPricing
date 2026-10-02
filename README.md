@@ -150,7 +150,17 @@ Ajoutez une ligne dans la crontab de votre VPS (`crontab -e`) pour récupérer l
 ```
 ### 6. Collecte des tarifs Tesla depuis le navigateur
 
-L'API Tesla FindUs est protégée par Akamai : les requêtes serveur (GitHub Actions, VPS, `curl`, Node) sont refusées (`403`), même via une IP résidentielle. Seul un vrai navigateur, depuis une connexion personnelle, obtient les tarifs. La collecte se fait donc manuellement :
+L'API Tesla FindUs est protégée par Akamai : les requêtes serveur (GitHub Actions, VPS, `curl`, Node) sont refusées (`403`), même via une IP résidentielle. Seul un vrai navigateur, depuis une connexion personnelle, obtient les tarifs. (L'API GraphQL de l'app mobile Tesla, testée en octobre 2026, n'est pas bloquée mais ne renvoie aucune donnée hors de l'app.)
+
+**Automatique — extension Chrome (`extension/`)** : à intervalle régulier (7 jours par défaut), l'extension ouvre un onglet `www.tesla.com` en arrière-plan, interroge l'API depuis la page (≈ 30 min, 5 s par station) et envoie le relevé à l'add-on Home Assistant.
+
+1. Dans l'add-on, renseigner l'option **Clé d'import** et un port direct (onglet **Réseau**), puis redémarrer.
+2. Dans Chrome/Edge/Brave : `chrome://extensions` → **Mode développeur** → **Charger l'extension non empaquetée** → dossier `extension/`.
+3. Cliquer sur l'icône de l'extension : saisir l'adresse de l'add-on (`http://<ip-home-assistant>:<port>`) et la clé, **Enregistrer**, **Tester la connexion**.
+
+Le navigateur doit être ouvert, depuis une connexion personnelle (pas via le VPN/proxy d'entreprise). Une collecte manquée est rattrapée dans l'heure qui suit l'ouverture du navigateur.
+
+**Manuel — favori** :
 
 1. `npm run collector` génère `collector.html` (favori + extrait console, avec la liste à jour des stations).
 2. Ouvrez `collector.html`, glissez le bouton dans vos favoris, puis cliquez dessus sur une page `https://www.tesla.com/fr_FR/findus` (≈ 25 min, 5 s par station).
@@ -181,6 +191,8 @@ Les données sont persistées dans `/data` (variable `DATA_DIR`), donc incluses 
 | `GET` | `/api/superchargers/:slug/prices` | Historique complet des relevés de prix d'une station |
 | `POST` | `/api/superchargers/:slug/prices` | Ajout d'un nouveau relevé de tarif (persisté dans la base JSON) |
 | `GET` | `/api/prices/stats` | Statistiques globales nationales (moyennes HP/HC, station la moins chère, etc.) |
+| `GET` | `/api/prices/collector-stations` | Stations à interroger par le collecteur (`[id, locationId, locationSlug]`) |
+| `POST` | `/api/prices/import` | Import d'un relevé du collecteur (en-tête `Authorization: Bearer <clé d'import>`) |
 | `POST` | `/api/sync` | Met à jour le timestamp de synchronisation de la base |
 | `GET` | `/api/tesla/proxy-details?locationSlug=:slug` | Relais vers l'API FindUs Tesla ou renvoi du miroir local |
 
