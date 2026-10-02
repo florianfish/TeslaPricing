@@ -201,6 +201,7 @@ Les données sont persistées dans `/data` (variable `DATA_DIR`), donc incluses 
 | `GET` | `/api/stations/events?limit=200` | Dernières évolutions de stations (nouvelles stations, changements de statut) |
 | `GET` | `/api/prices/collector-stations` | Stations à interroger par le collecteur (`[id, locationId, locationSlug]`) |
 | `POST` | `/api/prices/import` | Import d'un relevé du collecteur (en-tête `Authorization: Bearer <clé d'import>`) |
+| `POST` | `/api/prices/purge-history` | Purge l'historique des prix : un relevé par station (tarif actuel), sauvegarde préalable (en-tête `Authorization: Bearer <clé d'import>`). En local : `npm run purge-history` |
 | `POST` | `/api/sync` | Met à jour le timestamp de synchronisation de la base |
 | `GET` | `/api/tesla/proxy-details?locationSlug=:slug` | Relais vers l'API FindUs Tesla ou renvoi du miroir local |
 

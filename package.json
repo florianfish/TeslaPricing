@@ -12,7 +12,8 @@
     "lint": "tsc --noEmit",
     "update-prices": "tsx scripts/update-prices.ts",
     "collector": "tsx scripts/build-collector.ts",
-    "import-prices": "tsx scripts/import-prices.ts"
+    "import-prices": "tsx scripts/import-prices.ts",
+    "purge-history": "tsx scripts/purge-history.ts"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.1
+
+- Purge de l'historique des prix (`POST /api/prices/purge-history`, protégé par la clé d'import) : un relevé par station, sauvegarde préalable dans `/data`.
+
 ## 1.2.0
 
 - Synchronisation quotidienne des stations depuis supercharge.info (nouvelles stations, changements de statut, bornes), sans toucher aux tarifs.

@@ -14,6 +14,7 @@ import {
   getImportKey,
   getCollectorStations,
   importCollectedPrices,
+  purgeHistory,
   getRecentPriceUpdates,
   getStationEvents,
   syncStationsFromRegistry,
@@ -188,23 +189,43 @@ async function startServer() {
     res.json({ data: getCollectorStations() });
   });
 
-  // Import d'un relevé du collecteur, protégé par la clé d'import (Authorization: Bearer <clé>)
-  app.post('/api/prices/import', (req, res) => {
+  // Routes d'administration protégées par la clé d'import (Authorization: Bearer <clé>)
+  const checkImportKey = (req: express.Request, res: express.Response): boolean => {
     const key = getImportKey();
     if (!key) {
-      return res.status(403).json({ error: "Import désactivé : définir la clé d'import (option import_key ou IMPORT_KEY)" });
+      res.status(403).json({ error: "Import désactivé : définir la clé d'import (option import_key ou IMPORT_KEY)" });
+      return false;
     }
     const given = Buffer.from(String(req.headers.authorization || '').replace(/^Bearer\s+/i, ''));
     const expected = Buffer.from(key);
     if (given.length !== expected.length || !crypto.timingSafeEqual(given, expected)) {
-      return res.status(401).json({ error: "Clé d'import invalide" });
+      res.status(401).json({ error: "Clé d'import invalide" });
+      return false;
     }
+    return true;
+  };
+
+  // Import d'un relevé du collecteur
+  app.post('/api/prices/import', (req, res) => {
+    if (!checkImportKey(req, res)) return;
     try {
       const counts = importCollectedPrices(req.body);
       console.log(`Relevé du collecteur importé (${req.body.collectedAt}) :`, counts);
       res.json({ success: true, ...counts });
     } catch (err: any) {
       res.status(400).json({ error: err.message });
+    }
+  });
+
+  // Purge de l'historique des prix : un relevé par station (tarif actuel), sauvegarde préalable dans le dossier de données
+  app.post('/api/prices/purge-history', (req, res) => {
+    if (!checkImportKey(req, res)) return;
+    try {
+      const result = purgeHistory();
+      console.log('Historique des prix purgé :', result);
+      res.json({ success: true, ...result });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
     }
   });
 

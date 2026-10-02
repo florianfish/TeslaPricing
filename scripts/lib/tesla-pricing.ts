@@ -141,3 +141,37 @@ export function applyTeslaData(
 
   return { outcome: 'updated', changePercentage };
 }
+
+// Purger l'historique des prix : un seul relevé par station, reconstruit depuis son tarif actuel.
+// La courbe nationale (nationalHistory) n'est pas touchée.
+export function purgePriceHistory(db: DatabaseSchema): { stations: number; removed: number } {
+  const before = db.priceSnapshots.length;
+  const snapshots: PriceSnapshot[] = [];
+
+  for (const charger of db.superchargers) {
+    const latest = [...(charger.priceHistory || [])].sort((a, b) => a.date.localeCompare(b.date)).pop();
+    const p = charger.currentPricing;
+    const date = (p.lastUpdated || latest?.date || new Date().toISOString()).slice(0, 10);
+    const snapshot: PriceSnapshot = {
+      id: `${charger.id}-${date}`,
+      superchargerId: charger.id,
+      superchargerName: charger.name,
+      locationSlug: charger.locationSlug,
+      date,
+      teslaPeak: p.teslaPeak,
+      teslaOffPeak: p.teslaOffPeak,
+      nonTeslaPeak: p.nonTeslaPeak,
+      nonTeslaOffPeak: p.nonTeslaOffPeak,
+      peakHours: p.peakHours,
+      source: latest?.source || 'Tarif actuel',
+      notes: 'Historique purgé : tarif conservé',
+      changePercentage: 0,
+    };
+    charger.priceHistory = [snapshot];
+    snapshots.push(snapshot);
+  }
+
+  db.priceSnapshots = snapshots;
+  db.lastSyncTime = new Date().toISOString();
+  return { stations: snapshots.length, removed: before - snapshots.length };
+}

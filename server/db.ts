@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import type { Supercharger, PriceSnapshot, SuperchargerStats, SuperchargerPricing, PriceUpdate, StationEvent } from '../src/types.js';
-import { applyTeslaData, type DatabaseSchema } from '../scripts/lib/tesla-pricing.js';
+import { applyTeslaData, purgePriceHistory, type DatabaseSchema } from '../scripts/lib/tesla-pricing.js';
 import { fetchFrenchSites, applyRegistrySites, type StationSyncResult } from '../scripts/lib/station-sync.js';
 
 // Données livrées avec l'application (seed). DATA_DIR permet de persister ailleurs (ex: /data pour l'add-on Home Assistant)
@@ -693,6 +693,21 @@ export function importCollectedPrices(payload: any): { updated: number; confirme
     saveDatabase(db);
   }
   return counts;
+}
+
+// Purger l'historique des prix (un relevé par station, tarif actuel conservé), après sauvegarde.
+// Les relevés communautaires sont mis de côté avec la sauvegarde, sinon ils seraient ré-appliqués au chargement.
+export function purgeHistory(): { stations: number; removed: number; backup: string } {
+  const db = initDatabase();
+  const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const backup = path.join(DATA_DIR, `superchargers_db.backup-${stamp}.json`);
+  fs.copyFileSync(DB_FILE, backup);
+  if (fs.existsSync(USER_CONTRIBUTIONS_FILE)) {
+    fs.renameSync(USER_CONTRIBUTIONS_FILE, path.join(DATA_DIR, `user_contributions.backup-${stamp}.json`));
+  }
+  const counts = purgePriceHistory(db);
+  saveDatabase(db);
+  return { ...counts, backup: path.basename(backup) };
 }
 
 // Recharger la base en mémoire (depuis superchargers_db.json + user_contributions.json)

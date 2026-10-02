@@ -11,3 +11,4 @@ collector.html
 tesla-prices-*.json
 .tesla_token
 tesla-probe-*.json
+server/data/*.backup-*.json

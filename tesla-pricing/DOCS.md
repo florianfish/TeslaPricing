@@ -29,3 +29,13 @@ La base (`superchargers_db.json`) et les relevés saisis depuis l'interface (`us
 Au premier démarrage, la base livrée avec la version installée est copiée dans `/data`. Les mises à jour de l'add-on n'écrasent pas une base existante.
 
 La liste des stations (nouvelles stations, passages de « En travaux » à « Ouverte », nombre de bornes) est synchronisée depuis supercharge.info au démarrage puis chaque jour, sans toucher aux tarifs. Les évolutions apparaissent dans l'onglet « Mises à jour ».
+
+### Purger l'historique des prix
+
+Pour repartir d'un historique propre (un seul relevé par station, son tarif actuel), appeler depuis le réseau local :
+
+```bash
+curl -X POST -H "Authorization: Bearer <clé d'import>" http://<ip-home-assistant>:<port>/api/prices/purge-history
+```
+
+Une sauvegarde `superchargers_db.backup-<date>.json` est créée dans `/data` avant la purge. La courbe nationale depuis 2021 est conservée.
