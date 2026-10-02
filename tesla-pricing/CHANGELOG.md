@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.0
+
+- Synchronisation quotidienne des stations depuis supercharge.info (nouvelles stations, changements de statut, bornes), sans toucher aux tarifs.
+- Onglet « Mises à jour » : nouvelle section « Évolutions des stations ».
+- Retrait du bouton « Synchroniser BDD ».
+
 ## 1.1.1
 
 - Nouvel onglet « Mises à jour » : derniers changements de tarif par station, avec l'ancien et le nouveau prix.

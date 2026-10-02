@@ -27,3 +27,5 @@ Les tarifs Tesla sont collectés par l'extension Chrome « Collecteur Tesla Pric
 La base (`superchargers_db.json`) et les relevés saisis depuis l'interface (`user_contributions.json`) sont stockés dans le dossier persistant de l'add-on (`/data`). Ils sont conservés lors des mises à jour et inclus dans les sauvegardes Home Assistant.
 
 Au premier démarrage, la base livrée avec la version installée est copiée dans `/data`. Les mises à jour de l'add-on n'écrasent pas une base existante.
+
+La liste des stations (nouvelles stations, passages de « En travaux » à « Ouverte », nombre de bornes) est synchronisée depuis supercharge.info au démarrage puis chaque jour, sans toucher aux tarifs. Les évolutions apparaissent dans l'onglet « Mises à jour ».

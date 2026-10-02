@@ -1,9 +1,10 @@
-import type { Supercharger, SuperchargerPricing, PriceSnapshot } from '../../src/types.js';
+import type { Supercharger, SuperchargerPricing, PriceSnapshot, StationEvent } from '../../src/types.js';
 
 export interface DatabaseSchema {
   superchargers: Supercharger[];
   priceSnapshots: PriceSnapshot[];
   nationalHistory: PriceSnapshot[];
+  stationEvents?: StationEvent[];
   lastSyncTime: string;
 }
 

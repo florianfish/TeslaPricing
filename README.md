@@ -152,6 +152,8 @@ Ajoutez une ligne dans la crontab de votre VPS (`crontab -e`) pour récupérer l
 # Chaque nuit à 04:00 UTC : pull des nouveaux prix + rechargement en mémoire sans redémarrer le conteneur
 0 4 * * * cd /chemin/vers/TeslaPricing && git pull origin main && curl -s -X POST http://localhost:3000/api/sync
 ```
+
+**Base persistante séparée (`DATA_DIR`, add-on Home Assistant) :** le flux nocturne n'atteint pas cette base. Le serveur synchronise donc lui-même les stations depuis supercharge.info, 30 s après le démarrage puis toutes les 24 h (nouvelles stations, changements de statut, bornes ; les tarifs ne sont jamais modifiés). Activé par défaut dès que `DATA_DIR` est défini ; `STATION_SYNC=1` ou `STATION_SYNC=0` force le choix.
 ### 6. Collecte des tarifs Tesla depuis le navigateur
 
 L'API Tesla FindUs est protégée par Akamai : les requêtes serveur (GitHub Actions, VPS, `curl`, Node) sont refusées (`403`), même via une IP résidentielle. Seul un vrai navigateur, depuis une connexion personnelle, obtient les tarifs. (L'API GraphQL de l'app mobile Tesla, testée en octobre 2026, n'est pas bloquée mais ne renvoie aucune donnée hors de l'app.)
@@ -196,6 +198,7 @@ Les données sont persistées dans `/data` (variable `DATA_DIR`), donc incluses 
 | `POST` | `/api/superchargers/:slug/prices` | Ajout d'un nouveau relevé de tarif (persisté dans la base JSON) |
 | `GET` | `/api/prices/stats` | Statistiques globales nationales (moyennes HP/HC, station la moins chère, etc.) |
 | `GET` | `/api/prices/updates?limit=200` | Dernières mises à jour de tarif, avec le relevé précédent de chaque station |
+| `GET` | `/api/stations/events?limit=200` | Dernières évolutions de stations (nouvelles stations, changements de statut) |
 | `GET` | `/api/prices/collector-stations` | Stations à interroger par le collecteur (`[id, locationId, locationSlug]`) |
 | `POST` | `/api/prices/import` | Import d'un relevé du collecteur (en-tête `Authorization: Bearer <clé d'import>`) |
 | `POST` | `/api/sync` | Met à jour le timestamp de synchronisation de la base |

@@ -25,6 +25,18 @@ export interface PriceSnapshot {
   changePercentage?: number; // % variation vs previous snapshot
 }
 
+// Évolution d'une station dans le registre supercharge.info : nouvelle station ou changement de statut
+export interface StationEvent {
+  date: string;              // YYYY-MM-DD
+  type: 'NEW' | 'STATUS';
+  superchargerId: string;
+  superchargerName: string;
+  city: string;
+  region: string;
+  from?: Supercharger['status'];
+  to: Supercharger['status'];
+}
+
 // Mise à jour de tarif : un relevé et les tarifs du relevé précédent de la même station
 export interface PriceUpdate {
   snapshot: PriceSnapshot;

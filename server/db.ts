@@ -1,7 +1,8 @@
 import fs from 'fs';
 import path from 'path';
-import type { Supercharger, PriceSnapshot, SuperchargerStats, SuperchargerPricing, PriceUpdate } from '../src/types.js';
-import { applyTeslaData } from '../scripts/lib/tesla-pricing.js';
+import type { Supercharger, PriceSnapshot, SuperchargerStats, SuperchargerPricing, PriceUpdate, StationEvent } from '../src/types.js';
+import { applyTeslaData, type DatabaseSchema } from '../scripts/lib/tesla-pricing.js';
+import { fetchFrenchSites, applyRegistrySites, type StationSyncResult } from '../scripts/lib/station-sync.js';
 
 // Données livrées avec l'application (seed). DATA_DIR permet de persister ailleurs (ex: /data pour l'add-on Home Assistant)
 const SEED_DIR = path.join(process.cwd(), 'server', 'data');
@@ -12,13 +13,6 @@ const RAW_FILE = path.join(SEED_DIR, 'france_sites_raw.json');
 const USER_CONTRIBUTIONS_FILE = path.join(DATA_DIR, 'user_contributions.json');
 // Options de l'add-on Home Assistant (écrites par le Supervisor)
 const ADDON_OPTIONS_FILE = path.join(DATA_DIR, 'options.json');
-
-interface DatabaseSchema {
-  superchargers: Supercharger[];
-  priceSnapshots: PriceSnapshot[];
-  nationalHistory: PriceSnapshot[];
-  lastSyncTime: string;
-}
 
 let dbInstance: DatabaseSchema | null = null;
 
@@ -576,6 +570,26 @@ export function getRecentPriceUpdates(limit = 200): PriceUpdate[] {
   return updates
     .sort((a, b) => b.snapshot.date.localeCompare(a.snapshot.date) || a.snapshot.superchargerName.localeCompare(b.snapshot.superchargerName))
     .slice(0, limit);
+}
+
+// Dernières évolutions de stations (nouvelles stations, changements de statut), les plus récentes d'abord
+export function getStationEvents(limit = 200): StationEvent[] {
+  return (initDatabase().stationEvents || []).slice(0, limit);
+}
+
+// Synchroniser les stations depuis supercharge.info (statuts, nouvelles stations, bornes), sans toucher aux tarifs.
+// Sert aux installations à base persistante séparée (add-on Home Assistant), que le flux nocturne GitHub n'atteint pas.
+export const STATION_SYNC_ENABLED = process.env.STATION_SYNC
+  ? process.env.STATION_SYNC !== '0'
+  : DB_FILE !== SEED_DB_FILE;
+
+export async function syncStationsFromRegistry(): Promise<StationSyncResult> {
+  const sites = await fetchFrenchSites();
+  if (sites.length === 0) throw new Error('Registre supercharge.info vide');
+  const db = initDatabase();
+  const result = applyRegistrySites(db, sites);
+  if (result.created || result.statusChanged || result.updated) saveDatabase(db);
+  return result;
 }
 
 export function addPriceSnapshot(data: {

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { History, Search, TrendingUp, TrendingDown, AlertCircle } from 'lucide-react';
-import type { PriceUpdate, Supercharger } from '../types';
+import { History, Search, TrendingUp, TrendingDown, AlertCircle, MapPin } from 'lucide-react';
+import type { PriceUpdate, StationEvent, Supercharger } from '../types';
 
 interface PriceUpdatesViewProps {
   superchargers: Supercharger[];
@@ -11,6 +11,20 @@ type Direction = 'all' | 'up' | 'down';
 
 const formatDate = (iso: string) =>
   new Date(`${iso}T12:00:00`).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+const STATUS_LABELS: Record<Supercharger['status'], { label: string; className: string }> = {
+  OPEN: { label: 'Ouverte', className: 'bg-emerald-950/60 text-emerald-300 border-emerald-900/60' },
+  CONSTRUCTION: { label: 'En travaux', className: 'bg-amber-950/60 text-amber-300 border-amber-900/60' },
+  PLAN: { label: 'En projet', className: 'bg-slate-800 text-slate-300 border-slate-700' },
+};
+
+const StatusBadge: React.FC<{ status: Supercharger['status'] }> = ({ status }) => (
+  <span className={`px-2 py-0.5 rounded-md border text-[11px] font-semibold ${STATUS_LABELS[status].className}`}>
+    {STATUS_LABELS[status].label}
+  </span>
+);
+
+const EVENTS_PREVIEW = 8;
 
 // Prix actuel, avec l'ancien prix et le sens de variation s'il a changé
 const PriceCell: React.FC<{ value: number; previous?: number; accent: string }> = ({ value, previous, accent }) => {
@@ -33,6 +47,8 @@ export const PriceUpdatesView: React.FC<PriceUpdatesViewProps> = ({ supercharger
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [direction, setDirection] = useState<Direction>('all');
+  const [stationEvents, setStationEvents] = useState<StationEvent[]>([]);
+  const [showAllEvents, setShowAllEvents] = useState(false);
 
   useEffect(() => {
     fetch('api/prices/updates?limit=500')
@@ -43,7 +59,19 @@ export const PriceUpdatesView: React.FC<PriceUpdatesViewProps> = ({ supercharger
       .then((json) => setUpdates(json.data || []))
       .catch((err) => setError(err.message))
       .finally(() => setIsLoading(false));
+    fetch('api/stations/events?limit=200')
+      .then((res) => (res.ok ? res.json() : { data: [] }))
+      .then((json) => setStationEvents(json.data || []))
+      .catch(() => {});
   }, []);
+
+  const visibleEvents = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    const list = q
+      ? stationEvents.filter((e) => [e.superchargerName, e.city, e.region].some((v) => v?.toLowerCase().includes(q)))
+      : stationEvents;
+    return showAllEvents ? list : list.slice(0, EVENTS_PREVIEW);
+  }, [stationEvents, search, showAllEvents]);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -128,6 +156,61 @@ export const PriceUpdatesView: React.FC<PriceUpdatesViewProps> = ({ supercharger
           </div>
         </div>
       </div>
+
+      {visibleEvents.length > 0 && (
+        <div className="bg-slate-900 rounded-2xl border border-slate-800 shadow-xl overflow-hidden">
+          <div className="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-slate-800">
+            <h3 className="flex items-center space-x-2 text-sm font-bold text-white">
+              <MapPin className="w-4 h-4 text-red-400" />
+              <span>Évolutions des stations</span>
+            </h3>
+            <span className="text-xs text-slate-400">Nouvelles stations et changements de statut</span>
+          </div>
+          <ul className="divide-y divide-slate-800/60">
+            {visibleEvents.map((e) => (
+              <li
+                key={`${e.date}-${e.superchargerId}-${e.type}-${e.to}`}
+                className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-4 sm:px-6 py-3 text-xs"
+              >
+                <div>
+                  <button
+                    onClick={() => openStation(e.superchargerId)}
+                    className="font-semibold text-white hover:text-red-400 text-left transition-colors"
+                  >
+                    {e.superchargerName.replace(/, France/, '')}
+                  </button>
+                  <div className="text-[11px] text-slate-500">
+                    {[e.city, e.region].filter(Boolean).join(' · ')} · {new Date(`${e.date}T12:00:00`).toLocaleDateString('fr-FR')}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  {e.type === 'NEW' ? (
+                    <span className="px-2 py-0.5 rounded-md border text-[11px] font-semibold bg-red-950/60 text-red-300 border-red-900/60">
+                      Nouvelle
+                    </span>
+                  ) : (
+                    e.from && (
+                      <>
+                        <StatusBadge status={e.from} />
+                        <span className="text-slate-500">→</span>
+                      </>
+                    )
+                  )}
+                  <StatusBadge status={e.to} />
+                </div>
+              </li>
+            ))}
+          </ul>
+          {!showAllEvents && stationEvents.length > EVENTS_PREVIEW && (
+            <button
+              onClick={() => setShowAllEvents(true)}
+              className="w-full py-2 text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800/40 border-t border-slate-800 transition-colors"
+            >
+              Voir toutes les évolutions ({stationEvents.length})
+            </button>
+          )}
+        </div>
+      )}
 
       {error && (
         <div className="p-4 rounded-2xl bg-red-950/80 border border-red-800 text-red-200 flex items-center space-x-3">

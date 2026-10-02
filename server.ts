@@ -15,7 +15,21 @@ import {
   getCollectorStations,
   importCollectedPrices,
   getRecentPriceUpdates,
+  getStationEvents,
+  syncStationsFromRegistry,
+  STATION_SYNC_ENABLED,
 } from './server/db.js';
+
+const STATION_SYNC_INTERVAL_MS = 24 * 3600 * 1000;
+
+async function runStationSync() {
+  try {
+    const r = await syncStationsFromRegistry();
+    console.log(`Stations synchronisées (supercharge.info) : ${r.created} nouvelle(s), ${r.statusChanged} statut(s) modifié(s), ${r.updated} mise(s) à jour.`);
+  } catch (err: any) {
+    console.warn(`Synchronisation des stations impossible : ${err.message}`);
+  }
+}
 
 async function startServer() {
   const app = express();
@@ -163,6 +177,12 @@ async function startServer() {
     }
   });
 
+  // Dernières évolutions de stations (nouvelles stations, changements de statut)
+  app.get('/api/stations/events', (req, res) => {
+    const limit = Math.min(Math.max(Number(req.query.limit) || 200, 1), 1000);
+    res.json({ data: getStationEvents(limit) });
+  });
+
   // Stations à interroger par le collecteur de tarifs (extension navigateur)
   app.get('/api/prices/collector-stations', (req, res) => {
     res.json({ data: getCollectorStations() });
@@ -277,6 +297,12 @@ async function startServer() {
   app.listen(PORT, () => {
     console.log(`Serveur démarré sur http://0.0.0.0:${PORT}`);
   });
+
+  // Base persistante séparée (add-on Home Assistant) : stations synchronisées par le serveur lui-même
+  if (STATION_SYNC_ENABLED) {
+    setTimeout(runStationSync, 30000);
+    setInterval(runStationSync, STATION_SYNC_INTERVAL_MS);
+  }
 }
 
 startServer();
