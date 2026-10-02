@@ -233,7 +233,8 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
+  // Sans hôte explicite : IPv4 et IPv6 (le proxy Nginx de Home Assistant joint les add-ons en IPv6)
+  app.listen(PORT, () => {
     console.log(`Serveur démarré sur http://0.0.0.0:${PORT}`);
   });
 }
