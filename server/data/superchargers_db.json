@@ -4483,7 +4483,7 @@
       "postalCode": "63300",
       "latitude": 45.840863,
       "longitude": 3.511887,
-      "status": "PLAN",
+      "status": "CONSTRUCTION",
       "stallCount": 8,
       "powerKw": 250,
       "stallsBreakdown": {
@@ -5055,7 +5055,7 @@
       "postalCode": "76620",
       "latitude": 49.523316,
       "longitude": 0.104229,
-      "status": "PLAN",
+      "status": "CONSTRUCTION",
       "stallCount": 8,
       "powerKw": 250,
       "stallsBreakdown": {
@@ -7708,7 +7708,7 @@
       "longitude": 2.88053,
       "status": "OPEN",
       "stallCount": 8,
-      "powerKw": 500,
+      "powerKw": 430,
       "stallsBreakdown": {
         "v2": 0,
         "v3": 0,
@@ -17514,6 +17514,55 @@
           "changePercentage": 0
         }
       ]
+    },
+    {
+      "id": "12150",
+      "locationId": "30197",
+      "locationSlug": "villennessurseinesupercharger",
+      "name": "Villennes-sur-Seine, France",
+      "city": "Villennes-sur-Seine",
+      "department": "Dép. 78",
+      "region": "Île-de-France",
+      "street": "235 Rte d'Orgeval",
+      "postalCode": "78670",
+      "latitude": 48.933499,
+      "longitude": 1.992287,
+      "status": "PLAN",
+      "stallCount": 8,
+      "powerKw": 500,
+      "stallsBreakdown": {
+        "v2": 0,
+        "v3": 0,
+        "v4": 0
+      },
+      "otherEVs": true,
+      "currentPricing": {
+        "teslaPeak": 0.36,
+        "teslaOffPeak": 0.3,
+        "nonTeslaPeak": 0.49,
+        "nonTeslaOffPeak": 0.39,
+        "peakHours": "09:00 - 20:00",
+        "idleFeeStandard": 0.5,
+        "idleFeeCongested": 1,
+        "lastUpdated": "2026-10-04T09:12:17.895Z"
+      },
+      "priceHistory": [
+        {
+          "id": "12150-2026-10-04",
+          "superchargerId": "12150",
+          "superchargerName": "Villennes-sur-Seine, France",
+          "locationSlug": "villennessurseinesupercharger",
+          "date": "2026-10-04",
+          "teslaPeak": 0.36,
+          "teslaOffPeak": 0.3,
+          "nonTeslaPeak": 0.49,
+          "nonTeslaOffPeak": 0.39,
+          "peakHours": "09:00 - 20:00",
+          "source": "Nouveau référencement",
+          "notes": "Nouvelle station répertoriée",
+          "changePercentage": 0
+        }
+      ]
     }
   ],
   "priceSnapshots": [
@@ -22571,6 +22620,21 @@
       "source": "Nouveau référencement",
       "notes": "Historique purgé : tarif conservé",
       "changePercentage": 0
+    },
+    {
+      "id": "12150-2026-10-04",
+      "superchargerId": "12150",
+      "superchargerName": "Villennes-sur-Seine, France",
+      "locationSlug": "villennessurseinesupercharger",
+      "date": "2026-10-04",
+      "teslaPeak": 0.36,
+      "teslaOffPeak": 0.3,
+      "nonTeslaPeak": 0.49,
+      "nonTeslaOffPeak": 0.39,
+      "peakHours": "09:00 - 20:00",
+      "source": "Nouveau référencement",
+      "notes": "Nouvelle station répertoriée",
+      "changePercentage": 0
     }
   ],
   "nationalHistory": [
@@ -22695,5 +22759,36 @@
       "changePercentage": -5.2
     }
   ],
-  "lastSyncTime": "2026-10-02T15:51:27.101Z"
+  "lastSyncTime": "2026-10-04T09:12:17.895Z",
+  "stationEvents": [
+    {
+      "date": "2026-10-04",
+      "type": "STATUS",
+      "superchargerId": "10569",
+      "superchargerName": "Le Havre, France",
+      "city": "Le Havre",
+      "region": "Normandy",
+      "from": "PLAN",
+      "to": "CONSTRUCTION"
+    },
+    {
+      "date": "2026-10-04",
+      "type": "NEW",
+      "superchargerId": "12150",
+      "superchargerName": "Villennes-sur-Seine, France",
+      "city": "Villennes-sur-Seine",
+      "region": "Île-de-France",
+      "to": "PLAN"
+    },
+    {
+      "date": "2026-10-04",
+      "type": "STATUS",
+      "superchargerId": "10561",
+      "superchargerName": "Thiers, France",
+      "city": "Thiers",
+      "region": "Auvergne-Rhône-Alpes",
+      "from": "PLAN",
+      "to": "CONSTRUCTION"
+    }
+  ]
 }
