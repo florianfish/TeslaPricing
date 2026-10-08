@@ -9,6 +9,7 @@ import { PriceUpdatesView } from './components/PriceUpdatesView';
 import { StationDetailModal } from './components/StationDetailModal';
 import { ReferralEncart } from './components/ReferralEncart';
 import { CookieBanner } from './components/CookieBanner';
+import { ChangelogModal } from './components/ChangelogModal';
 import { AlertCircle, Zap } from 'lucide-react';
 import { trackTab, isAnalyticsConfigured, resetConsent, subscribeAnalytics } from './analytics';
 import { useRoute, navigate, routeHash, parseRoute, type Tab } from './router';
@@ -21,6 +22,7 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const analyticsConfigured = useSyncExternalStore(subscribeAnalytics, isAnalyticsConfigured);
   const geolocation = useGeolocation();
+  const [showChangelog, setShowChangelog] = useState(false);
 
   // Onglet et fiche station ouverte sont portés par l'URL (#/carte?station=rennessupercharger)
   const route = useRoute();
@@ -216,15 +218,13 @@ export default function App() {
             <span>•</span>
             <span>Tarifs en € TTC / kWh</span>
             <span>•</span>
-            <a
-              href="https://github.com/florianfish/TeslaPricing/blob/main/tesla-pricing/CHANGELOG.md"
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              onClick={() => setShowChangelog(true)}
               title="Version de l'add-on — notes de version"
               className="hover:text-red-400 transition-colors font-mono"
             >
               v{__APP_VERSION__}
-            </a>
+            </button>
             {analyticsConfigured && (
               <>
                 <span>•</span>
@@ -240,6 +240,8 @@ export default function App() {
           </div>
         </div>
       </footer>
+
+      {showChangelog && <ChangelogModal onClose={() => setShowChangelog(false)} />}
 
       <CookieBanner />
     </div>

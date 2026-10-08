@@ -1,5 +1,5 @@
 name: Tesla Pricing
-version: "1.4.1"
+version: "1.4.2"
 slug: tesla_pricing
 description: Observatoire des Superchargeurs Tesla en France (carte, tarifs, historique, simulateur)
 url: https://github.com/florianfish/TeslaPricing
