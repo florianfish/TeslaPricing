@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import type { Supercharger } from '../types';
+import { offPeakHours } from '../hours';
 import { Search, SlidersHorizontal, Zap, ArrowUpDown, ChevronRight, CheckCircle2, AlertCircle, Clock } from 'lucide-react';
 
 interface SuperchargerDirectoryProps {
@@ -386,6 +387,7 @@ export const SuperchargerDirectory: React.FC<SuperchargerDirectoryProps> = ({
                     <span className="flex items-center">
                       <Clock className="w-3 h-3 mr-1" />
                       HP : {charger.currentPricing.peakHours}
+                      {offPeakHours(charger.currentPricing.peakHours) && <> · HC : {offPeakHours(charger.currentPricing.peakHours)}</>}
                     </span>
                     <span>Non-Tesla : ~{charger.currentPricing.nonTeslaOffPeak.toFixed(2)} €</span>
                   </div>

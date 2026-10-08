@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { Supercharger } from '../types';
+import { offPeakHours } from '../hours';
 import {
   X,
   Zap,
@@ -224,6 +225,7 @@ export const StationDetailModal: React.FC<StationDetailModalProps> = ({
               <span className="text-[11px] text-slate-400 flex items-center">
                 <Clock className="w-3 h-3 mr-1" />
                 Heures pleines : {current.peakHours}
+                {offPeakHours(current.peakHours) && <> · Heures creuses : {offPeakHours(current.peakHours)}</>}
               </span>
             </div>
 

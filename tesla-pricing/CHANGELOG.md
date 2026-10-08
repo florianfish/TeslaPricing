@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.1
+
+- Affichage de la plage d'heures creuses (HC) à côté des heures pleines, dans la fiche station et dans « Liste & recherche ».
+
 ## 1.3.0
 
 - Google Analytics 4 facultatif : option `ga_measurement_id` (ou variable `GA_MEASUREMENT_ID`), une page vue par onglet consulté.
