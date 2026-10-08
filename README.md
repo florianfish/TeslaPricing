@@ -52,7 +52,6 @@ Application web complète permettant de visualiser, répertorier, comparer et hi
 - **Tailwind CSS v4** & **Lucide React** (icônes)
 - **Leaflet** & **React-Leaflet** (cartographie)
 - **Recharts** (visualisation de données graphiques)
-- **Framer Motion** (micro-animations fluides)
 
 ### Backend
 - **Node.js** & **Express**
