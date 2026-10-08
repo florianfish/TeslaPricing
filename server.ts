@@ -208,54 +208,6 @@ async function startServer() {
     }
   });
 
-  // Proxy / Direct Inspector for Tesla API get-charger-details
-  app.get('/api/tesla/proxy-details', async (req, res) => {
-    const slug = (req.query.locationSlug as string) || 'rennessupercharger';
-    const teslaUrl = `https://www.tesla.com/api/findus/get-charger-details?locationSlug=${encodeURIComponent(slug)}&programType=supercharger&locale=fr-FR&isInHkMoTw=false`;
-
-    const localStation = getSuperchargerBySlug(slug);
-
-    try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 3500);
-
-      const response = await fetch(teslaUrl, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
-          'Accept': 'application/json, text/plain, */*',
-          'Accept-Language': 'fr-FR,fr;q=0.9',
-          'Referer': `https://www.tesla.com/fr_FR/findus/location/supercharger/${slug}`,
-        },
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeout);
-
-      if (response.ok) {
-        const data = await response.json();
-        return res.json({
-          source: 'TESLA_LIVE_API',
-          teslaUrl,
-          data,
-        });
-      }
-    } catch (fetchErr) {
-      // Akamai / Bot protection blocked datacenter IP, fallback to local DB representation
-    }
-
-    // Fallback format matching Tesla details structure + DB enhanced data
-    return res.json({
-      source: 'LOCAL_DATABASE_MIRROR',
-      notice: 'L\'API directe de Tesla bloque les adresses IP hébergées via Akamai Edge. Les données sont servies fidèlement depuis votre base de données persistante.',
-      teslaUrl,
-      locationSlug: slug,
-      data: localStation || {
-        locationSlug: slug,
-        name: 'Superchargeur non trouvé dans la base',
-      },
-    });
-  });
-
   // --- VITE MIDDLEWARE ---
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({

@@ -5,6 +5,7 @@ Inventaire des évolutions possibles, établi le 2026-10-08 à partir de l'état
 ## ✅ Réalisé
 
 - **Nettoyage du gabarit AI Studio** (ex-1.4) : paquet renommé `tesla-pricing`, dépendances inutilisées (`@google/genai`, `undici`, `motion`, `autoprefixer`) et variables `GEMINI_API_KEY` / `APP_URL` retirées.
+- **Suppression du proxy FindUs** (ex-1.3) : route `/api/tesla/proxy-details` et bouton « Tester API FindUs » de la fiche (appel serveur toujours bloqué par Akamai).
 - **Suppression des relevés communautaires** (ex-1.2) : route `POST /api/superchargers/:slug/prices` et fichier `user_contributions.json`, le formulaire n'étant plus proposé.
 - **Suppression de `POST /api/sync`** (ex-1.1) : route non protégée et sans appelant.
 - **URLs partageables** (ex-2.1) : onglet, recherche, filtres et fiche station dans le fragment d'URL (`src/router.ts`).
@@ -24,7 +25,6 @@ Points relevés dans le code qu'il vaut mieux traiter avant d'ouvrir de nouvelle
 
 | # | Sujet | Constat | Proposition | Effort | Valeur |
 |---|---|---|---|---|---|
-| 1.3 | Retirer le proxy FindUs | `/api/tesla/proxy-details` appelle encore Tesla côté serveur, ce que l'`AGENTS.md` proscrit (bloqué par Akamai). | Le transformer en simple lecture du miroir local, ou le supprimer ; mettre à jour le README. | S | ⭐ |
 | 1.5 | Tests automatisés | Aucun test. La logique critique (`tesla-pricing.ts`, `station-sync.ts`, `importCollectedPrices`, `getStats`) est pure ou presque. | Vitest + quelques jeux de données figés ; exécution dans un workflow CI avec `npm run lint`. | M | ⭐⭐ |
 | 1.6 | Durcissement HTTP | Pas de compression, ni d'en-têtes de sécurité, ni de cache sur l'API. | `compression`, `helmet`, `Cache-Control` court + `ETag` sur `/api/superchargers` et `/api/prices/stats`. | S | ⭐⭐ |
 
@@ -108,7 +108,6 @@ Rappel : tout appel serveur à Tesla est bloqué par Akamai ; la collecte passe 
 
 ## 🎯 Proposition de priorisation
 
-1. **Sécurité d'abord** : 1.3 — rapide et limite les risques actuels.
 2. **Quick wins à forte valeur** : 2.2 (HC/HP maintenant), 4.1 (RSS), 5.2 (prix carburant réels).
 3. **Différenciants** : 7.3 (SEO, maintenant que les URLs sont partageables), 3.1 (heatmap), 4.2 (capteurs Home Assistant).
 4. **Chantiers de fond** : 1.5 (tests), 7.1 (SQLite), 3.5 (plages horaires structurées), 5.1 (planificateur de trajet).

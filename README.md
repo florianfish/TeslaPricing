@@ -39,8 +39,6 @@ Application web complète permettant de visualiser, répertorier, comparer et hi
   - Badge de fraîcheur (« Relevé il y a N j ») sur chaque station, dans la liste, la fiche et la carte.
   - Lien direct partageable vers chaque fiche (`#/carte?station=rennessupercharger`) ; le bouton Retour du navigateur referme la fiche.
 
-- **🔄 Proxy API Tesla FindUs** :
-  - Route d'interrogation de l'API officielle Tesla FindUs avec basculement automatique (*graceful fallback*) sur le miroir local en cas de blocage IP (Akamai Edge).
 
 ---
 
@@ -198,7 +196,6 @@ Les données sont persistées dans `/data` (variable `DATA_DIR`), donc incluses 
 | `GET` | `/api/prices/collector-stations` | Stations à interroger par le collecteur (`[id, locationId, locationSlug]`) |
 | `POST` | `/api/prices/import` | Import d'un relevé du collecteur (en-tête `Authorization: Bearer <clé d'import>`) |
 | `POST` | `/api/prices/purge-history` | Purge l'historique des prix : un relevé par station (tarif actuel), sauvegarde préalable (en-tête `Authorization: Bearer <clé d'import>`). En local : `npm run purge-history` |
-| `GET` | `/api/tesla/proxy-details?locationSlug=:slug` | Relais vers l'API FindUs Tesla ou renvoi du miroir local |
 
 ---
 

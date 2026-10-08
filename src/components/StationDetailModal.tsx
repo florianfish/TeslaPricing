@@ -11,7 +11,6 @@ import {
   Navigation,
   ExternalLink,
   TrendingUp,
-  Code2,
   Link2,
   Check,
 } from 'lucide-react';
@@ -34,10 +33,6 @@ export const StationDetailModal: React.FC<StationDetailModalProps> = ({
   charger,
   onClose,
 }) => {
-  // Live Tesla API Inspector state
-  const [showApiInspector, setShowApiInspector] = useState(false);
-  const [apiResponse, setApiResponse] = useState<any>(null);
-  const [apiLoading, setApiLoading] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
 
   if (!charger) return null;
@@ -63,20 +58,6 @@ export const StationDetailModal: React.FC<StationDetailModalProps> = ({
   const current = charger.currentPricing;
   const history = charger.priceHistory || [];
 
-  const handleOpenApiInspector = async () => {
-    setShowApiInspector(true);
-    setApiLoading(true);
-    try {
-      const res = await fetch(`api/tesla/proxy-details?locationSlug=${encodeURIComponent(charger.locationSlug)}`);
-      const data = await res.json();
-      setApiResponse(data);
-    } catch (err: any) {
-      setApiResponse({ error: err.message });
-    } finally {
-      setApiLoading(false);
-    }
-  };
-
   const chartData = history.map((item) => ({
     date: item.date,
     'Heures Creuses': item.teslaOffPeak,
@@ -87,7 +68,6 @@ export const StationDetailModal: React.FC<StationDetailModalProps> = ({
   }));
 
   const officialTeslaWebUrl = `https://www.tesla.com/fr_FR/findus/location/supercharger/${charger.locationSlug}`;
-  const officialTeslaApiUrl = `https://www.tesla.com/api/findus/get-charger-details?locationSlug=${charger.locationSlug}&programType=supercharger&locale=fr-FR&isInHkMoTw=false`;
   const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${charger.latitude},${charger.longitude}`;
 
   return (
@@ -206,48 +186,8 @@ export const StationDetailModal: React.FC<StationDetailModalProps> = ({
                 <ExternalLink className="w-3.5 h-3.5 text-red-400" />
                 <span>Page Tesla.com</span>
               </a>
-
-              <button
-                onClick={handleOpenApiInspector}
-                className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-red-950/80 hover:bg-red-900 border border-red-800/80 text-red-300 font-medium transition-colors"
-              >
-                <Code2 className="w-3.5 h-3.5" />
-                <span>Tester API FindUs</span>
-              </button>
             </div>
           </div>
-
-          {/* API Inspector Popup Panel */}
-          {showApiInspector && (
-            <div className="p-4 rounded-xl bg-slate-950 border border-red-900/60 space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <Code2 className="w-4 h-4 text-red-400" />
-                  <span className="text-xs font-bold text-white">
-                    Endpoint API Tesla : <code>get-charger-details</code>
-                  </span>
-                </div>
-                <button
-                  onClick={() => setShowApiInspector(false)}
-                  className="text-xs text-slate-400 hover:text-white"
-                >
-                  Fermer
-                </button>
-              </div>
-
-              <p className="text-[11px] text-slate-400">
-                Requête proxifiée vers : <span className="text-slate-300 font-mono break-all">{officialTeslaApiUrl}</span>
-              </p>
-
-              {apiLoading ? (
-                <div className="text-xs text-slate-400 py-4 text-center">Interrogation en cours...</div>
-              ) : (
-                <pre className="p-3 bg-slate-900 rounded-lg text-[11px] text-emerald-400 font-mono overflow-x-auto max-h-48 border border-slate-800">
-                  {JSON.stringify(apiResponse, null, 2)}
-                </pre>
-              )}
-            </div>
-          )}
 
           {/* Current Pricing Matrix */}
           <div className="bg-slate-950/70 rounded-2xl p-5 border border-slate-800 space-y-4">
