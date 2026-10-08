@@ -4951,7 +4951,7 @@
       "postalCode": "91310",
       "latitude": 48.652724,
       "longitude": 2.27399,
-      "status": "PLAN",
+      "status": "CONSTRUCTION",
       "stallCount": 8,
       "powerKw": 250,
       "stallsBreakdown": {
@@ -10935,7 +10935,7 @@
         "v4": 0,
         "accessible": 1
       },
-      "otherEVs": false,
+      "otherEVs": true,
       "facilityName": "Hôtel / Restauration / Services",
       "dateOpened": "2016-10-11",
       "currentPricing": {
@@ -22759,8 +22759,18 @@
       "changePercentage": -5.2
     }
   ],
-  "lastSyncTime": "2026-10-04T09:12:17.895Z",
+  "lastSyncTime": "2026-10-08T09:47:48.705Z",
   "stationEvents": [
+    {
+      "date": "2026-10-08",
+      "type": "STATUS",
+      "superchargerId": "10562",
+      "superchargerName": "Longpont-Sur-Orge, France",
+      "city": "Longpont-sur-Orge",
+      "region": "Île-de-France",
+      "from": "PLAN",
+      "to": "CONSTRUCTION"
+    },
     {
       "date": "2026-10-04",
       "type": "STATUS",
