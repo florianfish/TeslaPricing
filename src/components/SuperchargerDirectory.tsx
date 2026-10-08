@@ -1,28 +1,80 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import type { Supercharger } from '../types';
 import { offPeakHours } from '../hours';
-import { Search, SlidersHorizontal, Zap, ArrowUpDown, ChevronRight, CheckCircle2, AlertCircle, Clock } from 'lucide-react';
+import { stationFreshness, FRESHNESS_CLASSES } from '../freshness';
+import { distanceKm, formatDistance, type Geolocation } from '../geo';
+import { parseRoute, replaceParams } from '../router';
+import { Search, SlidersHorizontal, Zap, ArrowUpDown, ChevronRight, CheckCircle2, AlertCircle, Clock, LocateFixed, Loader2, Navigation } from 'lucide-react';
 
 interface SuperchargerDirectoryProps {
   superchargers: Supercharger[];
   onSelectSupercharger: (charger: Supercharger) => void;
   onViewOnMap: (charger: Supercharger) => void;
+  geolocation: Geolocation;
+}
+
+type StatusFilter = 'ALL' | 'OPEN' | 'CONSTRUCTION' | 'PLAN';
+type SortBy = 'price' | 'stalls' | 'power' | 'city' | 'name' | 'distance';
+
+const STATUS_FILTERS: StatusFilter[] = ['ALL', 'OPEN', 'CONSTRUCTION', 'PLAN'];
+const SORTS: SortBy[] = ['price', 'stalls', 'power', 'city', 'name', 'distance'];
+const MIN_POWERS = [0, 150, 250, 300];
+
+// Filtres lus dans l'URL (#/liste?q=rennes&tri=price) pour pouvoir partager une recherche
+function filtersFromUrl() {
+  const params = parseRoute(window.location.hash).params;
+  const status = (params.get('statut') || '').toUpperCase() as StatusFilter;
+  const sort = params.get('tri') as SortBy;
+  const power = Number(params.get('kw'));
+  return {
+    q: params.get('q') || '',
+    status: STATUS_FILTERS.includes(status) ? status : 'ALL',
+    ev: params.get('ev') === '1',
+    power: MIN_POWERS.includes(power) ? power : 0,
+    region: params.get('region') || 'ALL',
+    sort: SORTS.includes(sort) ? sort : 'city',
+    order: params.get('ordre') === 'desc' ? 'desc' : 'asc',
+    page: Math.max(1, Math.floor(Number(params.get('page'))) || 1),
+  } as const;
 }
 
 export const SuperchargerDirectory: React.FC<SuperchargerDirectoryProps> = ({
   superchargers,
   onSelectSupercharger,
   onViewOnMap,
+  geolocation,
 }) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'ALL' | 'OPEN' | 'CONSTRUCTION' | 'PLAN'>('ALL');
-  const [otherEVsOnly, setOtherEVsOnly] = useState(false);
-  const [minPower, setMinPower] = useState<number>(0);
-  const [selectedRegion, setSelectedRegion] = useState<string>('ALL');
-  const [sortBy, setSortBy] = useState<'price' | 'stalls' | 'power' | 'city' | 'name'>('city');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-  const [currentPage, setCurrentPage] = useState(1);
+  const [initial] = useState(filtersFromUrl);
+  const [searchTerm, setSearchTerm] = useState<string>(initial.q);
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>(initial.status);
+  const [otherEVsOnly, setOtherEVsOnly] = useState<boolean>(initial.ev);
+  const [minPower, setMinPower] = useState<number>(initial.power);
+  const [selectedRegion, setSelectedRegion] = useState<string>(initial.region);
+  const [sortBy, setSortBy] = useState<SortBy>(initial.sort);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>(initial.order);
+  const [currentPage, setCurrentPage] = useState<number>(initial.page);
   const pageSize = 18;
+  const { position, status: geoStatus, error: geoError, locate } = geolocation;
+
+  // Valeurs par défaut omises de l'URL
+  useEffect(() => {
+    replaceParams({
+      q: searchTerm.trim(),
+      region: selectedRegion !== 'ALL' ? selectedRegion : null,
+      statut: statusFilter !== 'ALL' ? statusFilter.toLowerCase() : null,
+      ev: otherEVsOnly ? '1' : null,
+      kw: minPower ? String(minPower) : null,
+      tri: sortBy !== 'city' ? sortBy : null,
+      ordre: sortOrder === 'desc' ? 'desc' : null,
+      page: currentPage > 1 ? String(currentPage) : null,
+    });
+  }, [searchTerm, selectedRegion, statusFilter, otherEVsOnly, minPower, sortBy, sortOrder, currentPage]);
+
+  const distances = useMemo(() => {
+    const map = new Map<string, number>();
+    if (position) superchargers.forEach((s) => map.set(s.id, distanceKm(position, s)));
+    return map;
+  }, [superchargers, position]);
 
   // Extract unique regions for dropdown
   const regions = useMemo(() => {
@@ -60,6 +112,9 @@ export const SuperchargerDirectory: React.FC<SuperchargerDirectoryProps> = ({
 
     const order = sortOrder === 'asc' ? 1 : -1;
     filtered.sort((a, b) => {
+      if (sortBy === 'distance' && distances.size) {
+        return (distances.get(a.id)! - distances.get(b.id)!) * order;
+      }
       if (sortBy === 'price') {
         return (a.currentPricing.teslaOffPeak - b.currentPricing.teslaOffPeak) * order;
       }
@@ -76,12 +131,18 @@ export const SuperchargerDirectory: React.FC<SuperchargerDirectoryProps> = ({
     });
 
     return filtered;
-  }, [superchargers, searchTerm, statusFilter, otherEVsOnly, minPower, selectedRegion, sortBy, sortOrder]);
+  }, [superchargers, searchTerm, statusFilter, otherEVsOnly, minPower, selectedRegion, sortBy, sortOrder, distances]);
 
   const totalPages = Math.ceil(filteredAndSorted.length / pageSize) || 1;
+
+  // Page lue dans l'URL hors limites (ex: après le chargement des stations)
+  useEffect(() => {
+    if (superchargers.length && currentPage > totalPages) setCurrentPage(totalPages);
+  }, [superchargers.length, currentPage, totalPages]);
   const paginatedList = filteredAndSorted.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
-  const toggleSort = (newSort: 'price' | 'stalls' | 'power' | 'city' | 'name') => {
+  const toggleSort = (newSort: SortBy) => {
+    if (newSort === 'distance' && !position) locate();
     if (sortBy === newSort) {
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
     } else {
@@ -261,6 +322,21 @@ export const SuperchargerDirectory: React.FC<SuperchargerDirectoryProps> = ({
             >
               Puissance {sortBy === 'power' ? (sortOrder === 'asc' ? '↑' : '↓') : ''}
             </button>
+            <button
+              onClick={() => toggleSort('distance')}
+              disabled={geoStatus === 'locating'}
+              title="Trier par distance depuis votre position"
+              className={`flex items-center px-2.5 py-1 rounded-md font-medium ${
+                sortBy === 'distance' ? 'bg-red-600 text-white' : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              {geoStatus === 'locating' ? (
+                <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+              ) : (
+                <LocateFixed className="w-3 h-3 mr-1" />
+              )}
+              Distance {sortBy === 'distance' ? (sortOrder === 'asc' ? '↑' : '↓') : ''}
+            </button>
           </div>
         </div>
       </div>
@@ -276,12 +352,29 @@ export const SuperchargerDirectory: React.FC<SuperchargerDirectoryProps> = ({
         </span>
       </div>
 
+      {sortBy === 'distance' && !position && (
+        <div className="flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-400">
+          <span>{geoError || 'Partagez votre position pour trier les stations par distance (elle reste dans votre navigateur).'}</span>
+          {geoStatus !== 'locating' && (
+            <button
+              onClick={locate}
+              className="shrink-0 flex items-center px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold border border-slate-700"
+            >
+              <LocateFixed className="w-3.5 h-3.5 mr-1" />
+              Me localiser
+            </button>
+          )}
+        </div>
+      )}
+
       {/* Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {paginatedList.map((charger) => {
           const isOpen = charger.status === 'OPEN';
           const priceOffPeak = charger.currentPricing.teslaOffPeak;
           const pricePeak = charger.currentPricing.teslaPeak;
+          const freshness = stationFreshness(charger);
+          const distance = distances.get(charger.id);
 
           return (
             <div
@@ -350,6 +443,12 @@ export const SuperchargerDirectory: React.FC<SuperchargerDirectoryProps> = ({
                       V2
                     </span>
                   )}
+                  {distance !== undefined && (
+                    <span className="flex items-center px-2 py-0.5 rounded-md bg-blue-950/70 text-blue-300 font-semibold border border-blue-800/50">
+                      <Navigation className="w-3 h-3 mr-1" />
+                      {formatDistance(distance)}
+                    </span>
+                  )}
                   {charger.otherEVs ? (
                     <span className="px-2 py-0.5 rounded-md bg-emerald-950/70 text-emerald-300 font-semibold border border-emerald-800/50">
                       Tous VE
@@ -390,6 +489,12 @@ export const SuperchargerDirectory: React.FC<SuperchargerDirectoryProps> = ({
                       {offPeakHours(charger.currentPricing.peakHours) && <> · HC : {offPeakHours(charger.currentPricing.peakHours)}</>}
                     </span>
                     <span>Non-Tesla : ~{charger.currentPricing.nonTeslaOffPeak.toFixed(2)} €</span>
+                  </div>
+
+                  <div className="flex justify-end">
+                    <span className={`px-2 py-0.5 rounded-md border text-[10px] font-semibold ${FRESHNESS_CLASSES[freshness.level]}`}>
+                      {freshness.label}
+                    </span>
                   </div>
                 </div>
               </div>

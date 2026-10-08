@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import type { Supercharger } from '../types';
 import { offPeakHours } from '../hours';
+import { stationFreshness, FRESHNESS_CLASSES } from '../freshness';
+import { isShareableLocation } from '../router';
 import {
   X,
   Zap,
@@ -10,6 +12,8 @@ import {
   ExternalLink,
   TrendingUp,
   Code2,
+  Link2,
+  Check,
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -34,8 +38,27 @@ export const StationDetailModal: React.FC<StationDetailModalProps> = ({
   const [showApiInspector, setShowApiInspector] = useState(false);
   const [apiResponse, setApiResponse] = useState<any>(null);
   const [apiLoading, setApiLoading] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
 
   if (!charger) return null;
+
+  const freshness = stationFreshness(charger);
+
+  // L'URL courante pointe déjà sur la fiche (#/onglet?station=slug)
+  const handleShare = async () => {
+    const url = window.location.href;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: `Superchargeur ${charger.city}`, url });
+        return;
+      }
+      await navigator.clipboard.writeText(url);
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2000);
+    } catch {
+      // Partage annulé par l'utilisateur ou presse-papiers indisponible
+    }
+  };
 
   const current = charger.currentPricing;
   const history = charger.priceHistory || [];
@@ -152,7 +175,18 @@ export const StationDetailModal: React.FC<StationDetailModalProps> = ({
               </code>
             </div>
 
-            <div className="flex items-center space-x-2">
+            <div className="flex flex-wrap items-center gap-2">
+              {isShareableLocation() && (
+                <button
+                  onClick={handleShare}
+                  title="Copier le lien vers cette fiche"
+                  className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
+                >
+                  {linkCopied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Link2 className="w-3.5 h-3.5 text-slate-400" />}
+                  <span>{linkCopied ? 'Lien copié' : 'Partager'}</span>
+                </button>
+              )}
+
               <a
                 href={googleMapsUrl}
                 target="_blank"
@@ -221,6 +255,12 @@ export const StationDetailModal: React.FC<StationDetailModalProps> = ({
               <h4 className="font-bold text-sm text-white flex items-center">
                 <Zap className="w-4 h-4 mr-1.5 text-yellow-400 fill-yellow-400" />
                 Grille tarifaire actuelle en vigueur
+                <span
+                  title="Date du dernier passage du collecteur sur cette station, que le tarif ait changé ou non"
+                  className={`ml-2 px-2 py-0.5 rounded-md border text-[10px] font-semibold ${FRESHNESS_CLASSES[freshness.level]}`}
+                >
+                  {freshness.label}
+                </span>
               </h4>
               <span className="text-[11px] text-slate-400 flex items-center">
                 <Clock className="w-3 h-3 mr-1" />

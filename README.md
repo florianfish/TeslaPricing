@@ -10,11 +10,13 @@ Application web complète permettant de visualiser, répertorier, comparer et hi
   - Visualisation des 330+ stations réparties en France (ouvertes, en construction, en projet).
   - Filtrage par puissance (V2 150kW, V3 250kW, V4), ouverture aux véhicules non-Tesla (CCS) et région.
   - Marqueurs stylisés et popups détaillés avec accès instantané aux tarifs.
+  - Bouton « Autour de moi » : position de l'utilisateur et les 5 superchargeurs les plus proches avec leurs tarifs (la position reste dans le navigateur).
 
 - **📋 Répertoire & Recherche Avancée** :
   - Recherche instantanée par ville, nom de station ou code postal.
   - Filtres multicritères (ouvert à tous, puissance mini, statut).
-  - Tri par tarif (€/kWh le moins cher), nombre de stèles, puissance ou nom.
+  - Tri par tarif (€/kWh le moins cher), nombre de stèles, puissance, nom ou distance depuis votre position.
+  - Recherche et filtres conservés dans l'URL : un lien partagé rouvre la même recherche.
 
 - **📈 Historique & Évolution des Prix** :
   - Graphiques d'évolution des tarifs nationaux depuis 2021 jusqu'à aujourd'hui (crise de l'énergie 2022, baisses successives, tarification dynamique).
@@ -24,6 +26,7 @@ Application web complète permettant de visualiser, répertorier, comparer et hi
 - **🕒 Mises à jour de tarif** :
   - Liste chronologique des derniers changements de prix, station par station, avec l'ancien et le nouveau tarif (HC/HP, Tesla/non-Tesla).
   - Filtres par station/ville/région et par sens (hausses / baisses).
+  - État de la collecte : dernier relevé reçu de l'extension (alerte au-delà de 10 jours), ancienneté des tarifs par station et liste des stations à revérifier.
 
 - **🔋 Simulateur de Coût de Recharge** :
   - Estimation du coût d'un plein ou d'un trajet selon la capacité de batterie (kWh) et le niveau de charge initial/cible.
@@ -33,6 +36,8 @@ Application web complète permettant de visualiser, répertorier, comparer et hi
 - **📊 Consultation & Fiche Détaillée des Stations** :
   - Modal d'informations complètes par station (adresses, stèles, puissance, frais d'inactivité, graphique Recharts).
   - Tarifs actualisés automatiquement de manière centralisée (automatisation nocturne et synchronisation BDD).
+  - Badge de fraîcheur (« Relevé il y a N j ») sur chaque station, dans la liste, la fiche et la carte.
+  - Lien direct partageable vers chaque fiche (`#/carte?station=rennessupercharger`) ; le bouton Retour du navigateur referme la fiche.
 
 - **🔄 Proxy API Tesla FindUs** :
   - Route d'interrogation de l'API officielle Tesla FindUs avec basculement automatique (*graceful fallback*) sur le miroir local en cas de blocage IP (Akamai Edge).
@@ -193,6 +198,7 @@ Les données sont persistées dans `/data` (variable `DATA_DIR`), donc incluses 
 | `GET` | `/api/prices/stats` | Statistiques globales nationales (moyennes HP/HC, station la moins chère, etc.) |
 | `GET` | `/api/prices/updates?limit=200` | Dernières mises à jour de tarif, avec le relevé précédent de chaque station |
 | `GET` | `/api/stations/events?limit=200` | Dernières évolutions de stations (nouvelles stations, changements de statut) |
+| `GET` | `/api/prices/collection-status` | État de la collecte : derniers imports, ancienneté des tarifs des stations ouvertes, stations à revérifier |
 | `GET` | `/api/prices/collector-stations` | Stations à interroger par le collecteur (`[id, locationId, locationSlug]`) |
 | `POST` | `/api/prices/import` | Import d'un relevé du collecteur (en-tête `Authorization: Bearer <clé d'import>`) |
 | `POST` | `/api/prices/purge-history` | Purge l'historique des prix : un relevé par station (tarif actuel), sauvegarde préalable (en-tête `Authorization: Bearer <clé d'import>`). En local : `npm run purge-history` |
@@ -226,6 +232,7 @@ TeslaPricing/
         ├── PriceEvolutionView.tsx   # Graphiques et historique national des prix
         ├── CostSimulator.tsx        # Simulateur interactif de coût de recharge
         ├── PriceUpdatesView.tsx     # Onglet « Mises à jour » : derniers changements de tarif par station
+        ├── CollectionStatusPanel.tsx# État de la collecte des tarifs (onglet « Mises à jour »)
         └── StationDetailModal.tsx   # Modal de détail & formulaire d'ajout de relevé
 ```
 

@@ -1,7 +1,8 @@
 import fs from 'fs';
 import path from 'path';
-import type { Supercharger, PriceSnapshot, SuperchargerStats, SuperchargerPricing, PriceUpdate, StationEvent } from '../src/types.js';
-import { applyTeslaData, purgePriceHistory, type DatabaseSchema } from '../scripts/lib/tesla-pricing.js';
+import type { Supercharger, PriceSnapshot, SuperchargerStats, SuperchargerPricing, PriceUpdate, StationEvent, CollectionStatus } from '../src/types.js';
+import { applyTeslaData, purgePriceHistory, logImport, type DatabaseSchema } from '../scripts/lib/tesla-pricing.js';
+import { lastCheckedDate, daysSince, freshnessLevel, COLLECTION_ALERT_DAYS, STALE_DAYS } from '../src/freshness.js';
 import { fetchFrenchSites, applyRegistrySites, type StationSyncResult } from '../scripts/lib/station-sync.js';
 
 // Données livrées avec l'application (seed). DATA_DIR permet de persister ailleurs (ex: /data pour l'add-on Home Assistant)
@@ -700,11 +701,47 @@ export function importCollectedPrices(payload: any): { updated: number; confirme
     else counts.skipped++;
   }
 
-  if (counts.updated > 0) {
-    db.lastSyncTime = new Date().toISOString();
-    saveDatabase(db);
-  }
+  logImport(db, {
+    at: new Date().toISOString(),
+    collectedAt: String(payload.collectedAt),
+    source: 'extension',
+    ...counts,
+    abortReason: payload.abortReason ?? null,
+  });
+  if (counts.updated > 0) db.lastSyncTime = new Date().toISOString();
+  saveDatabase(db);
   return counts;
+}
+
+// État de la collecte : derniers imports et fraîcheur des relevés des stations ouvertes
+export function getCollectionStatus(): CollectionStatus {
+  const db = initDatabase();
+  const imports = db.importLog || [];
+  const open = db.superchargers.filter((s) => s.status === 'OPEN');
+  const counts = { fresh: 0, aging: 0, stale: 0, never: 0 };
+  const staleStations: CollectionStatus['staleStations'] = [];
+
+  for (const s of open) {
+    const lastChecked = lastCheckedDate(s);
+    const level = freshnessLevel(lastChecked ? daysSince(lastChecked) : null);
+    if (level === 'unknown') counts.never++;
+    else counts[level]++;
+    if (level === 'stale' || level === 'unknown') {
+      staleStations.push({ id: s.id, locationSlug: s.locationSlug, name: s.name, city: s.city, lastChecked: lastChecked?.slice(0, 10) ?? null });
+    }
+  }
+  // Jamais relevées d'abord, puis les plus anciennes
+  staleStations.sort((a, b) => (a.lastChecked ?? '').localeCompare(b.lastChecked ?? ''));
+
+  return {
+    alertDays: COLLECTION_ALERT_DAYS,
+    staleDays: STALE_DAYS,
+    lastImport: imports[0] ?? null,
+    imports: imports.slice(0, 20),
+    openStations: open.length,
+    ...counts,
+    staleStations,
+  };
 }
 
 // Purger l'historique des prix (un relevé par station, tarif actuel conservé), après sauvegarde.

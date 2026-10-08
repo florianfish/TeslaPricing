@@ -1,11 +1,19 @@
-import type { Supercharger, SuperchargerPricing, PriceSnapshot, StationEvent } from '../../src/types.js';
+import type { Supercharger, SuperchargerPricing, PriceSnapshot, StationEvent, ImportLogEntry } from '../../src/types.js';
 
 export interface DatabaseSchema {
   superchargers: Supercharger[];
   priceSnapshots: PriceSnapshot[];
   nationalHistory: PriceSnapshot[];
   stationEvents?: StationEvent[];
+  importLog?: ImportLogEntry[];
   lastSyncTime: string;
+}
+
+const IMPORT_LOG_SIZE = 50;
+
+// Historiser un import du collecteur (le plus récent en tête)
+export function logImport(db: DatabaseSchema, entry: ImportLogEntry) {
+  db.importLog = [entry, ...(db.importLog || [])].slice(0, IMPORT_LOG_SIZE);
 }
 
 // Extraire et normaliser les tarifs depuis le schéma Tesla (effectivePricebooks)
@@ -98,6 +106,7 @@ export function applyTeslaData(
 ): { outcome: 'updated' | 'confirmed' | 'invalid'; changePercentage?: number } {
   const parsed = parseTeslaData(teslaData);
   if (!parsed) return { outcome: 'invalid' };
+  charger.lastCheckedAt = todayIso;
 
   const { pricing } = parsed;
   const current = charger.currentPricing;

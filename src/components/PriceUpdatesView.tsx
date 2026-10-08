@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { History, Search, TrendingUp, TrendingDown, AlertCircle, MapPin } from 'lucide-react';
 import type { PriceUpdate, StationEvent, Supercharger } from '../types';
+import { CollectionStatusPanel } from './CollectionStatusPanel';
 
 interface PriceUpdatesViewProps {
   superchargers: Supercharger[];
@@ -105,6 +106,8 @@ export const PriceUpdatesView: React.FC<PriceUpdatesViewProps> = ({ supercharger
 
   return (
     <div className="space-y-6">
+      <CollectionStatusPanel onOpenStation={openStation} />
+
       <div className="bg-slate-900 rounded-2xl p-4 sm:p-6 border border-slate-800 shadow-xl space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center space-x-3">

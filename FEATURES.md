@@ -2,6 +2,15 @@
 
 Inventaire des évolutions possibles, établi le 2026-10-08 à partir de l'état du dépôt (`server.ts`, `server/db.ts`, `src/`, `extension/`, add-on `tesla-pricing/`).
 
+## ✅ Réalisé
+
+- **Suppression de `POST /api/sync`** (ex-1.1) : route non protégée et sans appelant.
+- **URLs partageables** (ex-2.1) : onglet, recherche, filtres et fiche station dans le fragment d'URL (`src/router.ts`).
+- **Autour de moi** (ex-2.3) : 5 stations les plus proches sur la carte, tri par distance dans la liste (`src/geo.ts`).
+- **Fraîcheur des données** (ex-3.4) et **tableau de bord de collecte** (ex-6.2) : `lastCheckedAt` par station, journal des imports, `GET /api/prices/collection-status`, panneau dans l'onglet « Mises à jour ».
+
+---
+
 Légende effort : **S** (≤ ½ jour) · **M** (1–3 jours) · **L** (> 3 jours).
 Légende valeur : ⭐ à ⭐⭐⭐.
 
@@ -25,9 +34,7 @@ Points relevés dans le code qu'il vaut mieux traiter avant d'ouvrir de nouvelle
 
 | # | Feature | Description | Effort | Valeur |
 |---|---|---|---|---|
-| 2.1 | **URLs partageables** | Aujourd'hui l'onglet et la station sélectionnée vivent dans l'état React (`activeTab`). Synchroniser avec l'URL (`/carte`, `/station/rennessupercharger`, filtres en query string) pour partager un lien et utiliser le bouton Retour. | M | ⭐⭐⭐ |
 | 2.2 | **Indicateur « HC / HP maintenant »** | Afficher en temps réel si une station est en heures creuses ou pleines, et dans combien de temps ça bascule (logique déjà présente dans `src/hours.ts`). Colorer les marqueurs de la carte selon le tarif *actuel*. | S | ⭐⭐⭐ |
-| 2.3 | **Géolocalisation « autour de moi »** | Bouton « Me localiser » sur la carte et tri du répertoire par distance, avec tarif courant à côté. | S | ⭐⭐⭐ |
 | 2.4 | Favoris locaux | Épingler ses stations habituelles (stockage navigateur), avec un filtre « Mes stations » et un rappel de leur dernière variation. | S | ⭐⭐ |
 | 2.5 | Comparateur de stations | Sélectionner 2–4 stations et superposer leurs historiques et grilles HP/HC. | M | ⭐⭐ |
 | 2.6 | PWA | Manifeste + service worker : installation sur mobile, consultation hors-ligne du dernier jeu de données. | M | ⭐⭐ |
@@ -43,7 +50,6 @@ Points relevés dans le code qu'il vaut mieux traiter avant d'ouvrir de nouvelle
 | 3.1 | **Heatmap des prix** | Couche carte colorant les stations (ou les départements) par €/kWh courant ; vue choroplèthe par région. | M | ⭐⭐⭐ |
 | 3.2 | Statistiques par région / département | Moyennes, min/max et dispersion par région ; classement des régions les moins chères. Les champs `region` et `department` existent déjà. | S | ⭐⭐ |
 | 3.3 | Écart Tesla / non-Tesla | Graphique dédié à l'évolution du surcoût non-Tesla et seuil de rentabilité de l'abonnement Supercharging. | S | ⭐⭐ |
-| 3.4 | Fraîcheur des données | Badge « relevé il y a N jours » par station, et page listant les stations jamais ou anciennement relevées (aide à prioriser la collecte). | S | ⭐⭐ |
 | 3.5 | Plages horaires multiples | `peakHours` est une chaîne libre ; Tesla publie parfois plusieurs plages ou des tarifs par jour de semaine. Structurer le modèle (`{ start, end, days, price }[]`) via un script de migration. | L | ⭐⭐ |
 | 3.6 | Export open data | `GET /api/export.csv` et `.json` (stations + historique), licence ouverte, éventuellement publication sur data.gouv.fr. | S | ⭐⭐ |
 | 3.7 | Frise des ouvertures | Exploiter `stationEvents` et `dateOpened` : courbe du nombre de stations / stalles ouvertes en France dans le temps, pipeline construction → ouverture. | S | ⭐⭐ |
@@ -82,7 +88,6 @@ Rappel : tout appel serveur à Tesla est bloqué par Akamai ; la collecte passe 
 | # | Feature | Description | Effort | Valeur |
 |---|---|---|---|---|
 | 6.1 | Collecte incrémentale | Interroger d'abord les stations les plus anciennes ou ayant récemment varié plutôt que les ~330 à chaque passage ; reprendre une collecte interrompue. Réduit les ~30 min et le risque de blocage. | M | ⭐⭐ |
-| 6.2 | Tableau de bord de collecte | Page admin (protégée par clé) : date et durée des derniers imports, stations en échec, couverture, alertes si aucun import depuis N jours. | M | ⭐⭐ |
 | 6.3 | Extension multi-cibles | Envoyer le même relevé à plusieurs instances (plusieurs add-ons HA) et/ou au dépôt GitHub via un token, pour converger les bases. | M | ⭐⭐ |
 | 6.4 | Publication de l'extension | Packaging et publication sur le Chrome Web Store / Firefox Add-ons pour élargir la collecte communautaire (avec un endpoint d'import public modéré, cf. 1.2). | L | ⭐ |
 | 6.5 | Détection d'anomalies | Rejeter ou signaler à l'import les variations > X % ou les tarifs hors bornes avant de les historiser. | S | ⭐⭐ |
@@ -95,7 +100,7 @@ Rappel : tout appel serveur à Tesla est bloqué par Akamai ; la collecte passe 
 |---|---|---|---|---|
 | 7.1 | Passage à SQLite | La base JSON est réécrite entièrement à chaque écriture (`writeFileSync`). SQLite (`better-sqlite3`) offrirait écritures atomiques, requêtes historiques et croissance sans limite, avec un script de migration. | L | ⭐⭐ |
 | 7.2 | API publique documentée | Spécification OpenAPI + page `/api/docs`, versionnage `/api/v1`, CORS ouvert en lecture seule. | M | ⭐⭐ |
-| 7.3 | SEO & partage | Pages pré-rendues par station (titre, description, image Open Graph générée avec le tarif courant), `sitemap.xml`. Dépend de 2.1. | M | ⭐⭐ |
+| 7.3 | SEO & partage | Pages pré-rendues par station (titre, description, image Open Graph générée avec le tarif courant), `sitemap.xml`. S'appuie sur les URLs partageables (fragment d'URL : nécessiterait un passage à des chemins hors Ingress). | M | ⭐⭐ |
 | 7.4 | Observabilité | Endpoint `/api/metrics` (Prometheus) : nombre de stations, âge du dernier import, latence ; logs structurés. | S | ⭐ |
 | 7.5 | Sauvegardes tournantes | Les sauvegardes (`superchargers_db.backup-*.json`) s'accumulent ; conserver les N dernières automatiquement. | S | ⭐ |
 
@@ -104,6 +109,6 @@ Rappel : tout appel serveur à Tesla est bloqué par Akamai ; la collecte passe 
 ## 🎯 Proposition de priorisation
 
 1. **Sécurité d'abord** : 1.2, 1.3, 1.4 — rapide et limite les risques actuels.
-2. **Quick wins à forte valeur** : 2.2 (HC/HP maintenant), 2.3 (autour de moi), 4.1 (RSS), 3.4 (fraîcheur), 5.2 (prix carburant réels).
-3. **Différenciants** : 2.1 (URLs partageables) puis 7.3 (SEO), 3.1 (heatmap), 4.2 (capteurs Home Assistant).
+2. **Quick wins à forte valeur** : 2.2 (HC/HP maintenant), 4.1 (RSS), 5.2 (prix carburant réels).
+3. **Différenciants** : 7.3 (SEO, maintenant que les URLs sont partageables), 3.1 (heatmap), 4.2 (capteurs Home Assistant).
 4. **Chantiers de fond** : 1.5 (tests), 7.1 (SQLite), 3.5 (plages horaires structurées), 5.1 (planificateur de trajet).

@@ -1,23 +1,32 @@
 import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import type { Supercharger } from '../types';
-import { Zap, Filter, Compass, Info, Layers } from 'lucide-react';
+import { Filter, Compass, Layers, LocateFixed, Loader2, X } from 'lucide-react';
+import { stationFreshness, FRESHNESS_COLORS } from '../freshness';
+import { distanceKm, formatDistance, type Geolocation } from '../geo';
 
 interface FranceMapProps {
   superchargers: Supercharger[];
   onSelectSupercharger: (charger: Supercharger) => void;
   selectedCharger: Supercharger | null;
+  geolocation: Geolocation;
 }
+
+const NEAREST_COUNT = 5;
 
 export const FranceMap: React.FC<FranceMapProps> = ({
   superchargers,
   onSelectSupercharger,
   selectedCharger,
+  geolocation,
 }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersLayerRef = useRef<L.LayerGroup | null>(null);
   const tileLayerGroupRef = useRef<L.LayerGroup | null>(null);
+  const userLayerRef = useRef<L.LayerGroup | null>(null);
+  const [showNearest, setShowNearest] = useState(false);
+  const { position, status: geoStatus, error: geoError, locate } = geolocation;
 
   const [mapFilter, setMapFilter] = useState<'ALL' | 'OTHER_EVS' | 'HIGH_POWER' | 'CHEAP'>('ALL');
   const [mapStyle, setMapStyle] = useState<'dark' | 'osm' | 'satellite'>('dark');
@@ -53,6 +62,7 @@ export const FranceMap: React.FC<FranceMapProps> = ({
 
     const layerGroup = L.layerGroup().addTo(map);
     markersLayerRef.current = layerGroup;
+    userLayerRef.current = L.layerGroup().addTo(map);
     mapInstanceRef.current = map;
 
     return () => {
@@ -167,6 +177,8 @@ export const FranceMap: React.FC<FranceMapProps> = ({
 
       const marker = L.marker([charger.latitude, charger.longitude], { icon: customIcon });
 
+      const freshness = stationFreshness(charger);
+
       // Popup Content
       const popupHtml = `
         <div style="font-family: 'Plus Jakarta Sans', sans-serif; min-width: 220px; padding: 4px;">
@@ -200,6 +212,10 @@ export const FranceMap: React.FC<FranceMapProps> = ({
             <div style="display: flex; justify-content: space-between; font-size: 11px;">
               <span style="color: #64748b;">Heures Pleines :</span>
               <strong style="color: #d97706;">${charger.currentPricing.teslaPeak.toFixed(2)} €/kWh</strong>
+            </div>
+            <div style="display: flex; align-items: center; gap: 5px; margin-top: 6px; padding-top: 6px; border-top: 1px solid #e2e8f0; font-size: 10px; color: #64748b;">
+              <span style="width: 7px; height: 7px; border-radius: 9999px; background: ${FRESHNESS_COLORS[freshness.level]};"></span>
+              ${freshness.label}
             </div>
           </div>
 
@@ -247,6 +263,34 @@ export const FranceMap: React.FC<FranceMapProps> = ({
       { duration: 1.2 }
     );
   }, [selectedCharger]);
+
+  // Position de l'utilisateur : marqueur, cercle de précision et zoom sur la zone
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    const userLayer = userLayerRef.current;
+    if (!map || !userLayer || !position) return;
+    userLayer.clearLayers();
+    const latLng: L.LatLngTuple = [position.latitude, position.longitude];
+    L.circle(latLng, { radius: position.accuracy, color: '#3b82f6', weight: 1, fillOpacity: 0.08, interactive: false }).addTo(userLayer);
+    L.circleMarker(latLng, { radius: 8, color: '#ffffff', weight: 3, fillColor: '#3b82f6', fillOpacity: 1 })
+      .bindTooltip('Vous êtes ici')
+      .addTo(userLayer);
+    map.flyTo(latLng, 9, { duration: 1.2 });
+  }, [position]);
+
+  const nearest = React.useMemo(() => {
+    if (!position) return [];
+    return superchargers
+      .filter((s) => s.status === 'OPEN' && s.latitude && s.longitude)
+      .map((charger) => ({ charger, km: distanceKm(position, charger) }))
+      .sort((a, b) => a.km - b.km)
+      .slice(0, NEAREST_COUNT);
+  }, [superchargers, position]);
+
+  const handleLocate = () => {
+    setShowNearest(true);
+    locate();
+  };
 
   const handleResetView = () => {
     if (!mapInstanceRef.current) return;
@@ -318,6 +362,63 @@ export const FranceMap: React.FC<FranceMapProps> = ({
           <Compass className="w-3.5 h-3.5 text-red-400" />
           <span>Recentrer</span>
         </button>
+
+        <button
+          onClick={handleLocate}
+          disabled={geoStatus === 'locating'}
+          title="Afficher les superchargeurs les plus proches de vous"
+          className="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-900/90 backdrop-blur-md rounded-xl border border-slate-700/80 shadow-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 disabled:opacity-60 transition-colors"
+        >
+          {geoStatus === 'locating' ? (
+            <Loader2 className="w-3.5 h-3.5 text-blue-400 animate-spin" />
+          ) : (
+            <LocateFixed className="w-3.5 h-3.5 text-blue-400" />
+          )}
+          <span>Autour de moi</span>
+        </button>
+
+        {/* Nearest stations */}
+        {showNearest && (geoStatus === 'error' || nearest.length > 0) && (
+          <div className="basis-full">
+          <div className="w-72 max-w-full bg-slate-900/95 backdrop-blur-md rounded-xl border border-slate-700/80 shadow-lg text-xs overflow-hidden">
+            <div className="flex items-center justify-between px-3 py-2 border-b border-slate-800">
+              <span className="font-semibold text-slate-200">
+                {geoStatus === 'error' ? 'Localisation impossible' : 'Les plus proches de vous'}
+              </span>
+              <button
+                onClick={() => setShowNearest(false)}
+                title="Masquer"
+                className="p-0.5 rounded text-slate-400 hover:text-white"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+            {geoStatus === 'error' ? (
+              <p className="px-3 py-2.5 text-slate-400">{geoError}</p>
+            ) : (
+              <ul className="divide-y divide-slate-800/80">
+                {nearest.map(({ charger, km }) => (
+                  <li key={charger.id}>
+                    <button
+                      onClick={() => onSelectSupercharger(charger)}
+                      className="w-full flex items-center justify-between gap-2 px-3 py-2 text-left hover:bg-slate-800/70 transition-colors"
+                    >
+                      <span className="min-w-0">
+                        <span className="block font-semibold text-slate-200 truncate">{charger.city}</span>
+                        <span className="block text-[11px] text-slate-500">{formatDistance(km)}</span>
+                      </span>
+                      <span className="shrink-0 text-right">
+                        <span className="block font-semibold text-emerald-400">{charger.currentPricing.teslaOffPeak.toFixed(2)} € HC</span>
+                        <span className="block text-[11px] text-amber-400">{charger.currentPricing.teslaPeak.toFixed(2)} € HP</span>
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+          </div>
+        )}
       </div>
 
       {/* Top-Right Style Switcher (100% Free & No API Key Required) */}

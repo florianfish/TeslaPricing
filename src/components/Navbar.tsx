@@ -1,10 +1,11 @@
 import React from 'react';
 import { Zap, MapPin, TrendingUp, Calculator, Database, ExternalLink, Gift, History } from 'lucide-react';
 import type { SuperchargerStats } from '../types';
+import type { Tab } from '../router';
 
 interface NavbarProps {
-  activeTab: 'map' | 'list' | 'stats' | 'updates' | 'simulator';
-  onTabChange: (tab: 'map' | 'list' | 'stats' | 'updates' | 'simulator') => void;
+  activeTab: Tab;
+  onTabChange: (tab: Tab) => void;
   stats: SuperchargerStats | null;
 }
 

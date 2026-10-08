@@ -51,7 +51,7 @@ Le projet adopte une architecture full-stack unifiée servie par un unique proce
 
 ### C. Frontend (`src/`)
 - Entrée : `src/main.tsx` montant `src/App.tsx`.
-- Gestion des onglets : Vue simple par état React (`activeTab: 'map' | 'list' | 'stats' | 'updates' | 'simulator'`).
+- Gestion des onglets : routage par le fragment d'URL (`src/router.ts`, ex. `#/liste?q=rennes`, `#/carte?station=rennessupercharger`). Pas de routage par chemin : l'application est servie sous un préfixe inconnu par l'Ingress Home Assistant.
 - Style : **Tailwind CSS v4** via `@tailwindcss/vite` (imports dans `src/index.css`).
 - Graphiques : **Recharts** (nécessite `react-is`).
 - Carte : **Leaflet** avec tuiles libres sans clé API (ESRI Dark Gray Canvas, OpenStreetMap France et Satellite ESRI).
@@ -100,6 +100,7 @@ Pour toute modification ou extension de données, respecter scrupuleusement ces 
   - `stallCount`: number
   - `otherEVs`: boolean (vrai si accessible aux non-Tesla)
   - `currentPricing`: `SuperchargerPricing`
+  - `lastCheckedAt?`: string (`YYYY-MM-DD`, dernier passage du collecteur, prix modifié ou non ; seuils de fraîcheur dans `src/freshness.ts`, partagé avec le serveur)
   - `priceHistory`: `PriceSnapshot[]`
 
 - `SuperchargerPricing` :

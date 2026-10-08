@@ -18,7 +18,9 @@ import {
   getStationEvents,
   syncStationsFromRegistry,
   STATION_SYNC_ENABLED,
+  getCollectionStatus,
 } from './server/db.js';
+import { daysSince } from './src/freshness.js';
 
 const STATION_SYNC_INTERVAL_MS = 24 * 3600 * 1000;
 
@@ -28,6 +30,17 @@ async function runStationSync() {
     console.log(`Stations synchronisées (supercharge.info) : ${r.created} nouvelle(s), ${r.statusChanged} statut(s) modifié(s), ${r.updated} mise(s) à jour.`);
   } catch (err: any) {
     console.warn(`Synchronisation des stations impossible : ${err.message}`);
+  }
+}
+
+// Avertit dans le journal (add-on HA) quand l'extension n'a plus envoyé de relevé depuis longtemps
+function checkCollection() {
+  if (!getImportKey()) return;
+  const { lastImport, alertDays } = getCollectionStatus();
+  if (!lastImport) {
+    console.warn("Collecte des tarifs : aucun relevé reçu de l'extension pour l'instant.");
+  } else if (daysSince(lastImport.at) > alertDays) {
+    console.warn(`Collecte des tarifs : aucun relevé reçu depuis ${daysSince(lastImport.at)} jours (dernier : ${lastImport.at}).`);
   }
 }
 
@@ -221,6 +234,15 @@ async function startServer() {
     }
   });
 
+  // État de la collecte des tarifs : derniers imports et fraîcheur des relevés
+  app.get('/api/prices/collection-status', (req, res) => {
+    try {
+      res.json(getCollectionStatus());
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
   // Purge de l'historique des prix : un relevé par station (tarif actuel), sauvegarde préalable dans le dossier de données
   app.post('/api/prices/purge-history', (req, res) => {
     if (!checkImportKey(req, res)) return;
@@ -306,6 +328,9 @@ async function startServer() {
     setTimeout(runStationSync, 30000);
     setInterval(runStationSync, STATION_SYNC_INTERVAL_MS);
   }
+
+  checkCollection();
+  setInterval(checkCollection, 24 * 3600 * 1000);
 }
 
 startServer();

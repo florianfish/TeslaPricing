@@ -70,7 +70,33 @@ export interface Supercharger {
   facilityName?: string;
   dateOpened?: string;
   currentPricing: SuperchargerPricing;
+  lastCheckedAt?: string;    // YYYY-MM-DD : dernier relevé du collecteur, prix modifié ou non
   priceHistory?: PriceSnapshot[];
+}
+
+// Import d'un relevé du collecteur (extension navigateur ou fichier du favori)
+export interface ImportLogEntry {
+  at: string;                // ISO : date de réception par le serveur
+  collectedAt: string;       // ISO : début de la collecte
+  source: 'extension' | 'fichier';
+  updated: number;
+  confirmed: number;
+  skipped: number;
+  abortReason?: string | null;
+}
+
+// État de la collecte des tarifs : derniers imports et fraîcheur des relevés des stations ouvertes
+export interface CollectionStatus {
+  alertDays: number;         // alerte si aucun import depuis ce nombre de jours
+  staleDays: number;         // relevé d'une station considéré comme ancien au-delà
+  lastImport: ImportLogEntry | null;
+  imports: ImportLogEntry[]; // du plus récent au plus ancien
+  openStations: number;
+  fresh: number;
+  aging: number;
+  stale: number;
+  never: number;
+  staleStations: { id: string; locationSlug: string; name: string; city: string; lastChecked: string | null }[];
 }
 
 export interface SuperchargerStats {

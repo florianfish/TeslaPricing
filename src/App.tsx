@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useSyncExternalStore } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useSyncExternalStore } from 'react';
 import type { Supercharger, SuperchargerStats } from './types';
 import { Navbar } from './components/Navbar';
 import { FranceMap } from './components/FranceMap';
@@ -11,15 +11,46 @@ import { ReferralEncart } from './components/ReferralEncart';
 import { CookieBanner } from './components/CookieBanner';
 import { AlertCircle, Zap } from 'lucide-react';
 import { trackTab, isAnalyticsConfigured, resetConsent, subscribeAnalytics } from './analytics';
+import { useRoute, navigate, routeHash, parseRoute, type Tab } from './router';
+import { useGeolocation } from './geo';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'map' | 'list' | 'stats' | 'updates' | 'simulator'>('map');
   const [superchargers, setSuperchargers] = useState<Supercharger[]>([]);
   const [stats, setStats] = useState<SuperchargerStats | null>(null);
-  const [selectedCharger, setSelectedCharger] = useState<Supercharger | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const analyticsConfigured = useSyncExternalStore(subscribeAnalytics, isAnalyticsConfigured);
+  const geolocation = useGeolocation();
+
+  // Onglet et fiche station ouverte sont portés par l'URL (#/carte?station=rennessupercharger)
+  const route = useRoute();
+  const activeTab = route.tab;
+  const stationSlug = route.params.get('station')?.toLowerCase();
+  const selectedCharger = useMemo(
+    () => (stationSlug ? superchargers.find((s) => s.locationSlug.toLowerCase() === stationSlug) ?? null : null),
+    [superchargers, stationSlug]
+  );
+
+  const setActiveTab = (tab: Tab) => navigate(routeHash(tab));
+
+  // Ouvrir une fiche crée une entrée d'historique : le bouton Retour la referme
+  const openStation = useCallback((charger: Supercharger, tab?: Tab) => {
+    const current = parseRoute(window.location.hash);
+    const target = tab ?? current.tab;
+    const params = target === current.tab ? current.params : new URLSearchParams();
+    params.set('station', charger.locationSlug);
+    navigate(routeHash(target, params), { state: { stationOverlay: true } });
+  }, []);
+
+  const closeStation = () => {
+    if (window.history.state?.stationOverlay) {
+      window.history.back();
+      return;
+    }
+    const params = new URLSearchParams(route.params);
+    params.delete('station');
+    navigate(routeHash(route.tab, params), { replace: true });
+  };
 
   // Fetch all superchargers & stats
   const fetchData = useCallback(async () => {
@@ -57,10 +88,7 @@ export default function App() {
   }, [activeTab]);
 
   // View on map action
-  const handleViewOnMap = (charger: Supercharger) => {
-    setSelectedCharger(charger);
-    setActiveTab('map');
-  };
+  const handleViewOnMap = (charger: Supercharger) => openStation(charger, 'map');
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-['Plus_Jakarta_Sans',sans-serif]">
@@ -109,8 +137,9 @@ export default function App() {
             {activeTab === 'map' && (
               <FranceMap
                 superchargers={superchargers}
-                onSelectSupercharger={(charger) => setSelectedCharger(charger)}
+                onSelectSupercharger={openStation}
                 selectedCharger={selectedCharger}
+                geolocation={geolocation}
               />
             )}
 
@@ -118,8 +147,9 @@ export default function App() {
             {activeTab === 'list' && (
               <SuperchargerDirectory
                 superchargers={superchargers}
-                onSelectSupercharger={(charger) => setSelectedCharger(charger)}
+                onSelectSupercharger={openStation}
                 onViewOnMap={handleViewOnMap}
+                geolocation={geolocation}
               />
             )}
 
@@ -128,7 +158,7 @@ export default function App() {
               <PriceEvolutionView
                 stats={stats}
                 superchargers={superchargers}
-                onSelectSupercharger={(charger) => setSelectedCharger(charger)}
+                onSelectSupercharger={openStation}
               />
             )}
 
@@ -136,7 +166,7 @@ export default function App() {
             {activeTab === 'updates' && (
               <PriceUpdatesView
                 superchargers={superchargers}
-                onSelectSupercharger={(charger) => setSelectedCharger(charger)}
+                onSelectSupercharger={openStation}
               />
             )}
 
@@ -155,7 +185,7 @@ export default function App() {
       {selectedCharger && (
         <StationDetailModal
           charger={selectedCharger}
-          onClose={() => setSelectedCharger(null)}
+          onClose={closeStation}
         />
       )}
 

@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.4.0
+
+- Fraîcheur des tarifs : badge « Relevé il y a N j » sur chaque station (liste, fiche, carte), mis à jour à chaque passage du collecteur même si le prix n'a pas changé.
+- État de la collecte dans l'onglet « Mises à jour » : dernier relevé reçu de l'extension, alerte au-delà de 10 jours, ancienneté des tarifs et stations à revérifier. Avertissement quotidien dans le journal de l'add-on (`GET /api/prices/collection-status`).
+- Liens partageables : onglet, recherche, filtres et fiche station dans l'URL ; le bouton Retour referme la fiche.
+- « Autour de moi » : superchargeurs les plus proches sur la carte et tri par distance dans la liste.
+- Suppression de la route `POST /api/sync` (non protégée, sans utilisation).
+
 ## 1.3.1
 
 - Affichage de la plage d'heures creuses (HC) à côté des heures pleines, dans la fiche station et dans « Liste & recherche ».

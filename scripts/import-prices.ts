@@ -5,7 +5,7 @@
 import 'dotenv/config';
 import fs from 'fs';
 import path from 'path';
-import { applyTeslaData, type DatabaseSchema } from './lib/tesla-pricing.js';
+import { applyTeslaData, logImport, type DatabaseSchema } from './lib/tesla-pricing.js';
 
 interface CollectorFile {
   collectedAt: string;
@@ -67,16 +67,23 @@ async function main() {
     }
   }
 
-  if (updated > 0) {
-    db.lastSyncTime = new Date().toISOString();
-    fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2), 'utf-8');
-  }
+  logImport(db, {
+    at: new Date().toISOString(),
+    collectedAt: collected.collectedAt,
+    source: 'fichier',
+    updated,
+    confirmed,
+    skipped,
+    abortReason: collected.abortReason,
+  });
+  if (updated > 0) db.lastSyncTime = new Date().toISOString();
+  fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2), 'utf-8');
 
   console.log('\n================================================================');
   console.log(`• Tarifs modifiés    : ${updated}`);
   console.log(`• Tarifs inchangés   : ${confirmed}`);
   console.log(`• Ignorés (404/403…) : ${skipped}`);
-  console.log(updated > 0 ? `💾 Base enregistrée : ${DB_FILE}` : 'ℹ️ Aucun changement : base inchangée.');
+  console.log(`💾 Base enregistrée : ${DB_FILE}${updated > 0 ? '' : ' (aucun tarif modifié, dates de relevé mises à jour)'}`);
   console.log('================================================================\n');
 }
 
