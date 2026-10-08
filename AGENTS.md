@@ -46,7 +46,7 @@ Le projet adopte une architecture full-stack unifiée servie par un unique proce
 ### B. Couche Données (`server/db.ts`)
 - **Pas d'ORM lourd** : La persistance repose sur `server/data/superchargers_db.json` (~3.2 Mo).
 - Les données sont chargées en mémoire via un singleton `dbInstance` lors du premier appel à `initDatabase()`.
-- Chaque écriture (par ex. `addPriceSnapshot()`) modifie l'instance en mémoire et déclenche une sérialisation synchrone atomique via `fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2))`.
+- Chaque écriture (par ex. `importCollectedPrices()`) modifie l'instance en mémoire et déclenche une sérialisation synchrone atomique via `fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2))`.
 - Seed d'origine : `server/data/france_sites_raw.json`.
 
 ### C. Frontend (`src/`)
@@ -65,7 +65,6 @@ Le projet adopte une architecture full-stack unifiée servie par un unique proce
 - Un workflow GitHub Actions (`.github/workflows/update-prices.yml`) actualise chaque nuit la liste des stations (supercharge.info) et commite directement sur le dépôt GitHub.
 - **Tarifs Tesla** : l'API FindUs est bloquée par Akamai pour tout client non-navigateur (runners, serveurs, `curl`, Node — même via IP résidentielle ou VPN). Ne pas réintroduire d'appel serveur à Tesla : la collecte passe par l'extension Chrome `extension/` (onglet tesla.com en arrière-plan, envoi à l'add-on HA via `POST /api/prices/import` protégé par la clé `import_key`), ou en secours par le favori `scripts/collector.js` (`npm run collector`) puis `npm run import-prices -- <fichier>`. L'API GraphQL de l'app mobile (`akamai-apigateway-charging-ownership`) a été sondée en 10/2026 : joignable avec un jeton de compte, mais réponses vides — inutile de la retenter sans nouvelle piste. La logique d'analyse des tarifs est partagée dans `scripts/lib/tesla-pricing.ts`.
 - **Stations sur base persistante séparée** (`DATA_DIR`, add-on HA) : le serveur synchronise lui-même les stations depuis supercharge.info (démarrage + 24 h, `syncStationsFromRegistry()`), avec la même logique que le script nocturne (`scripts/lib/station-sync.ts`). Les évolutions sont historisées dans `stationEvents`. Ne jamais remplacer la base de l'add-on par celle de GitHub : elle écraserait les tarifs importés.
-- **Relevés communautaires** : Les relevés saisis depuis le Web sont sauvegardés dans `server/data/user_contributions.json` (ignoré par Git) et ré-appliqués au chargement de la base (démarrage du serveur). Ainsi, un `git pull` de la base ne provoque jamais de conflit de fusion.
 
 ---
 

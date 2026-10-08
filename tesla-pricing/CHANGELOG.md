@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.3
+
+- Suppression des relevés communautaires : route `POST /api/superchargers/:slug/prices` (non protégée) et fichier `user_contributions.json`, le formulaire n'étant plus proposé.
+
 ## 1.4.2
 
 - Notes de version consultables dans l'application : clic sur le numéro de version en pied de page.

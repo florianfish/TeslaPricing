@@ -30,7 +30,7 @@ Un bandeau demande le consentement de chaque visiteur : Google Analytics n'est c
 
 ## Données
 
-La base (`superchargers_db.json`) et les relevés saisis depuis l'interface (`user_contributions.json`) sont stockés dans le dossier persistant de l'add-on (`/data`). Ils sont conservés lors des mises à jour et inclus dans les sauvegardes Home Assistant.
+La base (`superchargers_db.json`) est stockée dans le dossier persistant de l'add-on (`/data`). Elle est conservée lors des mises à jour et incluse dans les sauvegardes Home Assistant.
 
 Au premier démarrage, la base livrée avec la version installée est copiée dans `/data`. Les mises à jour de l'add-on n'écrasent pas une base existante.
 

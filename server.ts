@@ -7,7 +7,6 @@ import {
   getAllSuperchargers,
   getSuperchargerBySlug,
   getPriceHistoryForCharger,
-  addPriceSnapshot,
   getStats,
   getImportKey,
   getGaMeasurementId,
@@ -134,52 +133,6 @@ async function startServer() {
       const { slug } = req.params;
       const history = getPriceHistoryForCharger(slug);
       res.json({ locationSlug: slug, history });
-    } catch (err: any) {
-      res.status(500).json({ error: err.message });
-    }
-  });
-
-  // Add new price snapshot to database
-  app.post('/api/superchargers/:slug/prices', (req, res) => {
-    try {
-      const { slug } = req.params;
-      const {
-        date,
-        teslaPeak,
-        teslaOffPeak,
-        nonTeslaPeak,
-        nonTeslaOffPeak,
-        peakHours,
-        notes,
-        source,
-      } = req.body ?? {};
-
-      if (!date || !teslaPeak || !teslaOffPeak) {
-        return res.status(400).json({
-          error: 'Champs obligatoires manquants: date, teslaPeak, teslaOffPeak',
-        });
-      }
-
-      const result = addPriceSnapshot({
-        locationSlug: slug,
-        date,
-        teslaPeak: Number(teslaPeak),
-        teslaOffPeak: Number(teslaOffPeak),
-        nonTeslaPeak: nonTeslaPeak ? Number(nonTeslaPeak) : Number((Number(teslaPeak) * 1.3).toFixed(2)),
-        nonTeslaOffPeak: nonTeslaOffPeak ? Number(nonTeslaOffPeak) : Number((Number(teslaOffPeak) * 1.3).toFixed(2)),
-        peakHours,
-        notes,
-        source,
-      });
-
-      if (!result.success) {
-        return res.status(400).json({ error: result.error });
-      }
-
-      res.status(201).json({
-        message: 'Relevé de prix enregistré avec succès en base de données',
-        snapshot: result.snapshot,
-      });
     } catch (err: any) {
       res.status(500).json({ error: err.message });
     }

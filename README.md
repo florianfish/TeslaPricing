@@ -169,8 +169,6 @@ Le navigateur doit être ouvert, depuis une connexion personnelle (pas via le VP
 2. Ouvrez `collector.html`, glissez le bouton dans vos favoris, puis cliquez dessus sur une page `https://www.tesla.com/fr_FR/findus` (≈ 25 min, 5 s par station).
 3. Importez le fichier téléchargé : `npm run import-prices -- tesla-prices-AAAA-MM-JJ.json`, puis commitez `server/data/superchargers_db.json`.
 
-> [!TIP]
-> **Zéro conflit Git** : Les relevés de tarifs saisis par les utilisateurs depuis l'interface web sont isolés dans `server/data/user_contributions.json` (ignoré par Git) et ré-appliqués automatiquement par-dessus la base lors du rechargement. Les `git pull` s'exécutent ainsi sans aucun risque de conflit de fusion !
 
 ---
 
@@ -193,7 +191,6 @@ Les données sont persistées dans `/data` (variable `DATA_DIR`), donc incluses 
 | `GET` | `/api/superchargers` | Liste des stations filtrable (`search`, `status`, `otherEVsOnly`, `minPower`, `region`, `sortBy`, `sortOrder`) |
 | `GET` | `/api/superchargers/:slug` | Détails complets d'un superchargeur via son slug (ex: `rennessupercharger`) |
 | `GET` | `/api/superchargers/:slug/prices` | Historique complet des relevés de prix d'une station |
-| `POST` | `/api/superchargers/:slug/prices` | Ajout d'un nouveau relevé de tarif (persisté dans la base JSON) |
 | `GET` | `/api/prices/stats` | Statistiques globales nationales (moyennes HP/HC, station la moins chère, etc.) |
 | `GET` | `/api/prices/updates?limit=200` | Dernières mises à jour de tarif, avec le relevé précédent de chaque station |
 | `GET` | `/api/stations/events?limit=200` | Dernières évolutions de stations (nouvelles stations, changements de statut) |
