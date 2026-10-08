@@ -54,7 +54,7 @@ Application web complète permettant de visualiser, répertorier, comparer et hi
 - **Recharts** (visualisation de données graphiques)
 
 ### Backend
-- **Node.js** & **Express**
+- **Node.js** & **Express 5**
 - **TSX** (exécution TypeScript native sans build intermédiaire en dev)
 - Base de données locale persistante au format JSON (`server/data/superchargers_db.json`)
 

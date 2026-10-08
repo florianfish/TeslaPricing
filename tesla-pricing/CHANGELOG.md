@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.1
+
+- Mise à jour des dépendances : Express 5, lucide-react 1, esbuild 0.28, dotenv 18 ; retrait des dépendances inutilisées.
+
 ## 1.4.0
 
 - Fraîcheur des tarifs : badge « Relevé il y a N j » sur chaque station (liste, fiche, carte), mis à jour à chaque passage du collecteur même si le prix n'a pas changé.

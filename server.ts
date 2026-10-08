@@ -152,7 +152,7 @@ async function startServer() {
         peakHours,
         notes,
         source,
-      } = req.body;
+      } = req.body ?? {};
 
       if (!date || !teslaPeak || !teslaOffPeak) {
         return res.status(400).json({
@@ -313,7 +313,7 @@ async function startServer() {
   } else {
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
-    app.get('*', (req, res) => {
+    app.get('/{*splat}', (req, res) => {
       res.sendFile(path.join(distPath, 'index.html'));
     });
   }
