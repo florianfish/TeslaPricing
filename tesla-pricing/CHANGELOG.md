@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.4
+
+- Passage à Node.js 24 (image `node:24-alpine`), comme le workflow nocturne.
+
 ## 1.4.3
 
 - Suppression des relevés communautaires : route `POST /api/superchargers/:slug/prices` (non protégée) et fichier `user_contributions.json`, le formulaire n'étant plus proposé.

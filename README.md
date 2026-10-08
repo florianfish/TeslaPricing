@@ -63,7 +63,7 @@ Application web complète permettant de visualiser, répertorier, comparer et hi
 ## 📦 Installation et Démarrage
 
 ### Prérequis
-- [Node.js](https://nodejs.org/) version 20+ (testé avec Node v24)
+- [Node.js](https://nodejs.org/) version 24 (`.nvmrc` ; même version que l'image Docker et le workflow nocturne)
 - npm 10+
 
 ### 1. Installation des dépendances

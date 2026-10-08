@@ -57,7 +57,7 @@ Le projet adopte une architecture full-stack unifiée servie par un unique proce
 - Carte : **Leaflet** avec tuiles libres sans clé API (ESRI Dark Gray Canvas, OpenStreetMap France et Satellite ESRI).
 
 ### D. Déploiement Conteneurisé (`Dockerfile` & `docker-compose.yml`)
-- Multi-stage build (`node:22-alpine`) : build du frontend Vite et packaging du serveur en un fichier autonome `dist/server.cjs`.
+- Multi-stage build (`node:24-alpine`) : build du frontend Vite et packaging du serveur en un fichier autonome `dist/server.cjs`.
 - Persistance obligatoire : Monter le dossier `./server/data:/app/server/data` en volume pour conserver les relevés et mises à jour de prix.
 - Configuration du port via la variable d'environnement `PORT` (par défaut `3000`).
 
