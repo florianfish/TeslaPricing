@@ -12,6 +12,7 @@ import {
   getStats,
   saveDatabase,
   getImportKey,
+  getGaMeasurementId,
   getCollectorStations,
   importCollectedPrices,
   purgeHistory,
@@ -51,6 +52,11 @@ async function startServer() {
   // Health check
   app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  });
+
+  // Configuration publique du frontend (Google Analytics)
+  app.get('/api/config', (req, res) => {
+    res.json({ gaMeasurementId: getGaMeasurementId() || null });
   });
 
   // Get all superchargers with filtering & sorting

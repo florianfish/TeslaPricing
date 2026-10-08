@@ -4,3 +4,6 @@ configuration:
   import_key:
     name: Clé d'import
     description: Clé partagée avec l'extension navigateur « Collecteur Tesla » pour importer les tarifs. Laisser vide pour désactiver l'import.
+  ga_measurement_id:
+    name: ID de mesure Google Analytics
+    description: ID de mesure Google Analytics 4 (G-XXXXXXXXXX) pour suivre la fréquentation de l'interface. Laisser vide pour désactiver le suivi.

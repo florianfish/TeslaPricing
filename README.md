@@ -192,6 +192,7 @@ Les données sont persistées dans `/data` (variable `DATA_DIR`), donc incluses 
 | Méthode | Route | Description |
 | :--- | :--- | :--- |
 | `GET` | `/api/health` | Vérification de l'état du serveur |
+| `GET` | `/api/config` | Configuration publique du frontend (`gaMeasurementId` Google Analytics, ou `null`) |
 | `GET` | `/api/superchargers` | Liste des stations filtrable (`search`, `status`, `otherEVsOnly`, `minPower`, `region`, `sortBy`, `sortOrder`) |
 | `GET` | `/api/superchargers/:slug` | Détails complets d'un superchargeur via son slug (ex: `rennessupercharger`) |
 | `GET` | `/api/superchargers/:slug/prices` | Historique complet des relevés de prix d'une station |

@@ -4,3 +4,6 @@ configuration:
   import_key:
     name: Import key
     description: Key shared with the "Collecteur Tesla" browser extension to import prices. Leave empty to disable importing.
+  ga_measurement_id:
+    name: Google Analytics measurement ID
+    description: Google Analytics 4 measurement ID (G-XXXXXXXXXX) to track web UI visits. Leave empty to disable tracking.

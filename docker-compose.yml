@@ -10,6 +10,8 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3000
+      # ID de mesure Google Analytics 4 (facultatif, vide = suivi désactivé)
+      - GA_MEASUREMENT_ID=${GA_MEASUREMENT_ID:-}
     volumes:
       # Persistance de la base de données JSON sur l'hôte VPS
       # Conserve l'historique des prix et nouveaux relevés entre les redémarrages

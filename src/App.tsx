@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useSyncExternalStore } from 'react';
 import type { Supercharger, SuperchargerStats } from './types';
 import { Navbar } from './components/Navbar';
 import { FranceMap } from './components/FranceMap';
@@ -8,7 +8,9 @@ import { CostSimulator } from './components/CostSimulator';
 import { PriceUpdatesView } from './components/PriceUpdatesView';
 import { StationDetailModal } from './components/StationDetailModal';
 import { ReferralEncart } from './components/ReferralEncart';
+import { CookieBanner } from './components/CookieBanner';
 import { AlertCircle, Zap } from 'lucide-react';
+import { trackTab, isAnalyticsConfigured, resetConsent, subscribeAnalytics } from './analytics';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<'map' | 'list' | 'stats' | 'updates' | 'simulator'>('map');
@@ -17,6 +19,7 @@ export default function App() {
   const [selectedCharger, setSelectedCharger] = useState<Supercharger | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const analyticsConfigured = useSyncExternalStore(subscribeAnalytics, isAnalyticsConfigured);
 
   // Fetch all superchargers & stats
   const fetchData = useCallback(async () => {
@@ -48,6 +51,10 @@ export default function App() {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  useEffect(() => {
+    trackTab(activeTab);
+  }, [activeTab]);
 
   // View on map action
   const handleViewOnMap = (charger: Supercharger) => {
@@ -188,9 +195,23 @@ export default function App() {
             >
               v{__APP_VERSION__}
             </a>
+            {analyticsConfigured && (
+              <>
+                <span>•</span>
+                <button
+                  onClick={resetConsent}
+                  title="Modifier mon choix concernant les cookies de mesure d'audience"
+                  className="hover:text-red-400 transition-colors"
+                >
+                  Cookies
+                </button>
+              </>
+            )}
           </div>
         </div>
       </footer>
+
+      <CookieBanner />
     </div>
   );
 }

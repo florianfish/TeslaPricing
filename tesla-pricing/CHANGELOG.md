@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.0
+
+- Google Analytics 4 facultatif : option `ga_measurement_id` (ou variable `GA_MEASUREMENT_ID`), une page vue par onglet consulté.
+- Bandeau de consentement aux cookies : Google Analytics n'est chargé qu'après acceptation ; choix modifiable via le lien « Cookies » en pied de page.
+
 ## 1.2.1
 
 - Purge de l'historique des prix (`POST /api/prices/purge-history`, protégé par la clé d'import) : un relevé par station, sauvegarde préalable dans `/data`.

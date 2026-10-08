@@ -650,14 +650,26 @@ export function addPriceSnapshot(data: {
   return { success: true, snapshot: newSnapshot };
 }
 
-// Clé d'import des relevés du collecteur : variable IMPORT_KEY, sinon option « import_key » de l'add-on
-export function getImportKey(): string {
-  if (process.env.IMPORT_KEY) return process.env.IMPORT_KEY;
+// Réglage : variable d'environnement, sinon option de l'add-on Home Assistant (options.json)
+function getSetting(envVar: string, addonOption: string): string {
+  if (process.env[envVar]) return process.env[envVar]!.trim();
   try {
-    return String(JSON.parse(fs.readFileSync(ADDON_OPTIONS_FILE, 'utf-8')).import_key || '');
+    return String(JSON.parse(fs.readFileSync(ADDON_OPTIONS_FILE, 'utf-8'))[addonOption] || '').trim();
   } catch {
     return '';
   }
+}
+
+// Clé d'import des relevés du collecteur : variable IMPORT_KEY, sinon option « import_key » de l'add-on
+export function getImportKey(): string {
+  return getSetting('IMPORT_KEY', 'import_key');
+}
+
+// ID de mesure Google Analytics 4 (G-XXXXXXXXXX) : variable GA_MEASUREMENT_ID, sinon option « ga_measurement_id ».
+// Valeur invalide ignorée : elle est injectée dans le script gtag côté navigateur.
+export function getGaMeasurementId(): string {
+  const id = getSetting('GA_MEASUREMENT_ID', 'ga_measurement_id').toUpperCase();
+  return /^G-[A-Z0-9]{4,20}$/.test(id) ? id : '';
 }
 
 // Stations à interroger par le collecteur : [id, locationId, locationSlug]
