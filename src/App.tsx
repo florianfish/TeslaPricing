@@ -12,7 +12,7 @@ import { CookieBanner } from './components/CookieBanner';
 import { ChangelogModal } from './components/ChangelogModal';
 import { AlertCircle, Zap } from 'lucide-react';
 import { trackTab, isAnalyticsConfigured, resetConsent, subscribeAnalytics } from './analytics';
-import { useRoute, navigate, routeHash, parseRoute, type Tab } from './router';
+import { useRoute, navigate, routeHash, parseRoute, findStation, type Tab } from './router';
 import { useGeolocation } from './geo';
 
 export default function App() {
@@ -24,14 +24,11 @@ export default function App() {
   const geolocation = useGeolocation();
   const [showChangelog, setShowChangelog] = useState(false);
 
-  // Onglet et fiche station ouverte sont portés par l'URL (#/carte?station=rennessupercharger)
+  // Onglet et fiche station ouverte sont portés par l'URL (#/carte?station=6507)
   const route = useRoute();
   const activeTab = route.tab;
-  const stationSlug = route.params.get('station')?.toLowerCase();
-  const selectedCharger = useMemo(
-    () => (stationSlug ? superchargers.find((s) => s.locationSlug.toLowerCase() === stationSlug) ?? null : null),
-    [superchargers, stationSlug]
-  );
+  const stationParam = route.params.get('station');
+  const selectedCharger = useMemo(() => findStation(superchargers, stationParam), [superchargers, stationParam]);
 
   const setActiveTab = (tab: Tab) => navigate(routeHash(tab));
 
@@ -40,7 +37,7 @@ export default function App() {
     const current = parseRoute(window.location.hash);
     const target = tab ?? current.tab;
     const params = target === current.tab ? current.params : new URLSearchParams();
-    params.set('station', charger.locationSlug);
+    params.set('station', charger.id);
     navigate(routeHash(target, params), { state: { stationOverlay: true } });
   }, []);
 

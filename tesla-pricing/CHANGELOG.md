@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.4.5
+
+- Correction : plusieurs stations d'une même ville partageant un identifiant Tesla (Rennes, Marseille, Cagnes-sur-Mer…), la fiche ouverte pouvait être celle d'une autre station, et l'historique des prix mélangeait les deux. Les liens de fiche utilisent désormais l'identifiant unique de la station (`#/carte?station=6507`) ; les anciens liens restent valides.
+- Retrait du bouton « Tester API FindUs » de la fiche station et de la route `/api/tesla/proxy-details` (appel à Tesla toujours bloqué depuis un serveur).
+- Les routes d'API inconnues répondent 404.
+- Tests automatisés (unitaires, API, navigateur) et intégration continue.
+
 ## 1.4.4
 
 - Passage à Node.js 24 (image `node:24-alpine`), comme le workflow nocturne.

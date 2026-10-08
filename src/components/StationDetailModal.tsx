@@ -39,7 +39,7 @@ export const StationDetailModal: React.FC<StationDetailModalProps> = ({
 
   const freshness = stationFreshness(charger);
 
-  // L'URL courante pointe déjà sur la fiche (#/onglet?station=slug)
+  // L'URL courante pointe déjà sur la fiche (#/onglet?station=<id>)
   const handleShare = async () => {
     const url = window.location.href;
     try {

@@ -502,7 +502,7 @@ export const SuperchargerDirectory: React.FC<SuperchargerDirectoryProps> = ({
               {/* Action Buttons */}
               <div className="flex items-center space-x-2 pt-2">
                 <button
-                  id={`view-charger-details-${charger.locationSlug}`}
+                  id={`view-charger-details-${charger.id}`}
                   onClick={() => onSelectSupercharger(charger)}
                   className="flex-1 flex items-center justify-center space-x-1 px-3 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold text-xs transition-colors shadow-md shadow-red-600/20"
                 >

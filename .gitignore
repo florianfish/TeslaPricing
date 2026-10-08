@@ -11,3 +11,5 @@ tesla-prices-*.json
 .tesla_token
 tesla-probe-*.json
 server/data/*.backup-*.json
+test-results/
+playwright-report/

@@ -32,10 +32,10 @@ export const CostSimulator: React.FC<CostSimulatorProps> = ({ stats, supercharge
   const [isCustom, setIsCustom] = useState(false);
   const [startPercent, setStartPercent] = useState<number>(10);
   const [endPercent, setEndPercent] = useState<number>(80);
-  const [selectedStationSlug, setSelectedStationSlug] = useState<string>('NATIONAL');
+  const [selectedStationId, setSelectedStationId] = useState<string>('NATIONAL');
 
   // Selected station or national average pricing
-  const station = superchargers.find((s) => s.locationSlug === selectedStationSlug);
+  const station = superchargers.find((s) => s.id === selectedStationId);
   const teslaOffPeak = station ? station.currentPricing.teslaOffPeak : stats?.avgTeslaOffPeak || 0.30;
   const teslaPeak = station ? station.currentPricing.teslaPeak : stats?.avgTeslaPeak || 0.36;
   const nonTeslaOffPeak = station ? station.currentPricing.nonTeslaOffPeak : stats?.avgNonTeslaOffPeak || 0.39;
@@ -173,13 +173,13 @@ export const CostSimulator: React.FC<CostSimulatorProps> = ({ stats, supercharge
               Station de Supercharge
             </label>
             <select
-              value={selectedStationSlug}
-              onChange={(e) => setSelectedStationSlug(e.target.value)}
+              value={selectedStationId}
+              onChange={(e) => setSelectedStationId(e.target.value)}
               className="w-full py-2 px-3 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-red-500"
             >
               <option value="NATIONAL">Moyenne nationale France</option>
               {superchargers.map((s) => (
-                <option key={s.id} value={s.locationSlug}>
+                <option key={s.id} value={s.id}>
                   {s.city} ({s.currentPricing.teslaOffPeak.toFixed(2)}€ HC / {s.currentPricing.teslaPeak.toFixed(2)}€ HP)
                 </option>
               ))}

@@ -1,4 +1,5 @@
 import { useMemo, useSyncExternalStore } from 'react';
+import type { Supercharger } from './types';
 
 // Routage par le fragment d'URL (#/liste?q=rennes) : fonctionne sous un préfixe inconnu
 // (Ingress Home Assistant) et sans configuration serveur.
@@ -65,6 +66,18 @@ export function replaceParams(changes: Record<string, string | null | undefined>
 export function useRoute(): Route {
   const hash = useSyncExternalStore(subscribe, getHash);
   return useMemo(() => parseRoute(hash), [hash]);
+}
+
+// Fiche désignée dans l'URL par l'identifiant de la station (unique) ; un slug est aussi accepté
+// pour les anciens liens, mais plusieurs stations peuvent partager le même (ex: deux à Rennes).
+export function findStation(superchargers: Supercharger[], param: string | null): Supercharger | null {
+  if (!param) return null;
+  const slug = param.toLowerCase();
+  return (
+    superchargers.find((s) => s.id === param) ??
+    superchargers.find((s) => s.locationSlug.toLowerCase() === slug) ??
+    null
+  );
 }
 
 // Sous Ingress Home Assistant, l'URL de l'iframe n'est pas partageable

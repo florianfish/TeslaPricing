@@ -51,7 +51,7 @@ Le projet adopte une architecture full-stack unifiée servie par un unique proce
 
 ### C. Frontend (`src/`)
 - Entrée : `src/main.tsx` montant `src/App.tsx`.
-- Gestion des onglets : routage par le fragment d'URL (`src/router.ts`, ex. `#/liste?q=rennes`, `#/carte?station=rennessupercharger`). Pas de routage par chemin : l'application est servie sous un préfixe inconnu par l'Ingress Home Assistant.
+- Gestion des onglets : routage par le fragment d'URL (`src/router.ts`, ex. `#/liste?q=rennes`, `#/carte?station=6507` — identifiant unique, car certains slugs sont partagés par plusieurs stations). Pas de routage par chemin : l'application est servie sous un préfixe inconnu par l'Ingress Home Assistant.
 - Style : **Tailwind CSS v4** via `@tailwindcss/vite` (imports dans `src/index.css`).
 - Graphiques : **Recharts** (nécessite `react-is`).
 - Carte : **Leaflet** avec tuiles libres sans clé API (ESRI Dark Gray Canvas, OpenStreetMap France et Satellite ESRI).
@@ -80,7 +80,7 @@ Le projet adopte une architecture full-stack unifiée servie par un unique proce
 4. **Persistance JSON & Sauvegarde** :
    - Ne pas corrompre `server/data/superchargers_db.json`. Si une migration de schéma est requise, s'assurer d'écrire un script de migration propre dans `server/` ou faire une copie de sauvegarde préalable.
 5. **Slug et Clé Unique des Superchargeurs** :
-   - Le champ `locationSlug` (ex: `rennessupercharger`, `charollessupercharger`) sert d'identifiant stable dans les routes REST (`/api/superchargers/:slug`). Toujours normaliser en minuscules.
+   - La clé unique est `id` (identifiant supercharge.info). Le champ `locationSlug` (ex: `rennessupercharger`) n'est **pas** unique : une vingtaine de slugs sont partagés par plusieurs stations d'une même ville (Rennes, Marseille, Cagnes-sur-Mer…). L'utiliser pour l'affichage et les liens Tesla, jamais pour retrouver une station de façon certaine. `/api/superchargers/:slug` accepte aussi un `id`. Toujours normaliser les slugs en minuscules.
 6. **Gestion des dev servers par agents** :
    - La commande `npm run dev` lance `tsx server.ts` qui est un processus daemon bloquant. Toujours utiliser l'option `IsDaemon: true` lors de son lancement via l'outil d'exécution de commandes.
 
@@ -124,9 +124,10 @@ Pour toute modification ou extension de données, respecter scrupuleusement ces 
 
 ### Ajouter un nouvel Endpoint API
 1. Déclarer la logique métier dans `server/db.ts`.
-2. Déclarer la route dans `server.ts` sous le bloc `// --- API ROUTES ---`.
+2. Déclarer la route dans `server/app.ts` (`createApp()`), sous le bloc `// --- API ROUTES ---`. `server.ts` ne fait que démarrer : frontend, écoute réseau, tâches périodiques.
 3. Mettre à jour les types partagés dans `src/types.ts` si un nouveau payload est introduit.
 4. Mettre à jour le tableau des routes dans `README.md`.
+5. Ajouter les cas de test dans `tests/api.test.ts` (base de test `tests/fixtures/superchargers_db.json`).
 
 ### Ajouter une nouvelle Vue ou Composant UI
 1. Créer le composant dans `src/components/MonNouveauComposant.tsx`.
@@ -136,10 +137,10 @@ Pour toute modification ou extension de données, respecter scrupuleusement ces 
 ### Valider les Changements
 Avant de conclure toute tâche :
 ```bash
-# Vérification du typage TypeScript
-npm run lint
-
-# Vérification de l'intégrité de l'API (PowerShell)
-Invoke-RestMethod -Uri http://localhost:3000/api/health
-Invoke-RestMethod -Uri http://localhost:3000/api/prices/stats
+npm run lint                         # typage TypeScript
+npm test                             # Vitest : tarification, synchro des stations, API en mémoire
+npm run build && npm run test:e2e    # Playwright : parcours navigateur sur le build de production
 ```
+- Les tests n'utilisent jamais `server/data/` : uniquement `tests/fixtures/superchargers_db.json` (5 stations, dont deux partageant le slug `rennessupercharger`), copiée dans un dossier temporaire.
+- Toute correction de bug s'accompagne d'un test qui échoue sans elle.
+- La CI (`.github/workflows/ci.yml`) rejoue tout à chaque push, puis construit et démarre l'image Docker en mode add-on.

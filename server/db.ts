@@ -466,11 +466,13 @@ export function getAllSuperchargers(options?: {
   return list;
 }
 
+// Identifiant (unique) d'abord, puis slug : plusieurs stations peuvent partager un même slug
 export function getSuperchargerBySlug(slug: string): Supercharger | undefined {
   const db = initDatabase();
   const normalized = slug.toLowerCase().trim();
-  return db.superchargers.find(
-    s => s.locationSlug.toLowerCase() === normalized || s.id === slug
+  return (
+    db.superchargers.find((s) => s.id === slug) ??
+    db.superchargers.find((s) => s.locationSlug.toLowerCase() === normalized)
   );
 }
 
@@ -479,7 +481,7 @@ export function getPriceHistoryForCharger(slugOrId: string): PriceSnapshot[] {
   const charger = getSuperchargerBySlug(slugOrId);
   if (!charger) return [];
   return db.priceSnapshots.filter(
-    p => p.superchargerId === charger.id || p.locationSlug === charger.locationSlug
+    p => p.superchargerId === charger.id
   ).sort((a, b) => a.date.localeCompare(b.date));
 }
 

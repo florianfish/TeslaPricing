@@ -37,7 +37,7 @@ Application web complète permettant de visualiser, répertorier, comparer et hi
   - Modal d'informations complètes par station (adresses, stèles, puissance, frais d'inactivité, graphique Recharts).
   - Tarifs actualisés automatiquement de manière centralisée (automatisation nocturne et synchronisation BDD).
   - Badge de fraîcheur (« Relevé il y a N j ») sur chaque station, dans la liste, la fiche et la carte.
-  - Lien direct partageable vers chaque fiche (`#/carte?station=rennessupercharger`) ; le bouton Retour du navigateur referme la fiche.
+  - Lien direct partageable vers chaque fiche (`#/carte?station=6507`, identifiant de la station ; plusieurs stations peuvent partager un même slug) ; le bouton Retour du navigateur referme la fiche.
 
 
 ---
@@ -84,6 +84,14 @@ Accéder à l'application dans votre navigateur :
 npm run build
 npm run start
 ```
+
+### 4. Tests
+```bash
+npm run lint        # typage TypeScript
+npm test            # tests unitaires et d'API (Vitest, base de test tests/fixtures/)
+npm run build && npm run test:e2e   # tests navigateur (Playwright, build de production)
+```
+Première exécution des tests navigateur : `npx playwright install chromium`. Le workflow `.github/workflows/ci.yml` exécute l'ensemble à chaque push et pull request, puis construit et démarre l'image Docker de l'add-on.
 
 ---
 
@@ -207,8 +215,9 @@ TeslaPricing/
 ├── package.json                # Dépendances et scripts
 ├── vite.config.ts              # Configuration de Vite & Tailwind CSS
 ├── tsconfig.json               # Configuration TypeScript
-├── server.ts                   # Serveur Express principal (API + Vite middleware)
+├── server.ts                   # Démarrage : API, frontend (Vite ou dist/), tâches périodiques
 ├── server/
+│   ├── app.ts                  # Routes de l'API (application Express testable)
 │   ├── db.ts                   # Couche d'accès aux données, filtres et persistance
 │   └── data/
 │       ├── superchargers_db.json   # Base de données persistante (330+ stations, prix)
@@ -226,7 +235,9 @@ TeslaPricing/
         ├── CostSimulator.tsx        # Simulateur interactif de coût de recharge
         ├── PriceUpdatesView.tsx     # Onglet « Mises à jour » : derniers changements de tarif par station
         ├── CollectionStatusPanel.tsx# État de la collecte des tarifs (onglet « Mises à jour »)
-        └── StationDetailModal.tsx   # Modal de détail & formulaire d'ajout de relevé
+        └── StationDetailModal.tsx   # Fiche station : tarifs, historique, liens
+tests/                          # Vitest : logique de tarification, synchro des stations, API (base de test fixtures/)
+e2e/                            # Playwright : parcours navigateur sur le build de production
 ```
 
 ---
