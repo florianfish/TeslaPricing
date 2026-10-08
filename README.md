@@ -85,12 +85,12 @@ npm run start
 
 ---
 
-## 🐳 Déploiement Docker sur VPS (Recommandé)
+## 🐳 Déploiement Docker
 
 L'application inclut un `Dockerfile` multi-stage optimisé et une configuration `docker-compose.yml` prête pour la production.
 
 ### 1. Démarrer avec Docker Compose
-Sur votre VPS, lancez simplement :
+Sur le serveur, lancez simplement :
 ```bash
 docker compose up -d --build
 ```
@@ -113,7 +113,7 @@ docker compose down
 
 ### 3. Persistance des Données
 Le volume `./server/data:/app/server/data` garantit que :
-- Votre fichier `superchargers_db.json` contenant les stations et l'historique des prix est stocké directement sur votre VPS.
+- Votre fichier `superchargers_db.json` contenant les stations et l'historique des prix est stocké directement sur l'hôte.
 - Tous les nouveaux relevés de tarifs ajoutés via l'interface restent conservés lors des mises à jour et redémarrages du conteneur.
 
 ### 4. Configuration d'un Reverse Proxy (Nginx / Caddy)
@@ -139,24 +139,17 @@ Pour exposer l'application sur votre domaine avec HTTPS :
   }
   ```
 
-### 5. Actualisation Nocturne Automatique (GitHub Actions & Synchronisation VPS)
+### 5. Actualisation Nocturne Automatique (GitHub Actions)
 
 Le workflow `.github/workflows/update-prices.yml` tourne chaque nuit à 03:00 UTC pour :
 1. Récupérer les nouvelles stations et changements de statuts/bornes (supercharge.info). Les tarifs sont collectés séparément, voir ci-dessous.
 2. Mettre à jour `server/data/superchargers_db.json`.
 3. Commiter et pousser automatiquement les modifications sur le dépôt GitHub.
 
-**Synchroniser votre VPS automatiquement chaque nuit :**
-Ajoutez une ligne dans la crontab de votre VPS (`crontab -e`) pour récupérer les nouveaux prix et recharger l'application à chaud sans interruption de service :
-```bash
-# Chaque nuit à 04:00 UTC : pull des nouveaux prix + rechargement en mémoire sans redémarrer le conteneur
-0 4 * * * cd /chemin/vers/TeslaPricing && git pull origin main && curl -s -X POST http://localhost:3000/api/sync
-```
-
 **Base persistante séparée (`DATA_DIR`, add-on Home Assistant) :** le flux nocturne n'atteint pas cette base. Le serveur synchronise donc lui-même les stations depuis supercharge.info, 30 s après le démarrage puis toutes les 24 h (nouvelles stations, changements de statut, bornes ; les tarifs ne sont jamais modifiés). Activé par défaut dès que `DATA_DIR` est défini ; `STATION_SYNC=1` ou `STATION_SYNC=0` force le choix.
 ### 6. Collecte des tarifs Tesla depuis le navigateur
 
-L'API Tesla FindUs est protégée par Akamai : les requêtes serveur (GitHub Actions, VPS, `curl`, Node) sont refusées (`403`), même via une IP résidentielle. Seul un vrai navigateur, depuis une connexion personnelle, obtient les tarifs. (L'API GraphQL de l'app mobile Tesla, testée en octobre 2026, n'est pas bloquée mais ne renvoie aucune donnée hors de l'app.)
+L'API Tesla FindUs est protégée par Akamai : les requêtes serveur (GitHub Actions, serveurs, `curl`, Node) sont refusées (`403`), même via une IP résidentielle. Seul un vrai navigateur, depuis une connexion personnelle, obtient les tarifs. (L'API GraphQL de l'app mobile Tesla, testée en octobre 2026, n'est pas bloquée mais ne renvoie aucune donnée hors de l'app.)
 
 **Automatique — extension Chrome (`extension/`)** : à intervalle régulier (7 jours par défaut), l'extension ouvre un onglet `www.tesla.com` en arrière-plan, interroge l'API depuis la page — ou, si Akamai refuse ces requêtes, ouvre directement chaque URL JSON `get-charger-details` dans l'onglet (≈ 30 min avec le délai par défaut de 5 s par requête, réglable de 1 à 30 s ; le mode auto / fetch / JSON se choisit aussi dans les options) et envoie le relevé à l'add-on Home Assistant.
 
@@ -170,7 +163,7 @@ Le navigateur doit être ouvert, depuis une connexion personnelle (pas via le VP
 
 1. `npm run collector` génère `collector.html` (favori + extrait console, avec la liste à jour des stations).
 2. Ouvrez `collector.html`, glissez le bouton dans vos favoris, puis cliquez dessus sur une page `https://www.tesla.com/fr_FR/findus` (≈ 25 min, 5 s par station).
-3. Importez le fichier téléchargé : `npm run import-prices -- tesla-prices-AAAA-MM-JJ.json` (ajoutez `--sync` pour l'envoyer au VPS via `VPS_SYNC_URL`), puis commitez `server/data/superchargers_db.json`.
+3. Importez le fichier téléchargé : `npm run import-prices -- tesla-prices-AAAA-MM-JJ.json`, puis commitez `server/data/superchargers_db.json`.
 
 > [!TIP]
 > **Zéro conflit Git** : Les relevés de tarifs saisis par les utilisateurs depuis l'interface web sont isolés dans `server/data/user_contributions.json` (ignoré par Git) et ré-appliqués automatiquement par-dessus la base lors du rechargement. Les `git pull` s'exécutent ainsi sans aucun risque de conflit de fusion !
@@ -203,7 +196,6 @@ Les données sont persistées dans `/data` (variable `DATA_DIR`), donc incluses 
 | `GET` | `/api/prices/collector-stations` | Stations à interroger par le collecteur (`[id, locationId, locationSlug]`) |
 | `POST` | `/api/prices/import` | Import d'un relevé du collecteur (en-tête `Authorization: Bearer <clé d'import>`) |
 | `POST` | `/api/prices/purge-history` | Purge l'historique des prix : un relevé par station (tarif actuel), sauvegarde préalable (en-tête `Authorization: Bearer <clé d'import>`). En local : `npm run purge-history` |
-| `POST` | `/api/sync` | Met à jour le timestamp de synchronisation de la base |
 | `GET` | `/api/tesla/proxy-details?locationSlug=:slug` | Relais vers l'API FindUs Tesla ou renvoi du miroir local |
 
 ---

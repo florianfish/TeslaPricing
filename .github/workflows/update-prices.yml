@@ -32,7 +32,6 @@ jobs:
         run: npm run update-prices
 
       - name: Commiter et pousser les modifications sur GitHub
-        id: auto_commit
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "chore(data): actualisation automatique nocturne de la liste des Superchargeurs"
@@ -41,17 +40,3 @@ jobs:
           commit_user_email: "github-actions[bot]@users.noreply.github.com"
           commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
 
-      - name: Notifier et synchroniser le VPS
-        if: steps.auto_commit.outputs.changes_detected == 'true'
-        env:
-          TARGET_URL: ${{ secrets.VPS_WEBHOOK_URL || secrets.VPS_SYNC_WEBHOOK_URL || secrets.VPS_URL || secrets.WEBHOOK_URL }}
-        run: |
-          if [ -n "$TARGET_URL" ]; then
-            echo "Envoi de la base actualisée vers le VPS..."
-            curl -s -X POST \
-              -H "Content-Type: application/json" \
-              --data-binary @server/data/superchargers_db.json \
-              "$TARGET_URL" || echo "VPS non joignable actuellement"
-          else
-            echo "Aucune URL de webhook configurée, étape ignorée."
-          fi

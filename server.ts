@@ -4,13 +4,11 @@ import path from 'path';
 import { createServer as createViteServer } from 'vite';
 import {
   initDatabase,
-  reloadDatabase,
   getAllSuperchargers,
   getSuperchargerBySlug,
   getPriceHistoryForCharger,
   addPriceSnapshot,
   getStats,
-  saveDatabase,
   getImportKey,
   getGaMeasurementId,
   getCollectorStations,
@@ -230,28 +228,6 @@ async function startServer() {
       const result = purgeHistory();
       console.log('Historique des prix purgé :', result);
       res.json({ success: true, ...result });
-    } catch (err: any) {
-      res.status(500).json({ error: err.message });
-    }
-  });
-
-  // Sync endpoint - Rechargement ou mise à jour directe depuis le webhook GitHub Actions
-  app.post('/api/sync', async (req, res) => {
-    try {
-      // Si GitHub Actions transmet la nouvelle base dans le corps de la requête
-      if (req.body && Array.isArray(req.body.superchargers) && req.body.superchargers.length > 0) {
-        saveDatabase(req.body);
-      }
-
-      const db = reloadDatabase();
-
-      res.json({
-        success: true,
-        message: 'Base de données synchronisée et rechargée avec succès',
-        totalStations: db.superchargers.length,
-        lastSyncTime: db.lastSyncTime,
-        stats: getStats(),
-      });
     } catch (err: any) {
       res.status(500).json({ error: err.message });
     }

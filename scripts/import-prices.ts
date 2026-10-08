@@ -1,8 +1,7 @@
 // Importe un fichier tesla-prices-AAAA-MM-JJ.json produit par le collecteur
 // navigateur (scripts/collector.js) dans server/data/superchargers_db.json.
 //
-// Usage : npm run import-prices -- <fichier.json> [--sync]
-//   --sync : envoie ensuite la base au VPS (POST vers VPS_SYNC_URL, lu dans .env)
+// Usage : npm run import-prices -- <fichier.json>
 import 'dotenv/config';
 import fs from 'fs';
 import path from 'path';
@@ -20,10 +19,9 @@ const DB_FILE = path.join(process.env.DATA_DIR || path.join(process.cwd(), 'serv
 async function main() {
   const args = process.argv.slice(2);
   const file = args.find((a) => !a.startsWith('--'));
-  const sync = args.includes('--sync');
 
   if (!file || !fs.existsSync(file)) {
-    console.error('Usage : npm run import-prices -- <tesla-prices-AAAA-MM-JJ.json> [--sync]');
+    console.error('Usage : npm run import-prices -- <tesla-prices-AAAA-MM-JJ.json>');
     process.exit(1);
   }
 
@@ -80,21 +78,6 @@ async function main() {
   console.log(`• Ignorés (404/403…) : ${skipped}`);
   console.log(updated > 0 ? `💾 Base enregistrée : ${DB_FILE}` : 'ℹ️ Aucun changement : base inchangée.');
   console.log('================================================================\n');
-
-  if (sync) {
-    const url = process.env.VPS_SYNC_URL;
-    if (!url) {
-      console.error('❌ --sync demandé mais VPS_SYNC_URL est absent du fichier .env');
-      process.exit(1);
-    }
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(db),
-    });
-    console.log(res.ok ? `✅ Base envoyée au VPS (${url})` : `❌ Envoi au VPS : HTTP ${res.status}`);
-    if (!res.ok) process.exit(1);
-  }
 }
 
 main().catch((err) => {

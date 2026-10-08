@@ -310,8 +310,8 @@ function generateNationalHistory(): PriceSnapshot[] {
 }
 
 // Initialize database from raw data or disk
-export function initDatabase(forceReload = false): DatabaseSchema {
-  if (dbInstance && !forceReload) return dbInstance;
+export function initDatabase(): DatabaseSchema {
+  if (dbInstance) return dbInstance;
 
   fs.mkdirSync(DATA_DIR, { recursive: true });
 
@@ -720,12 +720,6 @@ export function purgeHistory(): { stations: number; removed: number; backup: str
   const counts = purgePriceHistory(db);
   saveDatabase(db);
   return { ...counts, backup: path.basename(backup) };
-}
-
-// Recharger la base en mémoire (depuis superchargers_db.json + user_contributions.json)
-export function reloadDatabase(): DatabaseSchema {
-  dbInstance = null;
-  return initDatabase(true);
 }
 
 export function getStats(): SuperchargerStats {
