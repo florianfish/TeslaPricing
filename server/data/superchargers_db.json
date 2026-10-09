@@ -17563,6 +17563,55 @@
           "changePercentage": 0
         }
       ]
+    },
+    {
+      "id": "12213",
+      "locationId": "402464",
+      "locationSlug": "frontenaudsupercharger",
+      "name": "Frontenaud, France",
+      "city": "Frontenaud",
+      "department": "Dép. 71",
+      "region": "Bourgogne-Franche-Comté",
+      "street": "115 Rue des Paddocks",
+      "postalCode": "71580",
+      "latitude": 46.552112,
+      "longitude": 5.322609,
+      "status": "PLAN",
+      "stallCount": 8,
+      "powerKw": 500,
+      "stallsBreakdown": {
+        "v2": 0,
+        "v3": 0,
+        "v4": 0
+      },
+      "otherEVs": true,
+      "currentPricing": {
+        "teslaPeak": 0.36,
+        "teslaOffPeak": 0.3,
+        "nonTeslaPeak": 0.49,
+        "nonTeslaOffPeak": 0.39,
+        "peakHours": "09:00 - 20:00",
+        "idleFeeStandard": 0.5,
+        "idleFeeCongested": 1,
+        "lastUpdated": "2026-10-09T09:52:33.272Z"
+      },
+      "priceHistory": [
+        {
+          "id": "12213-2026-10-09",
+          "superchargerId": "12213",
+          "superchargerName": "Frontenaud, France",
+          "locationSlug": "frontenaudsupercharger",
+          "date": "2026-10-09",
+          "teslaPeak": 0.36,
+          "teslaOffPeak": 0.3,
+          "nonTeslaPeak": 0.49,
+          "nonTeslaOffPeak": 0.39,
+          "peakHours": "09:00 - 20:00",
+          "source": "Nouveau référencement",
+          "notes": "Nouvelle station répertoriée",
+          "changePercentage": 0
+        }
+      ]
     }
   ],
   "priceSnapshots": [
@@ -22635,6 +22684,21 @@
       "source": "Nouveau référencement",
       "notes": "Nouvelle station répertoriée",
       "changePercentage": 0
+    },
+    {
+      "id": "12213-2026-10-09",
+      "superchargerId": "12213",
+      "superchargerName": "Frontenaud, France",
+      "locationSlug": "frontenaudsupercharger",
+      "date": "2026-10-09",
+      "teslaPeak": 0.36,
+      "teslaOffPeak": 0.3,
+      "nonTeslaPeak": 0.49,
+      "nonTeslaOffPeak": 0.39,
+      "peakHours": "09:00 - 20:00",
+      "source": "Nouveau référencement",
+      "notes": "Nouvelle station répertoriée",
+      "changePercentage": 0
     }
   ],
   "nationalHistory": [
@@ -22759,8 +22823,17 @@
       "changePercentage": -5.2
     }
   ],
-  "lastSyncTime": "2026-10-08T09:47:48.705Z",
+  "lastSyncTime": "2026-10-09T09:52:33.272Z",
   "stationEvents": [
+    {
+      "date": "2026-10-09",
+      "type": "NEW",
+      "superchargerId": "12213",
+      "superchargerName": "Frontenaud, France",
+      "city": "Frontenaud",
+      "region": "Bourgogne-Franche-Comté",
+      "to": "PLAN"
+    },
     {
       "date": "2026-10-08",
       "type": "STATUS",
