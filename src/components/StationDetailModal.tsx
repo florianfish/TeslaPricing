@@ -3,6 +3,7 @@ import type { Supercharger } from '../types';
 import { offPeakHours } from '../hours';
 import { stationFreshness, FRESHNESS_CLASSES } from '../freshness';
 import { isShareableLocation } from '../router';
+import { teslaStationUrl } from '../tesla';
 import {
   X,
   Zap,
@@ -67,7 +68,7 @@ export const StationDetailModal: React.FC<StationDetailModalProps> = ({
     notes: item.notes,
   }));
 
-  const officialTeslaWebUrl = `https://www.tesla.com/fr_FR/findus/location/supercharger/${charger.locationSlug}`;
+  const officialTeslaWebUrl = teslaStationUrl(charger);
   const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${charger.latitude},${charger.longitude}`;
 
   return (
@@ -146,15 +147,8 @@ export const StationDetailModal: React.FC<StationDetailModalProps> = ({
             </div>
           </div>
 
-          {/* Links & Slug Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-2 p-3 rounded-xl bg-slate-950/80 border border-slate-800 text-xs">
-            <div className="flex items-center space-x-2">
-              <span className="text-slate-400">Slug Tesla :</span>
-              <code className="px-2 py-0.5 rounded bg-slate-800 text-red-300 font-mono text-xs">
-                {charger.locationSlug}
-              </code>
-            </div>
-
+          {/* Links Bar */}
+          <div className="flex flex-wrap items-center justify-end gap-2 p-3 rounded-xl bg-slate-950/80 border border-slate-800 text-xs">
             <div className="flex flex-wrap items-center gap-2">
               {isShareableLocation() && (
                 <button
@@ -177,15 +171,17 @@ export const StationDetailModal: React.FC<StationDetailModalProps> = ({
                 <span>Naviguer</span>
               </a>
 
-              <a
-                href={officialTeslaWebUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
-              >
-                <ExternalLink className="w-3.5 h-3.5 text-red-400" />
-                <span>Page Tesla.com</span>
-              </a>
+              {officialTeslaWebUrl && (
+                <a
+                  href={officialTeslaWebUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
+                >
+                  <ExternalLink className="w-3.5 h-3.5 text-red-400" />
+                  <span>Page Tesla.com</span>
+                </a>
+              )}
             </div>
           </div>
 

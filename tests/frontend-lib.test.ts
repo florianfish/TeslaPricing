@@ -6,6 +6,7 @@ import { daysSince, freshnessLevel, relativeDays, stationFreshness } from '../sr
 import { distanceKm, formatDistance } from '../src/geo';
 import { parseRoute, routeHash, findStation } from '../src/router';
 import { CHANGELOG, parseChangelog } from '../src/changelog';
+import { teslaStationUrl } from '../src/tesla';
 import { loadFixture } from './helpers';
 
 afterEach(() => {
@@ -44,6 +45,13 @@ describe('freshness', () => {
     const [rennes] = loadFixture().superchargers;
     expect(stationFreshness(rennes)).toEqual({ days: 20, level: 'stale', label: 'Relevé il y a 20 j' });
     expect(stationFreshness({ ...rennes, lastCheckedAt: '2026-10-07' })).toEqual({ days: 1, level: 'fresh', label: 'Relevé hier' });
+  });
+});
+
+describe('tesla', () => {
+  it('construit la fiche FindUs à partir du locationId', () => {
+    expect(teslaStationUrl({ locationId: '413672' })).toBe('https://www.tesla.com/fr_FR/findus/location/supercharger/413672');
+    expect(teslaStationUrl({})).toBeNull();
   });
 });
 
