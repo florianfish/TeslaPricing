@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.5.0
+
+- Référencement : nouvelle option « URL publique » (variable `PUBLIC_URL` hors add-on). Une fois renseignée, chaque station a sa propre page indexable (`/superchargeur-abbeville-9655`) avec titre, tarifs et données structurées, accompagnée de `robots.txt`, `sitemap.xml`, d'une URL canonique et d'une image d'aperçu pour les partages. Sans elle, l'instance reste privée et non indexée.
+- Le bouton « Partager » d'une fiche copie l'adresse de la page de la station.
+- Fiche station : le tarif du créneau en cours (heures pleines ou creuses, heure de Paris) est mis en évidence.
+- Fiche station : le lien « Page Tesla.com » ouvre la bonne page (identifiant Tesla de la station) ; le slug Tesla n'est plus affiché.
+- Logo de l'application en favicon et dans la boutique d'add-ons Home Assistant.
+
 ## 1.4.5
 
 - Correction : plusieurs stations d'une même ville partageant un identifiant Tesla (Rennes, Marseille, Cagnes-sur-Mer…), la fiche ouverte pouvait être celle d'une autre station, et l'historique des prix mélangeait les deux. Les liens de fiche utilisent désormais l'identifiant unique de la station (`#/carte?station=6507`) ; les anciens liens restent valides.
