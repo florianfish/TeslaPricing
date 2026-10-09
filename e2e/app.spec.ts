@@ -119,6 +119,15 @@ test.describe('Fraîcheur et collecte', () => {
 });
 
 test.describe('Divers', () => {
+  test('le favicon est servi par un chemin relatif (compatible Ingress)', async ({ page, request }) => {
+    await page.goto('');
+    const href = await page.locator('link[rel=icon]').getAttribute('href');
+    expect(href).toBe('./favicon.svg');
+    const res = await request.get(href!);
+    expect(res.ok()).toBe(true);
+    expect(res.headers()['content-type']).toContain('image/svg+xml');
+  });
+
   test('les notes de version s’ouvrent depuis le numéro de version', async ({ page }) => {
     const config = fs.readFileSync(path.join(import.meta.dirname, '..', 'tesla-pricing', 'config.yaml'), 'utf-8');
     const version = config.match(/^version:\s*"?([^"\s]+)"?/m)![1];
