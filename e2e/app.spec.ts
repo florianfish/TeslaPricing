@@ -15,6 +15,16 @@ const test = base.extend<{ page: Page }>({
 const modal = (page: Page) => page.getByText('Grille tarifaire actuelle en vigueur');
 const hash = (page: Page) => page.evaluate(() => window.location.hash);
 
+test.describe('Fiche station', () => {
+  test('le créneau tarifaire en cours est mis en évidence', async ({ page }) => {
+    // 17:30 à Paris (UTC+2) : en heures pleines pour la plage 09:00 - 20:00 de la station
+    await page.clock.setFixedTime(new Date('2026-10-09T15:30:00Z'));
+    await page.goto('#/carte?station=6507');
+    await expect(page.getByTestId('current-period')).toHaveText('En ce moment : heures pleines');
+    await expect(page.getByText('Maintenant')).toHaveCount(2); // Tesla et non-Tesla
+  });
+});
+
 test.describe('URLs partageables', () => {
   test('la recherche, les filtres et le tri sont relus depuis l’URL', async ({ page }) => {
     await page.goto('#/liste?q=rennes&tri=price');

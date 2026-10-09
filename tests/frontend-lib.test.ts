@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import fs from 'fs';
 import path from 'path';
-import { offPeakHours } from '../src/hours';
+import { offPeakHours, currentTariffPeriod } from '../src/hours';
 import { daysSince, freshnessLevel, relativeDays, stationFreshness } from '../src/freshness';
 import { distanceKm, formatDistance } from '../src/geo';
 import { parseRoute, routeHash, findStation } from '../src/router';
@@ -18,6 +18,19 @@ describe('hours', () => {
     expect(offPeakHours('16:00 - 20:00')).toBe('20:00 - 16:00');
     expect(offPeakHours(' 9:00-20:00 ')).toBe('20:00 - 9:00');
     expect(offPeakHours('variable')).toBeNull();
+  });
+
+  it('indique le créneau en cours à l’heure de Paris', () => {
+    // 2026-10-09 : heure d'été, Paris = UTC+2
+    const at = (utc: string) => new Date(`2026-10-09T${utc}:00Z`);
+    expect(currentTariffPeriod('16:00 - 20:00', at('14:00'))).toBe('peak');
+    expect(currentTariffPeriod('16:00 - 20:00', at('17:59'))).toBe('peak');
+    expect(currentTariffPeriod('16:00 - 20:00', at('18:00'))).toBe('offPeak');
+    expect(currentTariffPeriod('16:00 - 20:00', at('13:59'))).toBe('offPeak');
+    expect(currentTariffPeriod('09:00 - 00:00', at('21:59'))).toBe('peak');
+    expect(currentTariffPeriod('09:00 - 00:00', at('22:00'))).toBe('offPeak');
+    expect(currentTariffPeriod('22:00 - 06:00', at('02:00'))).toBe('peak');
+    expect(currentTariffPeriod('variable', at('12:00'))).toBeNull();
   });
 });
 

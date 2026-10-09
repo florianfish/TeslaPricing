@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { Supercharger } from '../types';
-import { offPeakHours } from '../hours';
+import { offPeakHours, currentTariffPeriod, type TariffPeriod } from '../hours';
 import { stationFreshness, FRESHNESS_CLASSES } from '../freshness';
 import { isShareableLocation } from '../router';
 import { teslaStationUrl } from '../tesla';
@@ -57,6 +57,24 @@ export const StationDetailModal: React.FC<StationDetailModalProps> = ({
   };
 
   const current = charger.currentPricing;
+
+  // Créneau HP/HC en cours, réévalué chaque minute tant que la fiche est ouverte
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 60_000);
+    return () => clearInterval(timer);
+  }, []);
+  const activePeriod = currentTariffPeriod(current.peakHours, now);
+  const priceCellClass = (period: TariffPeriod) =>
+    activePeriod === null
+      ? ''
+      : activePeriod === period
+        ? `-m-2 p-2 rounded-lg ring-1 ${period === 'peak' ? 'ring-amber-500/60 bg-amber-500/10' : 'ring-emerald-500/60 bg-emerald-500/10'}`
+        : '-m-2 p-2 opacity-50';
+  const nowTag = (period: TariffPeriod) =>
+    activePeriod === period && (
+      <span className="ml-1.5 px-1.5 py-px rounded text-[9px] font-bold uppercase tracking-wide bg-slate-100 text-slate-900">Maintenant</span>
+    );
   const history = charger.priceHistory || [];
 
   const chartData = history.map((item) => ({
@@ -202,6 +220,18 @@ export const StationDetailModal: React.FC<StationDetailModalProps> = ({
                 <Clock className="w-3 h-3 mr-1" />
                 Heures pleines : {current.peakHours}
                 {offPeakHours(current.peakHours) && <> · Heures creuses : {offPeakHours(current.peakHours)}</>}
+                {activePeriod && (
+                  <span
+                    data-testid="current-period"
+                    className={`ml-2 whitespace-nowrap px-2 py-0.5 rounded-md border text-[10px] font-semibold ${
+                      activePeriod === 'peak'
+                        ? 'bg-amber-500/15 text-amber-300 border-amber-500/40'
+                        : 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40'
+                    }`}
+                  >
+                    En ce moment : {activePeriod === 'peak' ? 'heures pleines' : 'heures creuses'}
+                  </span>
+                )}
               </span>
             </div>
 
@@ -215,15 +245,15 @@ export const StationDetailModal: React.FC<StationDetailModalProps> = ({
                   </span>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <span className="text-[11px] text-slate-400 block">Heures Creuses</span>
+                  <div className={priceCellClass('offPeak')}>
+                    <span className="text-[11px] text-slate-400 flex items-center">Heures Creuses{nowTag('offPeak')}</span>
                     <strong className="text-2xl font-extrabold text-emerald-400">
                       {current.teslaOffPeak.toFixed(2)} €
                     </strong>
                     <span className="text-[11px] text-slate-400 ml-1">/kWh</span>
                   </div>
-                  <div>
-                    <span className="text-[11px] text-slate-400 block">Heures Pleines</span>
+                  <div className={priceCellClass('peak')}>
+                    <span className="text-[11px] text-slate-400 flex items-center">Heures Pleines{nowTag('peak')}</span>
                     <strong className="text-2xl font-extrabold text-amber-400">
                       {current.teslaPeak.toFixed(2)} €
                     </strong>
@@ -241,15 +271,15 @@ export const StationDetailModal: React.FC<StationDetailModalProps> = ({
                   </span>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <span className="text-[11px] text-slate-400 block">Heures Creuses</span>
+                  <div className={priceCellClass('offPeak')}>
+                    <span className="text-[11px] text-slate-400 flex items-center">Heures Creuses{nowTag('offPeak')}</span>
                     <strong className="text-2xl font-extrabold text-slate-200">
                       {current.nonTeslaOffPeak.toFixed(2)} €
                     </strong>
                     <span className="text-[11px] text-slate-400 ml-1">/kWh</span>
                   </div>
-                  <div>
-                    <span className="text-[11px] text-slate-400 block">Heures Pleines</span>
+                  <div className={priceCellClass('peak')}>
+                    <span className="text-[11px] text-slate-400 flex items-center">Heures Pleines{nowTag('peak')}</span>
                     <strong className="text-2xl font-extrabold text-slate-200">
                       {current.nonTeslaPeak.toFixed(2)} €
                     </strong>
