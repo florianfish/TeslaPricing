@@ -21,12 +21,15 @@ ports_description:
   3000/tcp: Interface web (accès direct sans passer par Home Assistant)
 # Clé partagée avec l'extension navigateur pour importer les tarifs collectés (vide = import désactivé)
 # ID de mesure Google Analytics 4 (vide = suivi désactivé)
+# URL publique du site pour le référencement (vide = instance privée, non indexée)
 options:
   import_key: ""
   ga_measurement_id: ""
+  public_url: ""
 schema:
   import_key: password?
   ga_measurement_id: match(^(G-[A-Za-z0-9]+)?$)?
+  public_url: match(^(https?://[^\s?#]+)?$)?
 environment:
   DATA_DIR: /data
 watchdog: http://[HOST]:[PORT:3000]/api/health

@@ -52,6 +52,7 @@ Le projet adopte une architecture full-stack unifiée servie par un unique proce
 ### C. Frontend (`src/`)
 - Entrée : `src/main.tsx` montant `src/App.tsx`.
 - Gestion des onglets : routage par le fragment d'URL (`src/router.ts`, ex. `#/liste?q=rennes`, `#/carte?station=6507` — identifiant unique, car certains slugs sont partagés par plusieurs stations). Pas de routage par chemin : l'application est servie sous un préfixe inconnu par l'Ingress Home Assistant.
+- Référencement (`server/seo.ts`) : seule exception au routage par fragment, les pages station `/superchargeur-<nom>-<id>` (`src/stationPage.ts`) sont rendues côté serveur sur le gabarit `index.html` (titre, tarifs, JSON-LD), puis ouvrent la fiche dans l'application. Chemins à la racine uniquement, pour garder valides les ressources relatives. Liens absolus (canonique, sitemap, `og:image`) construits depuis `PUBLIC_URL` / option `public_url` ; vide = instance privée en `noindex`.
 - Style : **Tailwind CSS v4** via `@tailwindcss/vite` (imports dans `src/index.css`).
 - Graphiques : **Recharts** (nécessite `react-is`).
 - Carte : **Leaflet** avec tuiles libres sans clé API (ESRI Dark Gray Canvas, OpenStreetMap France et Satellite ESRI).

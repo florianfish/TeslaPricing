@@ -1,5 +1,6 @@
 import { useMemo, useSyncExternalStore } from 'react';
 import type { Supercharger } from './types';
+import { parseStationPagePath } from './stationPage';
 
 // Routage par le fragment d'URL (#/liste?q=rennes) : fonctionne sous un préfixe inconnu
 // (Ingress Home Assistant) et sans configuration serveur.
@@ -42,12 +43,17 @@ function subscribe(listener: () => void) {
   };
 }
 
-const getHash = () => window.location.hash;
+// Page station rendue par le serveur (/superchargeur-abbeville-9655) sans fragment : fiche de la station sur la carte
+function getHash(): string {
+  if (window.location.hash) return window.location.hash;
+  const stationId = parseStationPagePath(window.location.pathname);
+  return stationId ? routeHash('map', new URLSearchParams({ station: stationId })) : '';
+}
 
 // pushState ne déclenche ni popstate ni hashchange : prévenir les abonnés nous-mêmes.
 // Un remplacement conserve l'état de l'entrée courante (ex: fiche station ouverte depuis l'application).
 export function navigate(hash: string, { replace = false, state }: { replace?: boolean; state?: unknown } = {}) {
-  if (hash === window.location.hash) return;
+  if (hash === getHash()) return;
   if (replace) window.history.replaceState(state ?? window.history.state, '', hash);
   else window.history.pushState(state ?? null, '', hash);
   listeners.forEach((listener) => listener());
@@ -55,13 +61,15 @@ export function navigate(hash: string, { replace = false, state }: { replace?: b
 
 // Modifier des paramètres de l'onglet courant sans créer d'entrée d'historique (valeur vide = retrait)
 export function replaceParams(changes: Record<string, string | null | undefined>) {
-  const { tab, params } = parseRoute(window.location.hash);
+  const { tab, params } = currentRoute();
   for (const [key, value] of Object.entries(changes)) {
     if (value) params.set(key, value);
     else params.delete(key);
   }
   navigate(routeHash(tab, params), { replace: true });
 }
+
+export const currentRoute = (): Route => parseRoute(getHash());
 
 export function useRoute(): Route {
   const hash = useSyncExternalStore(subscribe, getHash);

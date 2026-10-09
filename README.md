@@ -148,6 +148,7 @@ Pour exposer l'application sur votre domaine avec HTTPS :
       }
   }
   ```
+- **Référencement** : renseigner l'adresse publique dans la variable `PUBLIC_URL` (ex. `PUBLIC_URL=https://tesla-pricing.votre-domaine.com`). Elle active les pages station indexables (`/superchargeur-abbeville-9655`), `robots.txt`, `sitemap.xml`, l'URL canonique et l'image d'aperçu des partages. Sans elle, `robots.txt` interdit l'indexation.
 
 ### 5. Actualisation Nocturne Automatique (GitHub Actions)
 
@@ -203,6 +204,9 @@ Les données sont persistées dans `/data` (variable `DATA_DIR`), donc incluses 
 | `GET` | `/api/prices/collection-status` | État de la collecte : derniers imports, ancienneté des tarifs des stations ouvertes, stations à revérifier |
 | `GET` | `/api/prices/collector-stations` | Stations à interroger par le collecteur (`[id, locationId, locationSlug]`) |
 | `POST` | `/api/prices/import` | Import d'un relevé du collecteur (en-tête `Authorization: Bearer <clé d'import>`) |
+| `GET` | `/robots.txt` | Règles d'indexation (tout interdire sans `PUBLIC_URL`) |
+| `GET` | `/sitemap.xml` | Plan du site : accueil et pages station (404 sans `PUBLIC_URL`) |
+| `GET` | `/superchargeur-<nom>-<id>` | Page station rendue côté serveur (titre, tarifs, données structurées), puis application |
 | `POST` | `/api/prices/purge-history` | Purge l'historique des prix : un relevé par station (tarif actuel), sauvegarde préalable (en-tête `Authorization: Bearer <clé d'import>`). En local : `npm run purge-history` |
 
 ---

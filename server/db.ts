@@ -568,6 +568,13 @@ export function getGaMeasurementId(): string {
   return /^G-[A-Z0-9]{4,20}$/.test(id) ? id : '';
 }
 
+// URL publique du site (https://exemple.fr) : variable PUBLIC_URL, sinon option « public_url ».
+// Sert aux liens absolus du référencement (canonique, sitemap, aperçus) ; vide = instance privée, non indexée.
+export function getPublicUrl(): string {
+  const url = getSetting('PUBLIC_URL', 'public_url').replace(/\/+$/, '');
+  return /^https?:\/\/[^\s/?#]+(\/[^\s?#]*)?$/i.test(url) ? url : '';
+}
+
 // Stations à interroger par le collecteur : [id, locationId, locationSlug]
 export function getCollectorStations(): [string, string, string][] {
   return initDatabase()

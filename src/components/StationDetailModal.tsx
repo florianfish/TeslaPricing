@@ -4,6 +4,7 @@ import { offPeakHours, currentTariffPeriod, type TariffPeriod } from '../hours';
 import { stationFreshness, FRESHNESS_CLASSES } from '../freshness';
 import { isShareableLocation } from '../router';
 import { teslaStationUrl } from '../tesla';
+import { stationPagePath } from '../stationPage';
 import {
   X,
   Zap,
@@ -42,7 +43,8 @@ export const StationDetailModal: React.FC<StationDetailModalProps> = ({
 
   // L'URL courante pointe déjà sur la fiche (#/onglet?station=<id>)
   const handleShare = async () => {
-    const url = window.location.href;
+    // Page de la station rendue par le serveur : aperçu de partage et titre propres à la station
+    const url = new URL(`./${stationPagePath(charger)}`, window.location.href).href;
     try {
       if (navigator.share) {
         await navigator.share({ title: `Superchargeur ${charger.city}`, url });

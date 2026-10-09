@@ -12,7 +12,7 @@ import { CookieBanner } from './components/CookieBanner';
 import { ChangelogModal } from './components/ChangelogModal';
 import { AlertCircle, Zap } from 'lucide-react';
 import { trackTab, isAnalyticsConfigured, resetConsent, subscribeAnalytics } from './analytics';
-import { useRoute, navigate, routeHash, parseRoute, findStation, type Tab } from './router';
+import { useRoute, navigate, routeHash, currentRoute, findStation, type Tab } from './router';
 import { useGeolocation } from './geo';
 
 export default function App() {
@@ -34,7 +34,7 @@ export default function App() {
 
   // Ouvrir une fiche crée une entrée d'historique : le bouton Retour la referme
   const openStation = useCallback((charger: Supercharger, tab?: Tab) => {
-    const current = parseRoute(window.location.hash);
+    const current = currentRoute();
     const target = tab ?? current.tab;
     const params = target === current.tab ? current.params : new URLSearchParams();
     params.set('station', charger.id);

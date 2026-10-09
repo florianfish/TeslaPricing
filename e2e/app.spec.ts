@@ -56,6 +56,17 @@ test.describe('URLs partageables', () => {
     expect(await hash(page)).toBe('#/liste?q=rennes');
   });
 
+  test('une page station rendue par le serveur ouvre sa fiche dans l’application', async ({ page }) => {
+    await page.goto('superchargeur-rennes-cleunay-6507');
+    await expect(page.getByText('Rue Jules Vallès, 35000 Rennes (Bretagne)')).toBeVisible();
+    // Le contenu de référencement est remplacé par l'application
+    await expect(page.locator('.seo-content')).toHaveCount(0);
+
+    await page.locator('.fixed.inset-0.z-50 button:has(svg.lucide-x)').first().click();
+    await expect(modal(page)).toBeHidden();
+    expect(await hash(page)).toBe('#/carte');
+  });
+
   test('un lien direct ouvre la bonne fiche (identifiant, ou slug des anciens liens)', async ({ page }) => {
     await page.goto('#/carte?station=6507');
     await expect(page.getByText('Rue Jules Vallès, 35000 Rennes (Bretagne)')).toBeVisible();

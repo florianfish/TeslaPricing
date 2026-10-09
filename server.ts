@@ -1,4 +1,5 @@
 import express from 'express';
+import fs from 'fs';
 import path from 'path';
 import { createServer as createViteServer } from 'vite';
 import {
@@ -44,18 +45,25 @@ async function startServer() {
     console.error('Database initialization error:', e);
   }
 
-  // --- API ROUTES --- (server/app.ts)
-  const app = createApp();
+  // --- FRONTEND ---
+  // Vite en développement, dist/ en production ; le gabarit HTML sert aux pages rendues côté serveur (server/seo.ts)
+  const distPath = path.join(process.cwd(), 'dist');
+  const vite =
+    process.env.NODE_ENV !== 'production'
+      ? await createViteServer({ server: { middlewareMode: true }, appType: 'spa' })
+      : null;
+  let builtIndex: string | undefined;
+  const indexHtml = async (url: string) =>
+    vite
+      ? vite.transformIndexHtml(url, fs.readFileSync(path.join(process.cwd(), 'index.html'), 'utf-8'))
+      : (builtIndex ??= fs.readFileSync(path.join(distPath, 'index.html'), 'utf-8'));
 
-  // --- VITE MIDDLEWARE ---
-  if (process.env.NODE_ENV !== 'production') {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: 'spa',
-    });
+  // --- API ROUTES --- (server/app.ts)
+  const app = createApp({ indexHtml });
+
+  if (vite) {
     app.use(vite.middlewares);
   } else {
-    const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
     app.get('/{*splat}', (req, res) => {
       res.sendFile(path.join(distPath, 'index.html'));

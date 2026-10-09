@@ -13,11 +13,20 @@ import {
   getRecentPriceUpdates,
   getStationEvents,
   getCollectionStatus,
+  getPublicUrl,
 } from './db.js';
+import { homePage, stationPage, renderPage, robotsTxt, sitemapXml } from './seo.js';
+import { parseStationPagePath, stationPagePath } from '../src/stationPage.js';
+
+export interface AppOptions {
+  // Gabarit HTML de l'application (index.html, transformé par Vite en développement) :
+  // active l'accueil et les pages station rendues côté serveur
+  indexHtml?: (url: string) => Promise<string>;
+}
 
 // Application Express avec les routes de l'API, sans frontend ni écoute réseau (testable en mémoire).
 // Le frontend (Vite ou dist/) et le démarrage sont ajoutés par server.ts.
-export function createApp() {
+export function createApp({ indexHtml }: AppOptions = {}) {
   const app = express();
   app.use(express.json({ limit: '15mb' }));
 
@@ -171,6 +180,39 @@ export function createApp() {
       res.status(500).json({ error: err.message });
     }
   });
+
+  // --- RÉFÉRENCEMENT ---
+
+  app.get('/robots.txt', (req, res) => {
+    res.type('text/plain').send(robotsTxt(getPublicUrl()));
+  });
+
+  app.get('/sitemap.xml', (req, res) => {
+    const publicUrl = getPublicUrl();
+    if (!publicUrl) return res.status(404).type('text/plain').send('Aucune URL publique configurée (PUBLIC_URL)');
+    res.type('application/xml').send(sitemapXml(getAllSuperchargers(), publicUrl));
+  });
+
+  if (indexHtml) {
+    const sendPage = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+      try {
+        const publicUrl = getPublicUrl();
+        const stationId = parseStationPagePath(req.path);
+        const station = stationId ? getSuperchargerBySlug(stationId) : undefined;
+        if (station && req.path !== `/${stationPagePath(station)}`) {
+          // Nom de station modifié depuis la création du lien : redirection vers l'adresse actuelle
+          return res.redirect(301, `./${stationPagePath(station)}`);
+        }
+        const page = station ? stationPage(station, publicUrl) : homePage(getAllSuperchargers(), publicUrl);
+        res.status(stationId && !station ? 404 : 200).type('html').send(renderPage(await indexHtml(req.originalUrl), page, publicUrl));
+      } catch (err) {
+        next(err);
+      }
+    };
+    app.get('/', sendPage);
+    app.get('/index.html', sendPage);
+    app.get(/^\/superchargeur-[a-z0-9-]+$/, sendPage);
+  }
 
   // Route d'API inconnue : 404 JSON plutôt que la page de l'application (repli SPA ajouté ensuite)
   app.use('/api', (req, res) => {

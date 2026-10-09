@@ -28,6 +28,16 @@ Pour suivre la fréquentation de l'interface, renseigner l'ID de mesure Google A
 
 Un bandeau demande le consentement de chaque visiteur : Google Analytics n'est chargé qu'après acceptation. Le choix est mémorisé dans le navigateur et modifiable via le lien **Cookies** en pied de page (un refus ultérieur supprime les cookies `_ga`).
 
+### URL publique (référencement)
+
+Si l'interface est exposée sur Internet derrière un reverse proxy (domaine en HTTPS), renseigner son adresse dans l'option **URL publique** (ex. `https://suc.exemple.fr`), puis redémarrer l'add-on. Le site devient alors indexable par les moteurs de recherche :
+
+- une page par station (`/superchargeur-abbeville-9655`), avec titre, description, tarifs et données structurées lisibles sans JavaScript ;
+- `robots.txt` et `sitemap.xml` (à déclarer dans Google Search Console) ;
+- URL canonique et image d'aperçu pour les partages de liens.
+
+Laisser vide pour une instance privée : `robots.txt` interdit alors toute indexation.
+
 ## Données
 
 La base (`superchargers_db.json`) est stockée dans le dossier persistant de l'add-on (`/data`). Elle est conservée lors des mises à jour et incluse dans les sauvegardes Home Assistant.

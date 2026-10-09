@@ -27,7 +27,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <span className="font-bold text-lg tracking-tight text-white">Superchargeurs France</span>
+                <h1 className="font-bold text-lg tracking-tight text-white">Superchargeurs France</h1>
                 <span className="text-[10px] uppercase font-semibold px-2 py-0.5 rounded-full bg-red-950/80 text-red-400 border border-red-800/50">
                   Tesla
                 </span>

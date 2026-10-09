@@ -7,3 +7,6 @@ configuration:
   ga_measurement_id:
     name: ID de mesure Google Analytics
     description: ID de mesure Google Analytics 4 (G-XXXXXXXXXX) pour suivre la fréquentation de l'interface. Laisser vide pour désactiver le suivi.
+  public_url:
+    name: URL publique
+    description: Adresse publique du site (ex. https://suc.exemple.fr) si l'interface est exposée sur Internet. Active le référencement (pages station, sitemap, aperçus de partage). Laisser vide pour une instance privée, non indexée.

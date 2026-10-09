@@ -3,7 +3,7 @@ import type { Supercharger } from '../types';
 import { offPeakHours } from '../hours';
 import { stationFreshness, FRESHNESS_CLASSES } from '../freshness';
 import { distanceKm, formatDistance, type Geolocation } from '../geo';
-import { parseRoute, replaceParams } from '../router';
+import { currentRoute, replaceParams } from '../router';
 import { Search, SlidersHorizontal, Zap, ArrowUpDown, ChevronRight, CheckCircle2, AlertCircle, Clock, LocateFixed, Loader2, Navigation } from 'lucide-react';
 
 interface SuperchargerDirectoryProps {
@@ -22,7 +22,7 @@ const MIN_POWERS = [0, 150, 250, 300];
 
 // Filtres lus dans l'URL (#/liste?q=rennes&tri=price) pour pouvoir partager une recherche
 function filtersFromUrl() {
-  const params = parseRoute(window.location.hash).params;
+  const params = currentRoute().params;
   const status = (params.get('statut') || '').toUpperCase() as StatusFilter;
   const sort = params.get('tri') as SortBy;
   const power = Number(params.get('kw'));

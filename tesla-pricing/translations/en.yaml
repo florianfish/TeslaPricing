@@ -7,3 +7,6 @@ configuration:
   ga_measurement_id:
     name: Google Analytics measurement ID
     description: Google Analytics 4 measurement ID (G-XXXXXXXXXX) to track web UI visits. Leave empty to disable tracking.
+  public_url:
+    name: Public URL
+    description: Public address of the site (e.g. https://suc.example.com) when the web UI is exposed on the Internet. Enables search engine indexing (station pages, sitemap, link previews). Leave empty for a private, non-indexed instance.

@@ -1,1 +1,14 @@
 @import "tailwindcss";
+
+/* Contenu rendu par le serveur (server/seo.ts), lisible sans JavaScript et remplacé par l'application au chargement */
+.seo-content {
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  line-height: 1.6;
+  color: var(--color-slate-300);
+}
+.seo-content h1 { font-size: 1.5rem; font-weight: 800; color: white; }
+.seo-content h2 { margin-top: 1.5rem; font-weight: 700; color: white; }
+.seo-content a { color: var(--color-red-400); }
+.seo-content td, .seo-content th { padding: 0.25rem 0.75rem 0.25rem 0; text-align: left; }
