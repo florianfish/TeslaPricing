@@ -12,8 +12,8 @@
       "latitude": 47.518148,
       "longitude": -0.606939,
       "status": "PLAN",
-      "stallCount": 8,
-      "powerKw": 250,
+      "stallCount": 16,
+      "powerKw": 500,
       "stallsBreakdown": {
         "v2": 0,
         "v3": 0,
@@ -428,7 +428,7 @@
       "latitude": 45.910635,
       "longitude": 6.657496,
       "status": "PLAN",
-      "stallCount": 8,
+      "stallCount": 6,
       "powerKw": 250,
       "stallsBreakdown": {
         "v2": 0,
@@ -792,7 +792,7 @@
       "latitude": 43.343555,
       "longitude": 5.447009,
       "status": "PLAN",
-      "stallCount": 8,
+      "stallCount": 6,
       "powerKw": 250,
       "stallsBreakdown": {
         "v2": 0,
@@ -896,7 +896,7 @@
       "latitude": 46.249719,
       "longitude": 6.104067,
       "status": "PLAN",
-      "stallCount": 8,
+      "stallCount": 6,
       "powerKw": 250,
       "stallsBreakdown": {
         "v2": 0,
@@ -4328,7 +4328,7 @@
       "latitude": 48.77893,
       "longitude": 2.58354,
       "status": "CONSTRUCTION",
-      "stallCount": 8,
+      "stallCount": 6,
       "powerKw": 250,
       "stallsBreakdown": {
         "v2": 0,
@@ -4484,7 +4484,7 @@
       "latitude": 45.840863,
       "longitude": 3.511887,
       "status": "CONSTRUCTION",
-      "stallCount": 8,
+      "stallCount": 6,
       "powerKw": 250,
       "stallsBreakdown": {
         "v2": 0,
@@ -4587,8 +4587,8 @@
       "postalCode": "31130",
       "latitude": 43.636478,
       "longitude": 1.501147,
-      "status": "PLAN",
-      "stallCount": 8,
+      "status": "CONSTRUCTION",
+      "stallCount": 6,
       "powerKw": 250,
       "stallsBreakdown": {
         "v2": 0,
@@ -4692,8 +4692,8 @@
       "latitude": 48.691352,
       "longitude": 5.973454,
       "status": "PLAN",
-      "stallCount": 8,
-      "powerKw": 250,
+      "stallCount": 32,
+      "powerKw": 500,
       "stallsBreakdown": {
         "v2": 0,
         "v3": 0,
@@ -4796,7 +4796,7 @@
       "latitude": 43.319087,
       "longitude": -0.427014,
       "status": "PLAN",
-      "stallCount": 8,
+      "stallCount": 6,
       "powerKw": 250,
       "stallsBreakdown": {
         "v2": 0,
@@ -5056,7 +5056,7 @@
       "latitude": 49.523316,
       "longitude": 0.104229,
       "status": "CONSTRUCTION",
-      "stallCount": 8,
+      "stallCount": 6,
       "powerKw": 250,
       "stallsBreakdown": {
         "v2": 0,
@@ -5992,7 +5992,7 @@
       "longitude": 6.066003,
       "status": "PLAN",
       "stallCount": 8,
-      "powerKw": 250,
+      "powerKw": 500,
       "stallsBreakdown": {
         "v2": 0,
         "v3": 0,
@@ -6095,7 +6095,7 @@
       "latitude": 45.469256,
       "longitude": 6.910454,
       "status": "PLAN",
-      "stallCount": 8,
+      "stallCount": 4,
       "powerKw": 250,
       "stallsBreakdown": {
         "v2": 0,
@@ -6148,7 +6148,7 @@
       "longitude": 6.935576,
       "status": "PLAN",
       "stallCount": 8,
-      "powerKw": 250,
+      "powerKw": 500,
       "stallsBreakdown": {
         "v2": 0,
         "v3": 0,
@@ -7291,7 +7291,7 @@
       "latitude": 49.23879,
       "longitude": 4.08754,
       "status": "CONSTRUCTION",
-      "stallCount": 12,
+      "stallCount": 20,
       "powerKw": 250,
       "stallsBreakdown": {
         "v2": 0,
@@ -17479,8 +17479,8 @@
       "latitude": 48.45139,
       "longitude": 0.11907,
       "status": "PLAN",
-      "stallCount": 8,
-      "powerKw": 250,
+      "stallCount": 16,
+      "powerKw": 500,
       "stallsBreakdown": {
         "v2": 0,
         "v3": 0,
@@ -17528,7 +17528,7 @@
       "latitude": 48.933499,
       "longitude": 1.992287,
       "status": "PLAN",
-      "stallCount": 8,
+      "stallCount": 16,
       "powerKw": 500,
       "stallsBreakdown": {
         "v2": 0,
@@ -17577,7 +17577,7 @@
       "latitude": 46.552112,
       "longitude": 5.322609,
       "status": "PLAN",
-      "stallCount": 8,
+      "stallCount": 24,
       "powerKw": 500,
       "stallsBreakdown": {
         "v2": 0,
@@ -22823,8 +22823,18 @@
       "changePercentage": -5.2
     }
   ],
-  "lastSyncTime": "2026-10-09T09:52:33.272Z",
+  "lastSyncTime": "2026-10-10T09:16:34.152Z",
   "stationEvents": [
+    {
+      "date": "2026-10-10",
+      "type": "STATUS",
+      "superchargerId": "10559",
+      "superchargerName": "Toulouse Balma, France",
+      "city": "Balma",
+      "region": "Occitanie",
+      "from": "PLAN",
+      "to": "CONSTRUCTION"
+    },
     {
       "date": "2026-10-09",
       "type": "NEW",
