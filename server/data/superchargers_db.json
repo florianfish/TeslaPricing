@@ -636,8 +636,8 @@
       "latitude": 43.664492,
       "longitude": 7.126042,
       "status": "PLAN",
-      "stallCount": 8,
-      "powerKw": 250,
+      "stallCount": 16,
+      "powerKw": 500,
       "stallsBreakdown": {
         "v2": 0,
         "v3": 0,
@@ -22823,7 +22823,7 @@
       "changePercentage": -5.2
     }
   ],
-  "lastSyncTime": "2026-10-10T09:16:34.152Z",
+  "lastSyncTime": "2026-10-12T10:04:07.641Z",
   "stationEvents": [
     {
       "date": "2026-10-10",
