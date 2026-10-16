@@ -4328,7 +4328,7 @@
       "latitude": 48.77893,
       "longitude": 2.58354,
       "status": "CONSTRUCTION",
-      "stallCount": 6,
+      "stallCount": 8,
       "powerKw": 250,
       "stallsBreakdown": {
         "v2": 0,
@@ -4484,7 +4484,7 @@
       "latitude": 45.840863,
       "longitude": 3.511887,
       "status": "CONSTRUCTION",
-      "stallCount": 6,
+      "stallCount": 7,
       "powerKw": 250,
       "stallsBreakdown": {
         "v2": 0,
@@ -7863,7 +7863,7 @@
       "latitude": 48.630851,
       "longitude": 2.494625,
       "status": "CONSTRUCTION",
-      "stallCount": 6,
+      "stallCount": 7,
       "powerKw": 250,
       "stallsBreakdown": {
         "v2": 0,
@@ -22823,7 +22823,7 @@
       "changePercentage": -5.2
     }
   ],
-  "lastSyncTime": "2026-10-12T10:04:07.641Z",
+  "lastSyncTime": "2026-10-16T07:46:55.229Z",
   "stationEvents": [
     {
       "date": "2026-10-10",
