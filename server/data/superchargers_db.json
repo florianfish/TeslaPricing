@@ -583,8 +583,8 @@
       "postalCode": "30100",
       "latitude": 44.10936,
       "longitude": 4.100546,
-      "status": "CONSTRUCTION",
-      "stallCount": 7,
+      "status": "OPEN",
+      "stallCount": 6,
       "powerKw": 250,
       "stallsBreakdown": {
         "v2": 0,
@@ -22823,8 +22823,18 @@
       "changePercentage": -5.2
     }
   ],
-  "lastSyncTime": "2026-10-16T07:46:55.229Z",
+  "lastSyncTime": "2026-10-21T08:10:55.980Z",
   "stationEvents": [
+    {
+      "date": "2026-10-21",
+      "type": "STATUS",
+      "superchargerId": "10743",
+      "superchargerName": "Alès, France",
+      "city": "Alès",
+      "region": "Occitanie",
+      "from": "CONSTRUCTION",
+      "to": "OPEN"
+    },
     {
       "date": "2026-10-10",
       "type": "STATUS",
