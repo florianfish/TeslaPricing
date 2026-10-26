@@ -22,14 +22,19 @@ ports_description:
 # Clé partagée avec l'extension navigateur pour importer les tarifs collectés (vide = import désactivé)
 # ID de mesure Google Analytics 4 (vide = suivi désactivé)
 # URL publique du site pour le référencement (vide = instance privée, non indexée)
+# Alertes Telegram lors de l'évolution des stations (ouverture, travaux, nouvelles stations)
 options:
   import_key: ""
   ga_measurement_id: ""
   public_url: ""
+  telegram_bot_token: ""
+  telegram_chat_id: ""
 schema:
   import_key: password?
   ga_measurement_id: match(^(G-[A-Za-z0-9]+)?$)?
   public_url: match(^(https?://[^\s?#]+)?$)?
+  telegram_bot_token: password?
+  telegram_chat_id: str?
 environment:
   DATA_DIR: /data
 watchdog: http://[HOST]:[PORT:3000]/api/health

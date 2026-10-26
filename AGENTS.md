@@ -62,10 +62,10 @@ Le projet adopte une architecture full-stack unifiée servie par un unique proce
 - Persistance obligatoire : Monter le dossier `./server/data:/app/server/data` en volume pour conserver les relevés et mises à jour de prix.
 - Configuration du port via la variable d'environnement `PORT` (par défaut `3000`).
 
-### E. Automatisation Nocturne & Conflits Git (`scripts/update-prices.ts`)
-- Un workflow GitHub Actions (`.github/workflows/update-prices.yml`) actualise chaque nuit la liste des stations (supercharge.info) et commite directement sur le dépôt GitHub.
+### E. Automatisation Nocturne & Conflits Git (`scripts/update-stations.ts`)
+- Un workflow GitHub Actions (`.github/workflows/update-stations.yml`) actualise chaque nuit la liste des stations (supercharge.info), envoie si configuré une alerte Telegram lors des évolutions (ouvertures, travaux, nouvelles stations via `scripts/lib/telegram.ts`), et commite directement sur le dépôt GitHub. `scripts/update-prices.ts` et `npm run update-prices` restent disponibles comme alias.
 - **Tarifs Tesla** : l'API FindUs est bloquée par Akamai pour tout client non-navigateur (runners, serveurs, `curl`, Node — même via IP résidentielle ou VPN). Ne pas réintroduire d'appel serveur à Tesla : la collecte passe par l'extension Chrome `extension/` (onglet tesla.com en arrière-plan, envoi à l'add-on HA via `POST /api/prices/import` protégé par la clé `import_key`), ou en secours par le favori `scripts/collector.js` (`npm run collector`) puis `npm run import-prices -- <fichier>`. L'API GraphQL de l'app mobile (`akamai-apigateway-charging-ownership`) a été sondée en 10/2026 : joignable avec un jeton de compte, mais réponses vides — inutile de la retenter sans nouvelle piste. La logique d'analyse des tarifs est partagée dans `scripts/lib/tesla-pricing.ts`.
-- **Stations sur base persistante séparée** (`DATA_DIR`, add-on HA) : le serveur synchronise lui-même les stations depuis supercharge.info (démarrage + 24 h, `syncStationsFromRegistry()`), avec la même logique que le script nocturne (`scripts/lib/station-sync.ts`). Les évolutions sont historisées dans `stationEvents`. Ne jamais remplacer la base de l'add-on par celle de GitHub : elle écraserait les tarifs importés.
+- **Stations sur base persistante séparée** (`DATA_DIR`, add-on HA) : le serveur synchronise lui-même les stations depuis supercharge.info (démarrage + 24 h, `syncStationsFromRegistry()`), avec la même logique que le script nocturne (`scripts/lib/station-sync.ts`), et peut aussi notifier sur Telegram si `telegram_bot_token` et `telegram_chat_id` sont configurés. Les évolutions sont historisées dans `stationEvents`. Ne jamais remplacer la base de l'add-on par celle de GitHub : elle écraserait les tarifs importés.
 
 ---
 

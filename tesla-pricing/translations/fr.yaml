@@ -10,3 +10,9 @@ configuration:
   public_url:
     name: URL publique
     description: Adresse publique du site (ex. https://suc.exemple.fr) si l'interface est exposée sur Internet. Active le référencement (pages station, sitemap, aperçus de partage). Laisser vide pour une instance privée, non indexée.
+  telegram_bot_token:
+    name: Token du bot Telegram
+    description: Jeton API fourni par @BotFather pour recevoir les alertes d'évolution des stations.
+  telegram_chat_id:
+    name: Chat ID Telegram
+    description: Identifiant du destinataire (utilisateur, groupe ou canal) pour les notifications.

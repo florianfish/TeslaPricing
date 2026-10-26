@@ -152,12 +152,19 @@ Pour exposer l'application sur votre domaine avec HTTPS :
 
 ### 5. Actualisation Nocturne Automatique (GitHub Actions)
 
-Le workflow `.github/workflows/update-prices.yml` tourne chaque nuit à 03:00 UTC pour :
+Le workflow `.github/workflows/update-stations.yml` tourne chaque nuit à 03:00 UTC pour :
 1. Récupérer les nouvelles stations et changements de statuts/bornes (supercharge.info). Les tarifs sont collectés séparément, voir ci-dessous.
 2. Mettre à jour `server/data/superchargers_db.json`.
-3. Commiter et pousser automatiquement les modifications sur le dépôt GitHub.
+3. Notifier sur Telegram en direct si des stations ont évolué (ouverture, passage en travaux, nouvelle station en projet, etc.) si les secrets `TELEGRAM_BOT_TOKEN` et `TELEGRAM_CHAT_ID` sont configurés.
+4. Commiter et pousser automatiquement les modifications sur le dépôt GitHub.
 
-**Base persistante séparée (`DATA_DIR`, add-on Home Assistant) :** le flux nocturne n'atteint pas cette base. Le serveur synchronise donc lui-même les stations depuis supercharge.info, 30 s après le démarrage puis toutes les 24 h (nouvelles stations, changements de statut, bornes ; les tarifs ne sont jamais modifiés). Activé par défaut dès que `DATA_DIR` est défini ; `STATION_SYNC=1` ou `STATION_SYNC=0` force le choix.
+**Configuration des notifications Telegram (facultatif) :**
+- Créer un bot via [@BotFather](https://t.me/BotFather) pour obtenir le token (`TELEGRAM_BOT_TOKEN`).
+- Récupérer votre identifiant ou celui de votre canal/groupe (`TELEGRAM_CHAT_ID`, ex. via [@userinfobot](https://t.me/userinfobot)).
+- Ajouter ces deux valeurs dans les Secrets du dépôt GitHub (**Settings** > **Secrets and variables** > **Actions**).
+- Optionnellement, renseigner la variable `PUBLIC_URL` pour que les alertes Telegram contiennent des liens directs vers les fiches stations.
+
+**Base persistante séparée (`DATA_DIR`, add-on Home Assistant) :** le flux nocturne n'atteint pas cette base. Le serveur synchronise donc lui-même les stations depuis supercharge.info, 30 s après le démarrage puis toutes les 24 h (nouvelles stations, changements de statut, bornes ; les tarifs ne sont jamais modifiés). Les options `telegram_bot_token` et `telegram_chat_id` permettent d'activer les notifications Telegram directement depuis l'add-on. Activé par défaut dès que `DATA_DIR` est défini ; `STATION_SYNC=1` ou `STATION_SYNC=0` force le choix.
 ### 6. Collecte des tarifs Tesla depuis le navigateur
 
 L'API Tesla FindUs est protégée par Akamai : les requêtes serveur (GitHub Actions, serveurs, `curl`, Node) sont refusées (`403`), même via une IP résidentielle. Seul un vrai navigateur, depuis une connexion personnelle, obtient les tarifs. (L'API GraphQL de l'app mobile Tesla, testée en octobre 2026, n'est pas bloquée mais ne renvoie aucune donnée hors de l'app.)

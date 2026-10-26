@@ -217,3 +217,17 @@ describe("purge de l'historique (POST /api/prices/purge-history)", () => {
     expect(history[0].teslaOffPeak).toBe(0.2);
   });
 });
+
+describe('getTelegramConfig', () => {
+  it('lit les variables d\'environnement Telegram', async () => {
+    const { getTelegramConfig } = await import('../server/db');
+    process.env.TELEGRAM_BOT_TOKEN = '123456:ABC';
+    process.env.TELEGRAM_CHAT_ID = '-987654';
+    expect(getTelegramConfig()).toEqual({
+      botToken: '123456:ABC',
+      chatId: '-987654',
+    });
+    delete process.env.TELEGRAM_BOT_TOKEN;
+    delete process.env.TELEGRAM_CHAT_ID;
+  });
+});

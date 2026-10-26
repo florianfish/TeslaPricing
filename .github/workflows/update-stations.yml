@@ -29,7 +29,11 @@ jobs:
         run: npm ci --legacy-peer-deps
 
       - name: Actualiser la liste des stations (supercharge.info)
-        run: npm run update-prices
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          PUBLIC_URL: ${{ vars.PUBLIC_URL || secrets.PUBLIC_URL || '' }}
+        run: npm run update-stations
 
       - name: Commiter et pousser les modifications sur GitHub
         uses: stefanzweifel/git-auto-commit-action@v5
@@ -39,4 +43,3 @@ jobs:
           commit_user_name: "github-actions[bot]"
           commit_user_email: "github-actions[bot]@users.noreply.github.com"
           commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
-

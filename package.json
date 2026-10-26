@@ -13,7 +13,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "update-prices": "tsx scripts/update-prices.ts",
+    "update-stations": "tsx scripts/update-stations.ts",
+    "update-prices": "npm run update-stations",
     "collector": "tsx scripts/build-collector.ts",
     "import-prices": "tsx scripts/import-prices.ts",
     "purge-history": "tsx scripts/purge-history.ts"

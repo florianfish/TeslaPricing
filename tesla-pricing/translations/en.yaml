@@ -10,3 +10,9 @@ configuration:
   public_url:
     name: Public URL
     description: Public address of the site (e.g. https://suc.example.com) when the web UI is exposed on the Internet. Enables search engine indexing (station pages, sitemap, link previews). Leave empty for a private, non-indexed instance.
+  telegram_bot_token:
+    name: Telegram bot token
+    description: API token provided by @BotFather to receive station evolution alerts.
+  telegram_chat_id:
+    name: Telegram chat ID
+    description: Recipient chat ID (user, group or channel) for notifications.

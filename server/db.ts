@@ -4,6 +4,7 @@ import type { Supercharger, PriceSnapshot, SuperchargerStats, SuperchargerPricin
 import { applyTeslaData, purgePriceHistory, logImport, type DatabaseSchema } from '../scripts/lib/tesla-pricing.js';
 import { lastCheckedDate, daysSince, freshnessLevel, COLLECTION_ALERT_DAYS, STALE_DAYS } from '../src/freshness.js';
 import { fetchFrenchSites, applyRegistrySites, type StationSyncResult } from '../scripts/lib/station-sync.js';
+import { notifyStationEvents } from '../scripts/lib/telegram.js';
 
 // Données livrées avec l'application (seed). DATA_DIR permet de persister ailleurs (ex: /data pour l'add-on Home Assistant)
 const SEED_DIR = path.join(process.cwd(), 'server', 'data');
@@ -543,6 +544,11 @@ export async function syncStationsFromRegistry(): Promise<StationSyncResult> {
   const db = initDatabase();
   const result = applyRegistrySites(db, sites);
   if (result.created || result.statusChanged || result.updated) saveDatabase(db);
+  if (result.events.length > 0) {
+    const { botToken, chatId } = getTelegramConfig();
+    const publicUrl = getPublicUrl();
+    await notifyStationEvents(result.events, db.superchargers, { botToken, chatId, publicUrl });
+  }
   return result;
 }
 
@@ -573,6 +579,15 @@ export function getGaMeasurementId(): string {
 export function getPublicUrl(): string {
   const url = getSetting('PUBLIC_URL', 'public_url').replace(/\/+$/, '');
   return /^https?:\/\/[^\s/?#]+(\/[^\s?#]*)?$/i.test(url) ? url : '';
+}
+
+// Configuration Telegram (alertes d'évolution des stations) : variables TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID,
+// sinon options « telegram_bot_token » / « telegram_chat_id » de l'add-on.
+export function getTelegramConfig(): { botToken: string; chatId: string } {
+  return {
+    botToken: getSetting('TELEGRAM_BOT_TOKEN', 'telegram_bot_token'),
+    chatId: getSetting('TELEGRAM_CHAT_ID', 'telegram_chat_id'),
+  };
 }
 
 // Stations à interroger par le collecteur : [id, locationId, locationSlug]
