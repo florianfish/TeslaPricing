@@ -3339,7 +3339,7 @@
       "postalCode": "31677",
       "latitude": 43.549511,
       "longitude": 1.499973,
-      "status": "PLAN",
+      "status": "CONSTRUCTION",
       "stallCount": 16,
       "powerKw": 250,
       "stallsBreakdown": {
@@ -22823,8 +22823,18 @@
       "changePercentage": -5.2
     }
   ],
-  "lastSyncTime": "2026-10-21T08:10:55.980Z",
+  "lastSyncTime": "2026-10-29T09:26:27.914Z",
   "stationEvents": [
+    {
+      "date": "2026-10-29",
+      "type": "STATUS",
+      "superchargerId": "8706",
+      "superchargerName": "Labège, France",
+      "city": "Labège",
+      "region": "Occitanie",
+      "from": "PLAN",
+      "to": "CONSTRUCTION"
+    },
     {
       "date": "2026-10-21",
       "type": "STATUS",
