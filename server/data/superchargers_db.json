@@ -9107,8 +9107,8 @@
       "latitude": 45.877131,
       "longitude": 6.087782,
       "status": "OPEN",
-      "stallCount": 16,
-      "powerKw": 250,
+      "stallCount": 24,
+      "powerKw": 500,
       "stallsBreakdown": {
         "v2": 0,
         "v3": 16,
@@ -15606,7 +15606,7 @@
       "latitude": 46.194796,
       "longitude": 6.255299,
       "status": "OPEN",
-      "stallCount": 12,
+      "stallCount": 16,
       "powerKw": 250,
       "stallsBreakdown": {
         "v2": 0,
@@ -22823,7 +22823,7 @@
       "changePercentage": -5.2
     }
   ],
-  "lastSyncTime": "2026-10-29T09:26:27.914Z",
+  "lastSyncTime": "2026-11-03T10:29:28.264Z",
   "stationEvents": [
     {
       "date": "2026-10-29",
