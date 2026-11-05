@@ -2300,7 +2300,7 @@
       "latitude": 46.330778,
       "longitude": 2.975572,
       "status": "OPEN",
-      "stallCount": 16,
+      "stallCount": 28,
       "powerKw": 250,
       "stallsBreakdown": {
         "v2": 0,
@@ -7758,9 +7758,9 @@
       "postalCode": "89310",
       "latitude": 47.66464,
       "longitude": 3.877834,
-      "status": "PLAN",
+      "status": "CONSTRUCTION",
       "stallCount": 36,
-      "powerKw": 250,
+      "powerKw": 500,
       "stallsBreakdown": {
         "v2": 0,
         "v3": 0,
@@ -17166,7 +17166,7 @@
       "latitude": 44.903825,
       "longitude": 6.630073,
       "status": "OPEN",
-      "stallCount": 9,
+      "stallCount": 16,
       "powerKw": 250,
       "stallsBreakdown": {
         "v2": 0,
@@ -22823,8 +22823,18 @@
       "changePercentage": -5.2
     }
   ],
-  "lastSyncTime": "2026-11-03T10:29:28.264Z",
+  "lastSyncTime": "2026-11-05T10:25:07.521Z",
   "stationEvents": [
+    {
+      "date": "2026-11-05",
+      "type": "STATUS",
+      "superchargerId": "9881",
+      "superchargerName": "Nitry, France",
+      "city": "Nanteuil-lès-Nitry",
+      "region": "Bourgogne-Franche-Comté",
+      "from": "PLAN",
+      "to": "CONSTRUCTION"
+    },
     {
       "date": "2026-10-29",
       "type": "STATUS",
