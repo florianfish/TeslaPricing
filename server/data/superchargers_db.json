@@ -1623,7 +1623,7 @@
       "postalCode": "68790",
       "latitude": 47.738071,
       "longitude": 7.281629,
-      "status": "CONSTRUCTION",
+      "status": "OPEN",
       "stallCount": 6,
       "powerKw": 250,
       "stallsBreakdown": {
@@ -22823,8 +22823,18 @@
       "changePercentage": -5.2
     }
   ],
-  "lastSyncTime": "2026-11-05T10:25:07.521Z",
+  "lastSyncTime": "2026-11-10T10:49:03.971Z",
   "stationEvents": [
+    {
+      "date": "2026-11-10",
+      "type": "STATUS",
+      "superchargerId": "10837",
+      "superchargerName": "Morschwiller, France",
+      "city": "Morschwiller-le-Bas",
+      "region": "Grand Est",
+      "from": "CONSTRUCTION",
+      "to": "OPEN"
+    },
     {
       "date": "2026-11-05",
       "type": "STATUS",
