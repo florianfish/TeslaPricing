@@ -10,10 +10,11 @@ import { StationDetailModal } from './components/StationDetailModal';
 import { ReferralEncart } from './components/ReferralEncart';
 import { CookieBanner } from './components/CookieBanner';
 import { ChangelogModal } from './components/ChangelogModal';
-import { AlertCircle, Zap } from 'lucide-react';
+import { AlertCircle, WifiOff, Zap } from 'lucide-react';
 import { trackTab, isAnalyticsConfigured, resetConsent, subscribeAnalytics } from './analytics';
 import { useRoute, navigate, routeHash, currentRoute, findStation, type Tab } from './router';
 import { useGeolocation } from './geo';
+import { cachedAt, isOnline, subscribePwa } from './pwa';
 
 export default function App() {
   const [superchargers, setSuperchargers] = useState<Supercharger[]>([]);
@@ -23,6 +24,9 @@ export default function App() {
   const analyticsConfigured = useSyncExternalStore(subscribeAnalytics, isAnalyticsConfigured);
   const geolocation = useGeolocation();
   const [showChangelog, setShowChangelog] = useState(false);
+  // Données servies par le service worker faute de réseau : date de leur enregistrement
+  const [offlineSince, setOfflineSince] = useState<Date | null>(null);
+  const online = useSyncExternalStore(subscribePwa, isOnline);
 
   // Onglet et fiche station ouverte sont portés par l'URL (#/carte?station=6507)
   const route = useRoute();
@@ -70,6 +74,7 @@ export default function App() {
 
       setSuperchargers(chargersData.data || []);
       setStats(statsData);
+      setOfflineSince(cachedAt(chargersRes));
     } catch (err: any) {
       console.error(err);
       setError(err.message || 'Une erreur est survenue lors de la récupération des données.');
@@ -81,6 +86,11 @@ export default function App() {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  // Retour du réseau après un affichage hors connexion : recharger les tarifs à jour
+  useEffect(() => {
+    if (online && offlineSince) fetchData();
+  }, [online]);
 
   useEffect(() => {
     trackTab(activeTab);
@@ -102,6 +112,22 @@ export default function App() {
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Encart Parrainage 1000 km offerts */}
         <ReferralEncart className="mb-6" />
+
+        {/* Offline State */}
+        {(offlineSince || !online) && !error && (
+          <div
+            data-testid="offline-banner"
+            className="mb-6 p-4 rounded-2xl bg-amber-950/60 border border-amber-800/70 text-amber-200 flex items-center space-x-3"
+          >
+            <WifiOff className="w-5 h-5 text-amber-400 shrink-0" />
+            <p className="text-sm">
+              Hors connexion
+              {offlineSince &&
+                ` : tarifs enregistrés le ${offlineSince.toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })}`}
+              .
+            </p>
+          </div>
+        )}
 
         {/* Error State */}
         {error && (

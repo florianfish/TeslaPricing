@@ -1,5 +1,6 @@
-import React from 'react';
-import { Zap, MapPin, TrendingUp, Calculator, Database, ExternalLink, Gift, History } from 'lucide-react';
+import React, { useSyncExternalStore } from 'react';
+import { Zap, MapPin, TrendingUp, Calculator, Database, ExternalLink, Gift, History, Download } from 'lucide-react';
+import { canInstall, promptInstall, subscribePwa } from '../pwa';
 import type { SuperchargerStats } from '../types';
 import type { Tab } from '../router';
 
@@ -14,6 +15,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onTabChange,
   stats,
 }) => {
+  const installable = useSyncExternalStore(subscribePwa, canInstall);
   return (
     <header className="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -27,6 +29,17 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
             <div>
               <div className="flex items-center space-x-2">
+            {installable && (
+              <button
+                id="install-app"
+                onClick={() => promptInstall()}
+                title="Installer l'application sur cet appareil"
+                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-300 hover:text-white transition-colors"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Installer</span>
+              </button>
+            )}
                 <h1 className="font-bold text-lg tracking-tight text-white">Superchargeurs France</h1>
                 <span className="text-[10px] uppercase font-semibold px-2 py-0.5 rounded-full bg-red-950/80 text-red-400 border border-red-800/50">
                   Tesla
