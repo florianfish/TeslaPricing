@@ -165,3 +165,36 @@ test.describe('Divers', () => {
     }
   });
 });
+
+test.describe('Application installable (PWA)', () => {
+  test('le manifeste est déclaré et servi', async ({ page, request }) => {
+    await page.goto('#/carte');
+    await expect(page.locator('link[rel="manifest"]')).toHaveAttribute('href', './manifest.webmanifest');
+    const res = await request.get('manifest.webmanifest');
+    expect(res.ok()).toBe(true);
+    const manifest = await res.json();
+    expect(manifest.start_url).toBe('./#/carte');
+    expect(manifest.icons.map((icon: { sizes: string }) => icon.sizes)).toEqual(expect.arrayContaining(['192x192', '512x512']));
+    for (const icon of manifest.icons) expect((await request.get(icon.src)).ok(), icon.src).toBe(true);
+  });
+
+  test('hors connexion, les derniers tarifs enregistrés restent consultables', async ({ page, context }) => {
+    await page.goto('#/liste?q=rennes');
+    // Attendre que le service worker contrôle la page, puis recharger pour mettre l'API en cache
+    await page.evaluate(async () => {
+      await navigator.serviceWorker.ready;
+      if (!navigator.serviceWorker.controller) {
+        await new Promise((resolve) => navigator.serviceWorker.addEventListener('controllerchange', resolve, { once: true }));
+      }
+    });
+    await page.reload();
+    await expect(page.locator('[id^=view-charger-details-]')).toHaveCount(2);
+    await expect(page.getByTestId('offline-banner')).toBeHidden();
+
+    await context.setOffline(true);
+    await page.reload();
+    await expect(page.getByTestId('offline-banner')).toContainText('Hors connexion');
+    await expect(page.locator('[id^=view-charger-details-]')).toHaveCount(2);
+    await context.setOffline(false);
+  });
+});

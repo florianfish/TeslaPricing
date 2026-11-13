@@ -12,6 +12,7 @@ Inventaire des évolutions possibles, établi le 2026-10-08 à partir de l'état
 - **URLs partageables** (ex-2.1) : onglet, recherche, filtres et fiche station dans le fragment d'URL (`src/router.ts`).
 - **Autour de moi** (ex-2.3) : 5 stations les plus proches sur la carte, tri par distance dans la liste (`src/geo.ts`).
 - **Fraîcheur des données** (ex-3.4) et **tableau de bord de collecte** (ex-6.2) : `lastCheckedAt` par station, journal des imports, `GET /api/prices/collection-status`, panneau dans l'onglet « Mises à jour ».
+- **Application installable (PWA)** (ex-2.6) : manifeste, icônes, service worker (`public/sw.js`), bouton « Installer », consultation hors connexion des derniers tarifs (`src/pwa.ts`).
 
 ---
 
@@ -37,7 +38,6 @@ Points relevés dans le code qu'il vaut mieux traiter avant d'ouvrir de nouvelle
 | 2.2 | **Indicateur « HC / HP maintenant »** | Afficher en temps réel si une station est en heures creuses ou pleines, et dans combien de temps ça bascule (logique déjà présente dans `src/hours.ts`). Colorer les marqueurs de la carte selon le tarif *actuel*. | S | ⭐⭐⭐ |
 | 2.4 | Favoris locaux | Épingler ses stations habituelles (stockage navigateur), avec un filtre « Mes stations » et un rappel de leur dernière variation. | S | ⭐⭐ |
 | 2.5 | Comparateur de stations | Sélectionner 2–4 stations et superposer leurs historiques et grilles HP/HC. | M | ⭐⭐ |
-| 2.6 | PWA | Manifeste + service worker : installation sur mobile, consultation hors-ligne du dernier jeu de données. | M | ⭐⭐ |
 | 2.7 | Mode clair & accessibilité | Thème clair optionnel, contrastes vérifiés, navigation clavier dans la modale et le répertoire. | M | ⭐ |
 | 2.8 | Version anglaise | i18n FR/EN (les traductions HA existent déjà côté add-on). Utile pour les touristes en transit. | M | ⭐ |
 

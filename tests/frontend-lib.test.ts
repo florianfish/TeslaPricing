@@ -7,6 +7,7 @@ import { distanceKm, formatDistance } from '../src/geo';
 import { parseRoute, routeHash, findStation } from '../src/router';
 import { CHANGELOG, parseChangelog } from '../src/changelog';
 import { teslaStationUrl } from '../src/tesla';
+import { cachedAt } from '../src/pwa';
 import { loadFixture } from './helpers';
 
 afterEach(() => {
@@ -122,5 +123,14 @@ describe('changelog', () => {
     const version = config.match(/^version:\s*"?([^"\s]+)"?/m)?.[1];
     expect(CHANGELOG[0].version).toBe(version);
     expect(CHANGELOG.every((release) => release.changes.length > 0)).toBe(true);
+  });
+});
+
+describe('pwa', () => {
+  it('lit la date d’enregistrement d’une réponse servie hors connexion', () => {
+    const cached = new Response('{}', { headers: { 'X-SW-Cached-At': '2026-11-13T21:00:00.000Z' } });
+    expect(cachedAt(cached)?.toISOString()).toBe('2026-11-13T21:00:00.000Z');
+    expect(cachedAt(new Response('{}'))).toBeNull();
+    expect(cachedAt(new Response('{}', { headers: { 'X-SW-Cached-At': 'n/a' } }))).toBeNull();
   });
 });

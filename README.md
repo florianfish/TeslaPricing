@@ -28,6 +28,11 @@ Application web complète permettant de visualiser, répertorier, comparer et hi
   - Filtres par station/ville/région et par sens (hausses / baisses).
   - État de la collecte : dernier relevé reçu de l'extension (alerte au-delà de 10 jours), ancienneté des tarifs par station et liste des stations à revérifier.
 
+- **📱 Application installable (PWA)** :
+  - Installation sur l'écran d'accueil Android (bouton « Installer » ou menu de Chrome), en plein écran, avec raccourcis vers la carte, la liste, les mises à jour et le simulateur.
+  - Consultation hors connexion des derniers tarifs enregistrés, avec un bandeau indiquant leur date.
+  - Service worker `public/sw.js` actif uniquement sur le build de production ; nécessite HTTPS (ou `localhost`).
+
 - **🔋 Simulateur de Coût de Recharge** :
   - Estimation du coût d'un plein ou d'un trajet selon la capacité de batterie (kWh) et le niveau de charge initial/cible.
   - Calcul comparatif en direct entre Tesla et véhicules non-Tesla (abonnement ou tarif standard).

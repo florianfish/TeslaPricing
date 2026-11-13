@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.6.0
+
+- Application installable sur Android (PWA) : bouton « Installer » dans l'en-tête ou menu de Chrome, ouverture en plein écran depuis l'écran d'accueil, raccourcis vers la carte, la liste, les mises à jour et le simulateur.
+- Hors connexion, les derniers tarifs consultés restent affichés, avec un bandeau indiquant la date de leur enregistrement ; ils se rechargent dès le retour du réseau.
+
 ## 1.5.0
 
 - Référencement : nouvelle option « URL publique » (variable `PUBLIC_URL` hors add-on). Une fois renseignée, chaque station a sa propre page indexable (`/superchargeur-abbeville-9655`) avec titre, tarifs et données structurées, accompagnée de `robots.txt`, `sitemap.xml`, d'une URL canonique et d'une image d'aperçu pour les partages. Sans elle, l'instance reste privée et non indexée.

@@ -56,6 +56,7 @@ Le projet adopte une architecture full-stack unifiée servie par un unique proce
 - Style : **Tailwind CSS v4** via `@tailwindcss/vite` (imports dans `src/index.css`).
 - Graphiques : **Recharts** (nécessite `react-is`).
 - Carte : **Leaflet** avec tuiles libres sans clé API (ESRI Dark Gray Canvas, OpenStreetMap France et Satellite ESRI).
+- Application installable (PWA) : `public/manifest.webmanifest` et service worker `public/sw.js` (JavaScript non compilé, chemins relatifs à cause de l'Ingress), enregistré par `src/pwa.ts` en production uniquement. Pages et API en réseau d'abord avec repli hors connexion ; les réponses d'API servies depuis le cache portent l'en-tête `X-SW-Cached-At` (bandeau « Hors connexion » dans `App.tsx`). Changer de stratégie de cache impose d'incrémenter `VERSION` dans `sw.js` (purge des anciens caches). Tuiles de carte non mises en cache.
 
 ### D. Déploiement Conteneurisé (`Dockerfile` & `docker-compose.yml`)
 - Multi-stage build (`node:24-alpine`) : build du frontend Vite et packaging du serveur en un fichier autonome `dist/server.cjs`.
