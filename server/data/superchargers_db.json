@@ -5990,7 +5990,7 @@
       "postalCode": "05000",
       "latitude": 44.54392,
       "longitude": 6.066003,
-      "status": "PLAN",
+      "status": "CONSTRUCTION",
       "stallCount": 8,
       "powerKw": 500,
       "stallsBreakdown": {
@@ -22823,8 +22823,18 @@
       "changePercentage": -5.2
     }
   ],
-  "lastSyncTime": "2026-11-10T10:49:03.971Z",
+  "lastSyncTime": "2026-11-14T09:51:01.045Z",
   "stationEvents": [
+    {
+      "date": "2026-11-14",
+      "type": "STATUS",
+      "superchargerId": "11810",
+      "superchargerName": "Gap, France - Route De Barcelonnette",
+      "city": "Gap",
+      "region": "Provence-Alpes-Côte d'Azur",
+      "from": "PLAN",
+      "to": "CONSTRUCTION"
+    },
     {
       "date": "2026-11-10",
       "type": "STATUS",
