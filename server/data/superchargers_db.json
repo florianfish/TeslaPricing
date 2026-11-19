@@ -4588,8 +4588,8 @@
       "latitude": 43.636478,
       "longitude": 1.501147,
       "status": "CONSTRUCTION",
-      "stallCount": 6,
-      "powerKw": 250,
+      "stallCount": 8,
+      "powerKw": 500,
       "stallsBreakdown": {
         "v2": 0,
         "v3": 0,
@@ -22823,7 +22823,7 @@
       "changePercentage": -5.2
     }
   ],
-  "lastSyncTime": "2026-11-14T09:51:01.045Z",
+  "lastSyncTime": "2026-11-19T11:10:53.284Z",
   "stationEvents": [
     {
       "date": "2026-11-14",
