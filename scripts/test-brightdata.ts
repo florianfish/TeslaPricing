@@ -3,7 +3,7 @@
 // renvoie l'API FindUs pour quelques stations, pour juger si Bright Data passe Akamai.
 //
 // Usage : BRIGHTDATA_API_TOKEN=... node scripts/test-brightdata.ts
-// Variables : BRIGHTDATA_ZONE (web_unlocker1), BRIGHTDATA_COUNTRY (fr), LIMIT (10), DELAY_SEC (2),
+// Variables : BRIGHTDATA_ZONE (web_unlocker1), BRIGHTDATA_COUNTRY (fr), LIMIT (10), DELAY_SEC (5), RETRIES (2),
 // STATIONS (ids supercharge.info séparés par des virgules, sinon les LIMIT premières stations ouvertes).
 // Sorties : résumé Markdown (GITHUB_STEP_SUMMARY si défini) et brightdata-results.json.
 
@@ -15,7 +15,10 @@ const ZONE = (process.env.BRIGHTDATA_ZONE || '').trim() || 'web_unlocker1';
 const COUNTRY = (process.env.BRIGHTDATA_COUNTRY || '').trim();
 const ENDPOINT = process.env.BRIGHTDATA_ENDPOINT || 'https://api.brightdata.com/request';
 const LIMIT = Math.max(1, Number(process.env.LIMIT) || 10);
-const DELAY_MS = Math.max(0, Number(process.env.DELAY_SEC ?? 2)) * 1000;
+const DELAY_MS = Math.max(0, Number(process.env.DELAY_SEC ?? 5)) * 1000;
+// Tesla limite le débit (429) ou renvoie un captcha : on retente le même identifiant après une pause
+const RETRIES = Math.max(0, Number(process.env.RETRIES ?? 2));
+const RETRY_PAUSE_MS = 20000;
 const ONLY = (process.env.STATIONS || '').split(',').map((s) => s.trim()).filter(Boolean);
 const DB_FILE = 'server/data/superchargers_db.json';
 
@@ -97,12 +100,16 @@ for (const s of stations) {
   const attempts: Attempt[] = [];
   let data: any;
   for (const candidate of candidates) {
-    if (requests > 0) await sleep(DELAY_MS);
-    requests++;
-    const r = await fetchViaBrightData(candidate);
-    attempts.push(r.attempt);
-    console.log(`${s.name} [${candidate}] → ${r.attempt.outcome}${r.attempt.brdError ? ` (${r.attempt.brdError})` : ''} en ${r.attempt.ms} ms`);
-    if (r.data) {
+    let r: Awaited<ReturnType<typeof fetchViaBrightData>> | undefined;
+    for (let attempt = 0; attempt <= RETRIES; attempt++) {
+      if (requests > 0) await sleep(attempt > 0 ? RETRY_PAUSE_MS * attempt : DELAY_MS);
+      requests++;
+      r = await fetchViaBrightData(candidate);
+      attempts.push(r.attempt);
+      console.log(`${s.name} [${candidate}]${attempt ? ` (essai ${attempt + 1})` : ''} → ${r.attempt.outcome}${r.attempt.brdError ? ` (${r.attempt.brdError})` : ''} en ${r.attempt.ms} ms`);
+      if (r.data || !/429|captcha|protection|bloqué/i.test(r.attempt.outcome + (r.attempt.brdError || ''))) break;
+    }
+    if (r?.data) {
       data = r.data;
       break;
     }
