@@ -5,7 +5,7 @@ name: "Relevé hebdomadaire des tarifs (Bright Data)"
 # tarif a changé. Aucun commit sur le dépôt : la base de l'add-on fait foi.
 #
 # Secrets : BRIGHTDATA_API_TOKEN, IMPORT_KEY (clé d'import de l'add-on), TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID.
-# Variables : TESLAPRICING_URL (adresse publique de l'add-on, ex. https://suc.poissonmail.fr),
+# Variables (ou secrets) : TESLAPRICING_URL (adresse publique de l'add-on, ex. https://suc.poissonmail.fr),
 #             BRIGHTDATA_ZONE (facultatif, défaut web_unlocker1), PUBLIC_URL (liens des fiches).
 
 on:
@@ -49,10 +49,10 @@ jobs:
 
       - name: Relever, importer et notifier
         env:
-          TESLAPRICING_URL: ${{ vars.TESLAPRICING_URL }}
+          TESLAPRICING_URL: ${{ vars.TESLAPRICING_URL || secrets.TESLAPRICING_URL }}
           IMPORT_KEY: ${{ secrets.IMPORT_KEY }}
           BRIGHTDATA_API_TOKEN: ${{ secrets.BRIGHTDATA_API_TOKEN }}
-          BRIGHTDATA_ZONE: ${{ vars.BRIGHTDATA_ZONE || 'web_unlocker1' }}
+          BRIGHTDATA_ZONE: ${{ vars.BRIGHTDATA_ZONE || secrets.BRIGHTDATA_ZONE || 'web_unlocker1' }}
           BRIGHTDATA_COUNTRY: fr
           DELAY_SEC: '5'
           LIMIT: ${{ inputs.limit }}
