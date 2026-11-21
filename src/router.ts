@@ -4,7 +4,7 @@ import { parseStationPagePath } from './stationPage';
 
 // Routage par le fragment d'URL (#/liste?q=rennes) : fonctionne sous un préfixe inconnu
 // (Ingress Home Assistant) et sans configuration serveur.
-export type Tab = 'map' | 'list' | 'stats' | 'updates' | 'simulator';
+export type Tab = 'map' | 'list' | 'stats' | 'updates' | 'simulator' | 'charges';
 
 const TAB_PATHS: Record<Tab, string> = {
   map: 'carte',
@@ -12,6 +12,7 @@ const TAB_PATHS: Record<Tab, string> = {
   stats: 'evolution',
   updates: 'mises-a-jour',
   simulator: 'simulateur',
+  charges: 'mes-recharges',
 };
 const PATH_TABS = Object.fromEntries(Object.entries(TAB_PATHS).map(([tab, path]) => [path, tab])) as Record<string, Tab>;
 

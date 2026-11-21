@@ -33,6 +33,10 @@ Application web complète permettant de visualiser, répertorier, comparer et hi
   - Consultation hors connexion des derniers tarifs enregistrés, avec un bandeau indiquant leur date.
   - Service worker `public/sw.js` actif uniquement sur le build de production ; nécessite HTTPS (ou `localhost`).
 
+- **🧾 Mes recharges (TeslaMate / MyTeslaMate)** :
+  - Vos sessions payantes au Superchargeur, lues sur TeslaMate API, comparées au tarif relevé pour la station à cette date et au créneau du début de la session : prix réel au kWh, écart, coût en heures creuses.
+  - Données personnelles : onglet servi seulement via Home Assistant (Ingress) ou avec la clé d'import, jamais sur l'adresse publique.
+
 - **🔋 Simulateur de Coût de Recharge** :
   - Estimation du coût d'un plein ou d'un trajet selon la capacité de batterie (kWh) et le niveau de charge initial/cible.
   - Calcul comparatif en direct entre Tesla et véhicules non-Tesla (abonnement ou tarif standard).
@@ -214,7 +218,8 @@ Les données sont persistées dans `/data` (variable `DATA_DIR`), donc incluses 
 | Méthode | Route | Description |
 | :--- | :--- | :--- |
 | `GET` | `/api/health` | Vérification de l'état du serveur |
-| `GET` | `/api/config` | Configuration publique du frontend (`gaMeasurementId` Google Analytics, ou `null`) |
+| `GET` | `/api/config` | Configuration publique du frontend (`gaMeasurementId` Google Analytics, ou `null` ; `myCharges` : onglet « Mes recharges » proposé) |
+| `GET` | `/api/my-charges` | Mes sessions Superchargeur (TeslaMate API) comparées aux tarifs relevés ; via l'Ingress Home Assistant ou avec `Authorization: Bearer <clé d'import>` uniquement |
 | `GET` | `/api/superchargers` | Liste des stations filtrable (`search`, `status`, `otherEVsOnly`, `minPower`, `region`, `sortBy`, `sortOrder`) |
 | `GET` | `/api/superchargers/:slug` | Détails complets d'un superchargeur via son slug (ex: `rennessupercharger`) |
 | `GET` | `/api/superchargers/:slug/prices` | Historique complet des relevés de prix d'une station |

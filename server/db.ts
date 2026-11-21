@@ -552,11 +552,12 @@ export async function syncStationsFromRegistry(): Promise<StationSyncResult> {
   return result;
 }
 
-// Réglage : variable d'environnement, sinon option de l'add-on Home Assistant (options.json)
-function getSetting(envVar: string, addonOption: string): string {
+// Réglage : variable d'environnement, sinon option de l'add-on Home Assistant (options.json).
+// Une option numérique à 0 est renvoyée telle quelle (« 0 »), pas comme une option absente.
+export function getSetting(envVar: string, addonOption: string): string {
   if (process.env[envVar]) return process.env[envVar]!.trim();
   try {
-    return String(JSON.parse(fs.readFileSync(ADDON_OPTIONS_FILE, 'utf-8'))[addonOption] || '').trim();
+    return String(JSON.parse(fs.readFileSync(ADDON_OPTIONS_FILE, 'utf-8'))[addonOption] ?? '').trim();
   } catch {
     return '';
   }

@@ -22,6 +22,17 @@ Pour y accéder aussi directement (`http://<ip-home-assistant>:<port>`), renseig
 
 Les tarifs Tesla sont collectés chaque semaine par un workflow GitHub Actions qui passe par Bright Data et les envoie à l'add-on à son adresse publique (voir la section « Collecte des tarifs Tesla » du README), ou en secours par l'extension Chrome « Collecteur Tesla Pricing » (dossier `extension/` du dépôt) via le port direct. Renseigner une clé (au moins 20 caractères aléatoires) dans l'option **Clé d'import**, puis la même clé dans le secret GitHub `IMPORT_KEY` et/ou dans l'extension. Laisser vide pour désactiver l'import.
 
+### Mes recharges (TeslaMate / MyTeslaMate)
+
+Renseigner l'**Adresse de TeslaMate API** (et son **Jeton** si besoin) pour ajouter l'onglet **Mes recharges**. Il liste vos sessions payantes au Superchargeur et compare, pour chacune :
+
+- le montant facturé par Tesla au tarif relevé pour la station à cette date, au créneau du début de la session ;
+- l'écart, et ce qu'aurait coûté la même énergie en heures creuses.
+
+Les sessions sont rattachées aux stations par leur position (moins de 300 m). Deux sessions consécutives au même coût (TeslaMate reporte parfois la même facture sur chacune) sont regroupées.
+
+Ce sont des données personnelles (lieux, dates, montants) : l'onglet et la route `/api/my-charges` ne répondent que via la barre latérale de Home Assistant (Ingress) ou avec la clé d'import, **jamais** sur l'adresse publique du site. Elles ne sont pas mises en cache par l'application installée.
+
 ### Google Analytics
 
 Pour suivre la fréquentation de l'interface, renseigner l'ID de mesure Google Analytics 4 (`G-XXXXXXXXXX`, visible dans **Admin → Flux de données** de la propriété GA4) dans l'option **ID de mesure Google Analytics**, puis redémarrer l'add-on. Une page vue est envoyée à chaque onglet consulté. Laisser vide pour désactiver le suivi (aucun script Google n'est alors chargé).

@@ -13,6 +13,15 @@ configuration:
   telegram_bot_token:
     name: Telegram bot token
     description: API token provided by @BotFather to receive station evolution alerts.
+  teslamate_api_url:
+    name: TeslaMate API URL
+    description: URL of your TeslaMate API (teslamateapi, or the one provided by MyTeslaMate) for the "Mes recharges" tab comparing your Supercharger bills with recorded prices. Only shown through Home Assistant. Leave empty to disable.
+  teslamate_api_token:
+    name: TeslaMate API token
+    description: Access token for TeslaMate API (Authorization Bearer header), if your instance requires one.
+  teslamate_car_id:
+    name: TeslaMate car ID
+    description: TeslaMate ID of the car (1 for the first one).
   telegram_chat_id:
     name: Telegram chat ID
     description: Recipient chat ID (user, group or channel) for notifications.

@@ -49,6 +49,8 @@ self.addEventListener('fetch', (event) => {
   if (url.origin === scopeUrl.origin) {
     if (!url.href.startsWith(scopeUrl.href)) return;
     const relative = url.pathname.slice(scopeUrl.pathname.length);
+    // Données personnelles (Mes recharges) : jamais mises en cache
+    if (relative === 'api/my-charges') return;
     if (request.mode === 'navigate') {
       event.respondWith(networkFirstPage(request));
     } else if (relative.startsWith('api/')) {

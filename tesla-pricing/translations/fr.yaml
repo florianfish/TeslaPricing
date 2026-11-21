@@ -16,3 +16,12 @@ configuration:
   telegram_chat_id:
     name: Chat ID Telegram
     description: Identifiant du destinataire (utilisateur, groupe ou canal) pour les notifications.
+  teslamate_api_url:
+    name: Adresse de TeslaMate API
+    description: Adresse de votre TeslaMate API (teslamateapi, ou celle fournie par MyTeslaMate), pour l'onglet « Mes recharges » qui compare vos factures Superchargeur aux tarifs relevés. Onglet visible seulement depuis Home Assistant. Laisser vide pour désactiver.
+  teslamate_api_token:
+    name: Jeton de TeslaMate API
+    description: Jeton d'accès à TeslaMate API (en-tête Authorization Bearer), si votre instance en demande un.
+  teslamate_car_id:
+    name: Numéro de la voiture dans TeslaMate
+    description: Identifiant TeslaMate de la voiture (1 pour la première).

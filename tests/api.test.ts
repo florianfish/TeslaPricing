@@ -219,6 +219,63 @@ describe('import du relevé hebdomadaire Bright Data', () => {
   });
 });
 
+describe('mes recharges (GET /api/my-charges)', () => {
+  const getWith = async (route: string, key?: string) => {
+    const res = await fetch(baseUrl + route, { headers: key ? { Authorization: `Bearer ${key}` } : {} });
+    return { status: res.status, body: await res.json() };
+  };
+
+  it('jamais servi sur l’adresse publique : clé d’import ou Ingress Home Assistant exigés', async () => {
+    expect((await getWith('/api/my-charges')).status).toBe(403);
+    expect((await getWith('/api/my-charges', 'mauvaise')).status).toBe(403);
+    expect((await getWith('/api/config')).body.myCharges).toBe(false);
+  });
+
+  it('sans TeslaMate configuré : désactivé', async () => {
+    delete process.env.TESLAMATE_API_URL;
+    expect((await getWith('/api/my-charges', 'cle-de-test')).body).toEqual({ enabled: false });
+    expect((await getWith('/api/config', 'cle-de-test')).body.myCharges).toBe(false);
+  });
+
+  it('lit les sessions sur TeslaMate API (pages, jeton) et les compare aux tarifs', async () => {
+    const http = await import('http');
+    const seen: string[] = [];
+    const teslamate = http.createServer((req, res) => {
+      seen.push(`${req.url} ${req.headers.authorization}`);
+      const page = new URL(req.url!, 'http://x').searchParams.get('page');
+      const charges =
+        page === '1'
+          ? [
+              // Rennes Cleunay (station 6507 de la base de test), 17 h : heures pleines
+              { charge_id: 1, start_date: '2026-10-10T17:00:00+02:00', end_date: '2026-10-10T17:30:00+02:00', address: 'Supercharger Rennes', charge_energy_added: 20, charge_energy_used: 21, cost: 7.56, latitude: 48.10364, longitude: -1.71384 },
+              { charge_id: 2, start_date: '2026-10-11T03:00:00+02:00', end_date: '2026-10-11T05:00:00+02:00', address: 'Domicile', charge_energy_added: 10, charge_energy_used: 11, cost: 1.5, latitude: 48.04, longitude: -1.6 },
+            ]
+          : [];
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ data: { charges } }));
+    });
+    teslamate.listen(0);
+    await new Promise((r) => teslamate.once('listening', r));
+    const { resetMyChargesCache } = await import('../server/my-charges');
+    resetMyChargesCache();
+    process.env.TESLAMATE_API_URL = `http://127.0.0.1:${(teslamate.address() as AddressInfo).port}`;
+    process.env.TESLAMATE_API_TOKEN = 'jeton-tm';
+    try {
+      expect((await getWith('/api/config', 'cle-de-test')).body.myCharges).toBe(true);
+      const { status, body } = await getWith('/api/my-charges', 'cle-de-test');
+      expect(status).toBe(200);
+      expect(seen[0]).toBe('/api/v1/cars/1/charges?page=1&show=100 Bearer jeton-tm');
+      expect(body.sessions).toHaveLength(1);
+      expect(body.sessions[0]).toMatchObject({ stationId: '6507', period: 'peak', cost: 7.56, energyUsed: 21 });
+      expect(body.totals).toMatchObject({ sessions: 1, cost: 7.56 });
+    } finally {
+      teslamate.close();
+      delete process.env.TESLAMATE_API_URL;
+      delete process.env.TESLAMATE_API_TOKEN;
+    }
+  });
+});
+
 describe("purge de l'historique (POST /api/prices/purge-history)", () => {
   it('exige la clé', async () => {
     expect((await post('/api/prices/purge-history', undefined, null)).status).toBe(401);
