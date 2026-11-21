@@ -581,6 +581,17 @@ export function getPublicUrl(): string {
   return /^https?:\/\/[^\s/?#]+(\/[^\s?#]*)?$/i.test(url) ? url : '';
 }
 
+// Empreintes SHA-256 des clés de signature de l'appli Android (TWA) : variable ANDROID_CERT_SHA256, sinon
+// option « android_cert_sha256 ». Plusieurs empreintes séparées par des virgules ou des espaces (clé de debug
+// et clé de release). Normalisées au format attendu par Android : « AB:CD:… » (32 octets).
+export function getAndroidCertFingerprints(): string[] {
+  return getSetting('ANDROID_CERT_SHA256', 'android_cert_sha256')
+    .split(/[\s,;]+/)
+    .map((f) => f.replace(/[^0-9a-f]/gi, '').toUpperCase())
+    .filter((f) => f.length === 64)
+    .map((f) => f.match(/../g)!.join(':'));
+}
+
 // Configuration Telegram (alertes d'évolution des stations) : variables TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID,
 // sinon options « telegram_bot_token » / « telegram_chat_id » de l'add-on.
 export function getTelegramConfig(): { botToken: string; chatId: string } {

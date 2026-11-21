@@ -13,6 +13,9 @@ configuration:
   telegram_bot_token:
     name: Telegram bot token
     description: API token provided by @BotFather to receive station evolution alerts.
+  android_cert_sha256:
+    name: Android app fingerprints
+    description: SHA-256 fingerprints of the Android app signing keys (debug and release, comma-separated), published in /.well-known/assetlinks.json. Without them, the app shows an address bar.
   telegram_chat_id:
     name: Telegram chat ID
     description: Recipient chat ID (user, group or channel) for notifications.

@@ -22,6 +22,10 @@ Pour y accéder aussi directement (`http://<ip-home-assistant>:<port>`), renseig
 
 Les tarifs Tesla sont collectés chaque semaine par un workflow GitHub Actions qui passe par Bright Data et les envoie à l'add-on à son adresse publique (voir la section « Collecte des tarifs Tesla » du README), ou en secours par l'extension Chrome « Collecteur Tesla Pricing » (dossier `extension/` du dépôt) via le port direct. Renseigner une clé (au moins 20 caractères aléatoires) dans l'option **Clé d'import**, puis la même clé dans le secret GitHub `IMPORT_KEY` et/ou dans l'extension. Laisser vide pour désactiver l'import.
 
+### Appli Android
+
+L'appli Android (dossier `android/` du dépôt) affiche ce site en plein écran. Pour qu'elle s'ouvre sans barre d'adresse, renseigner dans l'option **Empreintes de l'appli Android** l'empreinte SHA-256 de ses clés de signature (debug et release, séparées par une virgule) : l'add-on publie alors `/.well-known/assetlinks.json`. Voir `android/README.md`.
+
 ### Google Analytics
 
 Pour suivre la fréquentation de l'interface, renseigner l'ID de mesure Google Analytics 4 (`G-XXXXXXXXXX`, visible dans **Admin → Flux de données** de la propriété GA4) dans l'option **ID de mesure Google Analytics**, puis redémarrer l'add-on. Une page vue est envoyée à chaque onglet consulté. Laisser vide pour désactiver le suivi (aucun script Google n'est alors chargé).

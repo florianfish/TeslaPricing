@@ -219,6 +219,28 @@ describe('import du relevé hebdomadaire Bright Data', () => {
   });
 });
 
+describe('appli Android (GET /.well-known/assetlinks.json)', () => {
+  it('404 sans empreinte ; sinon empreintes normalisées pour les paquets release et debug', async () => {
+    delete process.env.ANDROID_CERT_SHA256;
+    expect((await get('/.well-known/assetlinks.json')).status).toBe(404);
+
+    const hex = 'ab'.repeat(32);
+    process.env.ANDROID_CERT_SHA256 = `${hex.match(/../g)!.join(':')}, ${'CD'.repeat(32)} trop-court`;
+    try {
+      const { status, body } = await get('/.well-known/assetlinks.json');
+      expect(status).toBe(200);
+      expect(body).toHaveLength(2);
+      expect(body.map((s: any) => s.target.package_name)).toEqual(['fr.florian.teslapricing', 'fr.florian.teslapricing.debug']);
+      expect(body[0]).toMatchObject({
+        relation: ['delegate_permission/common.handle_all_urls'],
+        target: { namespace: 'android_app', sha256_cert_fingerprints: [`${'AB:'.repeat(31)}AB`, `${'CD:'.repeat(31)}CD`] },
+      });
+    } finally {
+      delete process.env.ANDROID_CERT_SHA256;
+    }
+  });
+});
+
 describe("purge de l'historique (POST /api/prices/purge-history)", () => {
   it('exige la clé', async () => {
     expect((await post('/api/prices/purge-history', undefined, null)).status).toBe(401);

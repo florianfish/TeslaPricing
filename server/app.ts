@@ -14,6 +14,7 @@ import {
   getStationEvents,
   getCollectionStatus,
   getPublicUrl,
+  getAndroidCertFingerprints,
 } from './db.js';
 import { homePage, stationPage, renderPage, robotsTxt, sitemapXml } from './seo.js';
 import { parseStationPagePath, stationPagePath } from '../src/stationPage.js';
@@ -182,6 +183,21 @@ export function createApp({ indexHtml }: AppOptions = {}) {
   });
 
   // --- RÉFÉRENCEMENT ---
+
+  // Appli Android (TWA, dossier android/) : lien vérifié entre l'appli et le site, sans lequel Android
+  // affiche une barre d'adresse en haut de l'appli. Paquets release et debug (suffixe .debug).
+  app.get('/.well-known/assetlinks.json', (req, res) => {
+    const fingerprints = getAndroidCertFingerprints();
+    if (!fingerprints.length) {
+      return res.status(404).json({ error: "Aucune empreinte de clé Android configurée (option android_cert_sha256)" });
+    }
+    res.json(
+      ['fr.florian.teslapricing', 'fr.florian.teslapricing.debug'].map((pkg) => ({
+        relation: ['delegate_permission/common.handle_all_urls'],
+        target: { namespace: 'android_app', package_name: pkg, sha256_cert_fingerprints: fingerprints },
+      }))
+    );
+  });
 
   app.get('/robots.txt', (req, res) => {
     res.type('text/plain').send(robotsTxt(getPublicUrl()));

@@ -29,12 +29,14 @@ options:
   public_url: ""
   telegram_bot_token: ""
   telegram_chat_id: ""
+  android_cert_sha256: ""
 schema:
   import_key: password?
   ga_measurement_id: match(^(G-[A-Za-z0-9]+)?$)?
   public_url: match(^(https?://[^\s?#]+)?$)?
   telegram_bot_token: password?
   telegram_chat_id: str?
+  android_cert_sha256: str?
 environment:
   DATA_DIR: /data
 watchdog: http://[HOST]:[PORT:3000]/api/health

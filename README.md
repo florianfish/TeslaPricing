@@ -33,6 +33,10 @@ Application web complète permettant de visualiser, répertorier, comparer et hi
   - Consultation hors connexion des derniers tarifs enregistrés, avec un bandeau indiquant leur date.
   - Service worker `public/sw.js` actif uniquement sur le build de production ; nécessite HTTPS (ou `localhost`).
 
+- **🤖 Appli Android** (`android/`) :
+  - Trusted Web Activity : le site en plein écran avec le moteur de Chrome, icône et écran de démarrage natifs, sans code d'interface à maintenir.
+  - APK construit par la CI mutualisée [Forge-Apk](https://github.com/florianfish/Forge-Apk) : APK de debug sur chaque PR, pré-release « debug », release signée à la demande. Voir [android/README.md](android/README.md).
+
 - **🔋 Simulateur de Coût de Recharge** :
   - Estimation du coût d'un plein ou d'un trajet selon la capacité de batterie (kWh) et le niveau de charge initial/cible.
   - Calcul comparatif en direct entre Tesla et véhicules non-Tesla (abonnement ou tarif standard).
@@ -224,6 +228,7 @@ Les données sont persistées dans `/data` (variable `DATA_DIR`), donc incluses 
 | `GET` | `/api/prices/collection-status` | État de la collecte : derniers imports, ancienneté des tarifs des stations ouvertes, stations à revérifier |
 | `GET` | `/api/prices/collector-stations` | Stations à interroger par le collecteur (`[id, locationId, locationSlug]`) |
 | `POST` | `/api/prices/import` | Import d'un relevé du collecteur (en-tête `Authorization: Bearer <clé d'import>` ; `source: "brightdata"` pour le relevé hebdomadaire) |
+| `GET` | `/.well-known/assetlinks.json` | Lien vérifié avec l'appli Android (empreintes de `android_cert_sha256`) ; 404 sans empreinte |
 | `GET` | `/robots.txt` | Règles d'indexation (tout interdire sans `PUBLIC_URL`) |
 | `GET` | `/sitemap.xml` | Plan du site : accueil et pages station (404 sans `PUBLIC_URL`) |
 | `GET` | `/superchargeur-<nom>-<id>` | Page station rendue côté serveur (titre, tarifs, données structurées), puis application |

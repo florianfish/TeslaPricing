@@ -16,3 +16,6 @@ configuration:
   telegram_chat_id:
     name: Chat ID Telegram
     description: Identifiant du destinataire (utilisateur, groupe ou canal) pour les notifications.
+  android_cert_sha256:
+    name: Empreintes de l'appli Android
+    description: Empreintes SHA-256 des clés de signature de l'appli Android (debug et release, séparées par des virgules), publiées dans /.well-known/assetlinks.json. Sans elles, l'appli affiche une barre d'adresse.
