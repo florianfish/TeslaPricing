@@ -10,6 +10,7 @@ import {
   getCollectionStatus,
 } from './server/db.js';
 import { createApp } from './server/app.js';
+import { sampleOccupancy, getOccupancyIntervalMin } from './server/occupancy.js';
 import { daysSince } from './src/freshness.js';
 
 const STATION_SYNC_INTERVAL_MS = 24 * 3600 * 1000;
@@ -20,6 +21,15 @@ async function runStationSync() {
     console.log(`Stations synchronisées (supercharge.info) : ${r.created} nouvelle(s), ${r.statusChanged} statut(s) modifié(s), ${r.updated} mise(s) à jour.`);
   } catch (err: any) {
     console.warn(`Synchronisation des stations impossible : ${err.message}`);
+  }
+}
+
+async function runOccupancySample() {
+  try {
+    const { stations } = await sampleOccupancy();
+    if (stations === 0) console.warn('Occupation : aucune station échantillonnée (données IRVE vides ou périmées).');
+  } catch (err: any) {
+    console.warn(`Occupation des stations : échantillon impossible (${err.message}).`);
   }
 }
 
@@ -79,6 +89,14 @@ async function startServer() {
   if (STATION_SYNC_ENABLED) {
     setTimeout(runStationSync, 30000);
     setInterval(runStationSync, STATION_SYNC_INTERVAL_MS);
+  }
+
+  // Occupation des stations (données IRVE de transport.data.gouv.fr), toutes les N minutes
+  const occupancyMin = getOccupancyIntervalMin();
+  if (occupancyMin > 0) {
+    console.log(`Occupation des stations : échantillon toutes les ${occupancyMin} min.`);
+    setTimeout(runOccupancySample, 60_000);
+    setInterval(runOccupancySample, occupancyMin * 60_000);
   }
 
   checkCollection();

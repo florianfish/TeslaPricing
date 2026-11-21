@@ -219,6 +219,26 @@ describe('import du relevé hebdomadaire Bright Data', () => {
   });
 });
 
+describe('occupation (GET /api/superchargers/:id/occupancy)', () => {
+  it('renvoie la grille cumulée de la station, 404 si la station est inconnue', async () => {
+    const { emptyStore, addSample } = await import('../scripts/lib/occupancy');
+    const store = emptyStore();
+    store.mapping = { '6507': ['FRTSLE00A1', 'FRTSLE00A2'] };
+    const saturday14h = new Date('2026-11-21T13:00:00Z');
+    addSample(store, '6507', { occupied: 1, total: 2 }, saturday14h);
+    addSample(store, '6507', { occupied: 2, total: 2 }, saturday14h);
+    fs.writeFileSync(path.join(dataDir, 'occupancy.json'), JSON.stringify(store));
+
+    const { status, body } = await get('/api/superchargers/6507/occupancy');
+    expect(status).toBe(200);
+    expect(body).toMatchObject({ enabled: true, matched: true, points: 2, samples: 2, current: { occupied: 2, total: 2 } });
+    expect(body.grid[5][14]).toBe(0.75);
+    expect(body.grid[0][0]).toBeNull();
+    expect((await get('/api/superchargers/662/occupancy')).body).toMatchObject({ matched: false, samples: 0 });
+    expect((await get('/api/superchargers/inconnue/occupancy')).status).toBe(404);
+  });
+});
+
 describe("purge de l'historique (POST /api/prices/purge-history)", () => {
   it('exige la clé', async () => {
     expect((await post('/api/prices/purge-history', undefined, null)).status).toBe(401);

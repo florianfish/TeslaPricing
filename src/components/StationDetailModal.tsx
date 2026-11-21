@@ -5,6 +5,7 @@ import { stationFreshness, FRESHNESS_CLASSES } from '../freshness';
 import { isShareableLocation } from '../router';
 import { teslaStationUrl } from '../tesla';
 import { stationPagePath } from '../stationPage';
+import { OccupancyPanel } from './OccupancyPanel';
 import {
   X,
   Zap,
@@ -300,6 +301,8 @@ export const StationDetailModal: React.FC<StationDetailModalProps> = ({
               <span>Dernière révision : {new Date(current.lastUpdated).toLocaleDateString('fr-FR')}</span>
             </div>
           </div>
+
+          <OccupancyPanel stationId={charger.id} pricing={current} now={now} />
 
           {/* Historical Price Chart for this station */}
           <div className="bg-slate-950/70 rounded-2xl p-5 border border-slate-800 space-y-4">
