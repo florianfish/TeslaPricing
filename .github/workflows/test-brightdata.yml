@@ -3,6 +3,7 @@ name: "Test relevé des tarifs via Bright Data"
 # Test en lecture seule : interroge l'API Tesla FindUs via Bright Data Web Unlocker pour
 # quelques stations et affiche les tarifs dans le résumé du job. Aucun commit, aucune écriture
 # en base, aucun envoi à l'add-on. Secret requis : BRIGHTDATA_API_TOKEN.
+# Variable facultative : BRIGHTDATA_ZONE (nom de la zone Web Unlocker, défaut web_unlocker1).
 
 on:
   workflow_dispatch:
@@ -14,8 +15,8 @@ on:
         description: "Ids supercharge.info séparés par des virgules (remplace « limit »)"
         default: ""
       zone:
-        description: "Zone Bright Data Web Unlocker"
-        default: "web_unlocker1"
+        description: "Zone Bright Data Web Unlocker (vide = variable BRIGHTDATA_ZONE, sinon web_unlocker1)"
+        default: ""
       country:
         description: "Pays de sortie Bright Data (vide = au choix de Bright Data)"
         default: "fr"
@@ -45,7 +46,7 @@ jobs:
       - name: Relever les tarifs via Bright Data
         env:
           BRIGHTDATA_API_TOKEN: ${{ secrets.BRIGHTDATA_API_TOKEN }}
-          BRIGHTDATA_ZONE: ${{ inputs.zone || 'web_unlocker1' }}
+          BRIGHTDATA_ZONE: ${{ inputs.zone || vars.BRIGHTDATA_ZONE || 'web_unlocker1' }}
           BRIGHTDATA_COUNTRY: ${{ github.event_name == 'workflow_dispatch' && inputs.country || 'fr' }}
           LIMIT: ${{ inputs.limit || '10' }}
           STATIONS: ${{ inputs.stations }}
