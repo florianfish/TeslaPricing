@@ -1,0 +1,60 @@
+name: "Exploration (temporaire)"
+on:
+  push:
+    branches: [test/exploration]
+permissions:
+  contents: read
+jobs:
+  irve:
+    runs-on: ubuntu-latest
+    steps:
+      - name: IRVE statique et dynamique (lignes Tesla)
+        run: |
+          set -x
+          curl -sSL -o statique.csv https://transport.data.gouv.fr/resources/84013/download
+          curl -sSL -o dynamique.csv https://transport.data.gouv.fr/resources/84098/download
+          ls -la *.csv
+          head -1 statique.csv
+          head -1 dynamique.csv
+          grep -c FRTSLE statique.csv || true
+          grep -c FRTSLE dynamique.csv || true
+          grep -i tesla statique.csv | head -3
+          grep FRTSLE dynamique.csv | head -8
+          python3 - <<'PY'
+          import csv, collections
+          rows=[r for r in csv.DictReader(open('statique.csv', encoding='utf-8')) if r.get('id_pdc_itinerance','').startswith('FRTSLE')]
+          print('statique Tesla', len(rows))
+          st=collections.Counter(r['id_station_itinerance'] for r in rows)
+          print('stations', len(st), st.most_common(3))
+          for r in rows[:2]: print({k:v for k,v in r.items() if v})
+          dyn=[r for r in csv.DictReader(open('dynamique.csv', encoding='utf-8')) if r.get('id_pdc_itinerance','').startswith('FRTSLE')]
+          print('dynamique Tesla', len(dyn))
+          print(collections.Counter(r.get('occupation_pdc') for r in dyn))
+          print(collections.Counter(r.get('etat_pdc') for r in dyn))
+          print(sorted(r.get('horodatage','') for r in dyn)[:2], sorted(r.get('horodatage','') for r in dyn)[-2:])
+          ids={r['id_pdc_itinerance'] for r in rows}
+          print('dyn∩stat', len(ids & {r['id_pdc_itinerance'] for r in dyn}))
+          by=collections.defaultdict(list)
+          for r in dyn: by[r['id_pdc_itinerance'].rsplit('E',1)[0]].append(r['occupation_pdc'])
+          print('exemples ids dyn', [r['id_pdc_itinerance'] for r in dyn[:5]])
+          PY
+      - name: En-têtes HTTP (taille, cache)
+        run: |
+          curl -sSIL https://transport.data.gouv.fr/resources/84098/download | grep -i "content-length\|last-modified\|etag\|location\|^HTTP"
+  pricebooks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Grilles brutes Tesla via Bright Data
+        env:
+          TOKEN: ${{ secrets.BRIGHTDATA_API_TOKEN }}
+        run: |
+          for id in 444407 413625 300364; do
+            url="https://www.tesla.com/api/findus/get-charger-details?locationSlug=$id&programType=supercharger&locale=fr-FR&isInHkMoTw=false"
+            for try in 1 2 3; do
+              out=$(curl -sS -m 120 https://api.brightdata.com/request -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
+                -d "{\"zone\":\"web_unlocker1\",\"url\":\"$url\",\"format\":\"raw\",\"country\":\"fr\"}")
+              echo "$out" | python3 -c "import sys,json; d=json.load(sys.stdin)['data']['data']; print(json.dumps({k:d.get(k) for k in ['name','effectivePricebooks','timeZone','openToNonTeslas','publicStallCount','maxPowerKw']}, indent=1))" && break
+              echo "essai $try raté : ${out:0:120}"; sleep 10
+            done
+            sleep 5
+          done
