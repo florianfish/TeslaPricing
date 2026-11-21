@@ -65,7 +65,7 @@ describe('lecture', () => {
   });
 
   it('GET /api/config : Google Analytics désactivé par défaut', async () => {
-    expect((await get('/api/config')).body).toEqual({ gaMeasurementId: null });
+    expect((await get('/api/config')).body).toEqual({ gaMeasurementId: null, myCharges: false });
   });
 
   it('GET /api/superchargers : toutes les stations', async () => {
