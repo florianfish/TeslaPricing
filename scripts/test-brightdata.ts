@@ -56,7 +56,8 @@ async function fetchViaBrightData(candidate: string): Promise<{ attempt: Attempt
     ms: Date.now() - started,
   };
   if (!res.ok) {
-    attempt.outcome = `HTTP ${res.status}`;
+    const detail = text.replace(/\s+/g, ' ').trim().slice(0, 300);
+    attempt.outcome = `HTTP ${res.status}${detail ? ` : ${detail}` : ''}`;
     return { attempt };
   }
   if (/access denied|cpr_chlge/i.test(text) || /^\s*<(!doctype|html)/i.test(text)) {
@@ -118,6 +119,13 @@ for (const s of stations) {
       `${fmt(ref.teslaPeak)} / ${fmt(ref.teslaOffPeak)} | ${last ? Math.round(last.ms / 1000) : '—'} s |`
   );
   results.push({ id: s.id, name: s.name, attempts, pricing: p || null, raw: data || null });
+
+  // Erreur de requête Bright Data (zone, clé…) identique sur 3 stations : inutile d'insister
+  const apiErrors = results.slice(-3).map((r) => r.attempts.at(-1)?.outcome || '');
+  if (!ok && apiErrors.length === 3 && /^HTTP 4/.test(apiErrors[0]) && apiErrors.every((o) => o === apiErrors[0])) {
+    console.log(`Arrêt : Bright Data refuse toutes les requêtes (${apiErrors[0]}).`);
+    break;
+  }
 }
 
 const summary = [
