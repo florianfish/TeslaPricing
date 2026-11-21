@@ -96,6 +96,20 @@ export function parseTeslaData(teslaData: any): {
   };
 }
 
+// Un nouveau relevé modifie-t-il le tarif affiché ? (règle commune à l'import et au relevé Bright Data)
+export function pricingChanged(
+  current: Pick<SuperchargerPricing, 'teslaPeak' | 'teslaOffPeak' | 'nonTeslaPeak' | 'nonTeslaOffPeak' | 'peakHours'>,
+  next: Pick<SuperchargerPricing, 'teslaPeak' | 'teslaOffPeak' | 'nonTeslaPeak' | 'nonTeslaOffPeak' | 'peakHours'>
+): boolean {
+  return (
+    current.teslaPeak !== next.teslaPeak ||
+    current.teslaOffPeak !== next.teslaOffPeak ||
+    current.nonTeslaPeak !== next.nonTeslaPeak ||
+    current.nonTeslaOffPeak !== next.nonTeslaOffPeak ||
+    current.peakHours !== next.peakHours
+  );
+}
+
 // Appliquer une réponse Tesla FindUs à une station : met à jour les tarifs et
 // ajoute un relevé historique si le prix a changé.
 export function applyTeslaData(
@@ -110,14 +124,7 @@ export function applyTeslaData(
 
   const { pricing } = parsed;
   const current = charger.currentPricing;
-  const priceChanged =
-    current.teslaPeak !== pricing.teslaPeak ||
-    current.teslaOffPeak !== pricing.teslaOffPeak ||
-    current.nonTeslaPeak !== pricing.nonTeslaPeak ||
-    current.nonTeslaOffPeak !== pricing.nonTeslaOffPeak ||
-    current.peakHours !== pricing.peakHours;
-
-  if (!priceChanged) return { outcome: 'confirmed' };
+  if (!pricingChanged(current, pricing)) return { outcome: 'confirmed' };
 
   const oldAvg = (current.teslaPeak + current.teslaOffPeak) / 2;
   const newAvg = (pricing.teslaPeak + pricing.teslaOffPeak) / 2;

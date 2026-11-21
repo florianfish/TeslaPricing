@@ -20,7 +20,7 @@ Pour y accéder aussi directement (`http://<ip-home-assistant>:<port>`), renseig
 
 ### Clé d'import
 
-Les tarifs Tesla sont collectés par l'extension Chrome « Collecteur Tesla Pricing » (dossier `extension/` du dépôt), qui les envoie à l'add-on via le port direct. Renseigner une clé (au moins 20 caractères aléatoires) dans l'option **Clé d'import**, puis la même clé dans l'extension. Laisser vide pour désactiver l'import.
+Les tarifs Tesla sont collectés chaque semaine par un workflow GitHub Actions qui passe par Bright Data et les envoie à l'add-on à son adresse publique (voir la section « Collecte des tarifs Tesla » du README), ou en secours par l'extension Chrome « Collecteur Tesla Pricing » (dossier `extension/` du dépôt) via le port direct. Renseigner une clé (au moins 20 caractères aléatoires) dans l'option **Clé d'import**, puis la même clé dans le secret GitHub `IMPORT_KEY` et/ou dans l'extension. Laisser vide pour désactiver l'import.
 
 ### Google Analytics
 

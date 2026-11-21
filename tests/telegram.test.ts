@@ -7,6 +7,11 @@ import {
   formatStationEventsMessage,
   sendTelegramMessage,
   notifyStationEvents,
+  formatPriceChange,
+  formatPriceCollectionMessage,
+  notifyPriceCollection,
+  teslaChangePercent,
+  type PriceChange,
 } from '../scripts/lib/telegram';
 import type { StationEvent, Supercharger } from '../src/types';
 
@@ -235,5 +240,87 @@ describe('sendTelegramMessage & notifyStationEvents API calls', () => {
 
     expect(res).toEqual({ sent: true, count: 1 });
     expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('Relevé des tarifs : message Telegram', () => {
+  const lexy: PriceChange = {
+    id: '10338',
+    name: 'Lexy, France',
+    locationSlug: 'lexysupercharger',
+    before: { teslaPeak: 0.38, teslaOffPeak: 0.33, nonTeslaPeak: 0.51, nonTeslaOffPeak: 0.42, peakHours: '16:00 - 20:00' },
+    after: { teslaPeak: 0.42, teslaOffPeak: 0.24, nonTeslaPeak: 0.57, nonTeslaOffPeak: 0.32, peakHours: '10:00 - 21:00' },
+  };
+  const ferin: PriceChange = {
+    id: '10337',
+    name: 'Férin, France',
+    before: { teslaPeak: 0.42, teslaOffPeak: 0.15, nonTeslaPeak: 0.57, nonTeslaOffPeak: 0.21, peakHours: '10:00 - 20:00' },
+    after: { teslaPeak: 0.42, teslaOffPeak: 0.17, nonTeslaPeak: 0.57, nonTeslaOffPeak: 0.21, peakHours: '10:00 - 20:00' },
+  };
+
+  it('détaille l’ancien et le nouveau tarif, en ne soulignant que ce qui change', () => {
+    const text = formatPriceChange(ferin);
+    expect(text).toContain('🔺 <b>Férin</b> (+3,5 %)');
+    expect(text).toContain('⚡ Tesla : HP 0,42 · HC 0,15 → <b>0,17</b> €/kWh');
+    expect(text).toContain('🔌 Autres VE : HP 0,57 · HC 0,21 €/kWh');
+    expect(text).not.toContain('Heures pleines');
+  });
+
+  it('signale le changement d’heures pleines et ajoute le lien de la fiche', () => {
+    const text = formatPriceChange(lexy, 'https://suc.example.fr/');
+    expect(teslaChangePercent(lexy)).toBe(-7);
+    expect(text).toContain('🔻 <b>Lexy</b> (-7 %)');
+    expect(text).toContain('🕒 Heures pleines : 16:00 - 20:00 → <b>10:00 - 21:00</b>');
+    expect(text).toContain('<a href="https://suc.example.fr/superchargeur-lexysupercharger-10338">Fiche Observatoire</a>');
+  });
+
+  it('en-tête : bilan du relevé, stations en échec, import raté ; tri par nom', () => {
+    const [msg] = formatPriceCollectionMessage(
+      {
+        stations: 292,
+        collected: 290,
+        changes: [lexy, ferin],
+        failed: [{ name: 'Cholet, France', detail: 'Tesla HTTP 429' }, { name: 'Alès, France', detail: 'bloqué' }],
+        importError: 'HTTP 401',
+      },
+      { date: '22 novembre 2026' }
+    );
+    expect(msg).toContain('📅 22 novembre 2026 · 290/292 stations relevées · 2 tarifs modifiés');
+    expect(msg).toContain('⚠️ 2 stations non relevées : Cholet, Alès');
+    expect(msg).toContain("⚠️ Envoi à l'add-on en échec : HTTP 401");
+    expect(msg.indexOf('Férin')).toBeLessThan(msg.indexOf('Lexy'));
+  });
+
+  it('sans changement : un seul message court ; beaucoup de changements : plusieurs messages', () => {
+    const quiet = formatPriceCollectionMessage({ stations: 10, collected: 10, changes: [] }, { date: 'x' });
+    expect(quiet).toHaveLength(1);
+    expect(quiet[0]).toContain('aucun changement');
+
+    const many = Array.from({ length: 40 }, (_, i) => ({ ...lexy, id: String(i), name: `Station ${String(i).padStart(2, '0')}` }));
+    const chunks = formatPriceCollectionMessage({ stations: 40, collected: 40, changes: many }, { date: 'x', maxChunkLength: 1500 });
+    expect(chunks.length).toBeGreaterThan(1);
+    expect(chunks.every((c) => c.length <= 1500 && c.startsWith('💶'))).toBe(true);
+    expect(chunks.join('').match(/Station \d\d/g)).toHaveLength(40);
+  });
+
+  it('notifyPriceCollection ne fait rien sans jeton Telegram', async () => {
+    const originalFetch = globalThis.fetch;
+    const original = { token: process.env.TELEGRAM_BOT_TOKEN, chat: process.env.TELEGRAM_CHAT_ID };
+    delete process.env.TELEGRAM_BOT_TOKEN;
+    delete process.env.TELEGRAM_CHAT_ID;
+    const fetchMock = vi.fn();
+    globalThis.fetch = fetchMock;
+    try {
+      expect(await notifyPriceCollection({ stations: 1, collected: 1, changes: [ferin] })).toEqual({ sent: false, count: 1 });
+      expect(fetchMock).not.toHaveBeenCalled();
+
+      fetchMock.mockResolvedValue({ ok: true, json: async () => ({ ok: true }) });
+      expect(await notifyPriceCollection({ stations: 1, collected: 1, changes: [ferin] }, { botToken: 'b', chatId: 'c' })).toEqual({ sent: true, count: 1 });
+      expect(JSON.parse(fetchMock.mock.calls[0][1].body).text).toContain('Férin');
+    } finally {
+      globalThis.fetch = originalFetch;
+      if (original.token !== undefined) process.env.TELEGRAM_BOT_TOKEN = original.token;
+      if (original.chat !== undefined) process.env.TELEGRAM_CHAT_ID = original.chat;
+    }
   });
 });

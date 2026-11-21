@@ -597,7 +597,8 @@ export function getCollectorStations(): [string, string, string][] {
     .map((s) => [s.id, s.locationId || '', s.locationSlug || '']);
 }
 
-// Importer un relevé du collecteur (extension navigateur ou favori) : { collectedAt, results: { [id]: { status, data } } }
+// Importer un relevé du collecteur (relevé Bright Data, extension navigateur ou favori) :
+// { collectedAt, source?, results: { [id]: { status, data } } }
 export function importCollectedPrices(payload: any): { updated: number; confirmed: number; skipped: number } {
   if (!payload?.collectedAt || !payload?.results || typeof payload.results !== 'object') {
     throw new Error('Relevé invalide : collectedAt et results sont requis');
@@ -621,7 +622,8 @@ export function importCollectedPrices(payload: any): { updated: number; confirme
   logImport(db, {
     at: new Date().toISOString(),
     collectedAt: String(payload.collectedAt),
-    source: 'extension',
+    // Le relevé hebdomadaire (GitHub Actions + Bright Data) se signale ; sinon, extension ou favori
+    source: payload.source === 'brightdata' ? 'brightdata' : 'extension',
     ...counts,
     abortReason: payload.abortReason ?? null,
   });

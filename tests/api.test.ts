@@ -202,6 +202,23 @@ describe('import des tarifs (POST /api/prices/import)', () => {
   });
 });
 
+describe('import du relevé hebdomadaire Bright Data', () => {
+  it('enregistre la source « brightdata » dans le journal des imports', async () => {
+    const { status } = await post('/api/prices/import', {
+      collectedAt: '2026-10-15T05:00:00.000Z',
+      source: 'brightdata',
+      results: { '662': { status: 200, data: findUs(0.36, 0.18, 0.53, 0.25) } },
+    });
+    expect(status).toBe(200);
+    expect((await get('/api/prices/collection-status')).body.lastImport).toMatchObject({ source: 'brightdata', confirmed: 1 });
+  });
+
+  it('une source inconnue reste comptée comme « extension »', async () => {
+    await post('/api/prices/import', { collectedAt: '2026-10-16T05:00:00.000Z', source: 'autre', results: {} });
+    expect((await get('/api/prices/collection-status')).body.lastImport.source).toBe('extension');
+  });
+});
+
 describe("purge de l'historique (POST /api/prices/purge-history)", () => {
   it('exige la clé', async () => {
     expect((await post('/api/prices/purge-history', undefined, null)).status).toBe(401);

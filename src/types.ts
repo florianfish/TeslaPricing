@@ -78,7 +78,7 @@ export interface Supercharger {
 export interface ImportLogEntry {
   at: string;                // ISO : date de réception par le serveur
   collectedAt: string;       // ISO : début de la collecte
-  source: 'extension' | 'fichier';
+  source: 'extension' | 'fichier' | 'brightdata';
   updated: number;
   confirmed: number;
   skipped: number;
