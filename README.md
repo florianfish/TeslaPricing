@@ -180,7 +180,7 @@ L'API Tesla FindUs est protégée par Akamai : les requêtes serveur directes (G
 2. L'add-on doit être joignable depuis Internet (ex. `https://suc.poissonmail.fr`) avec une **Clé d'import** renseignée.
 3. Dans le dépôt GitHub, **Settings → Secrets and variables → Actions** :
    - secrets : `BRIGHTDATA_API_TOKEN`, `IMPORT_KEY` (la clé d'import de l'add-on), `TELEGRAM_BOT_TOKEN` et `TELEGRAM_CHAT_ID` (déjà utilisés par l'actualisation nocturne) ;
-   - variables : `TESLAPRICING_URL` (adresse de l'add-on), et si besoin `BRIGHTDATA_ZONE` (autre nom de zone) et `PUBLIC_URL` (liens vers les fiches).
+   - variables (ou secrets) : `TESLAPRICING_URL` (adresse de l'add-on), et si besoin `BRIGHTDATA_ZONE` (autre nom de zone) et `PUBLIC_URL` (liens vers les fiches).
 
 **Secours — extension Chrome (`extension/`)** : à intervalle régulier (7 jours par défaut), l'extension ouvre un onglet `www.tesla.com` en arrière-plan, interroge l'API depuis la page — ou, si Akamai refuse ces requêtes, ouvre directement chaque URL JSON `get-charger-details` dans l'onglet (≈ 30 min avec le délai par défaut de 5 s par requête, réglable de 1 à 30 s ; le mode auto / fetch / JSON se choisit aussi dans les options) et envoie le relevé à l'add-on Home Assistant.
 
