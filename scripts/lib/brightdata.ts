@@ -12,7 +12,8 @@ export interface BrightDataConfig {
 
 export interface FindUsResult {
   // 200 : tarifs reçus ; 404 : identifiant inconnu de Tesla ; 429 / 403 : limité ou bloqué par Tesla ;
-  // 0 : erreur Bright Data (zone, clé, crédit…) ou réseau
+  // 503 : raté passager (réponse vide, Bright Data 5xx, délai dépassé) ; 0 : erreur de configuration
+  // Bright Data (zone, clé, crédit…)
   status: number;
   data?: Record<string, unknown>;
   detail: string;
@@ -39,15 +40,18 @@ export async function fetchFindUs(id: string, config: BrightDataConfig): Promise
       signal: AbortSignal.timeout(config.timeoutMs ?? 120000),
     });
   } catch (e: any) {
-    return { status: 0, detail: `erreur réseau : ${e?.message || e}` };
+    return { status: 503, detail: `erreur réseau : ${e?.message || e}` };
   }
 
   const text = await res.text();
   if (!res.ok) {
-    // Erreur de Bright Data lui-même (zone inconnue, clé refusée, crédit épuisé…)
+    // Erreur de Bright Data lui-même : 4xx = configuration (zone inconnue, clé refusée, crédit épuisé…),
+    // 5xx = panne passagère
     const brdError = res.headers.get('x-brd-error');
-    return { status: 0, detail: `Bright Data HTTP ${res.status} : ${clean(brdError || text)}` };
+    return { status: res.status >= 500 ? 503 : 0, detail: `Bright Data HTTP ${res.status} : ${clean(brdError || text)}` };
   }
+  // Réponse vide : raté passager de Bright Data (≈ 1 station sur 6 lors du premier relevé complet)
+  if (!text.trim()) return { status: 503, detail: 'réponse vide' };
 
   // Réponse refusée par Tesla et relayée par Bright Data (« response status was rejected: 429 status code »)
   const rejected = text.match(/rejected:\s*(\d{3})/i);
@@ -60,7 +64,7 @@ export async function fetchFindUs(id: string, config: BrightDataConfig): Promise
   try {
     json = JSON.parse(text);
   } catch {
-    return { status: 0, detail: `réponse non JSON : ${clean(text)}` };
+    return { status: 503, detail: `réponse non JSON : ${clean(text)}` };
   }
   const data = json?.data?.data;
   if (!data || typeof data !== 'object') return { status: 404, detail: 'station inconnue de Tesla' };
@@ -73,7 +77,10 @@ export async function fetchFindUs(id: string, config: BrightDataConfig): Promise
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 // Interroger une station : identifiants dans l'ordre (locationId puis slug), en retentant le même
-// identifiant après une pause quand Tesla limite (429) ou bloque (403, captcha).
+// identifiant après une pause quand Tesla limite (429) ou bloque (403, captcha), ou après un raté
+// passager (503 : réponse vide, Bright Data 5xx, délai dépassé ; pause plus courte).
+const RETRYABLE = new Set([429, 403, 503]);
+
 export async function fetchStation(
   candidates: string[],
   config: BrightDataConfig,
@@ -86,11 +93,11 @@ export async function fetchStation(
 
   for (const candidate of candidates) {
     for (let attempt = 0; attempt <= retries; attempt++) {
-      if (attempt > 0) await sleep(pause * attempt);
+      if (attempt > 0) await sleep((last.status === 503 ? Math.min(pause, 5000) : pause) * attempt);
       requests++;
       last = await fetchFindUs(candidate, config);
       options.onAttempt?.(candidate, last, attempt);
-      if (last.status !== 429 && last.status !== 403) break;
+      if (!RETRYABLE.has(last.status)) break;
     }
     if (last.status === 200) return { ...last, candidate, requests };
     // Seul un identifiant inconnu (404) justifie d'essayer le suivant ; blocage ou erreur Bright Data : on s'arrête
