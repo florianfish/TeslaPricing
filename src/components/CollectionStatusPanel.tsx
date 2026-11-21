@@ -12,7 +12,7 @@ const STALE_PREVIEW = 8;
 const formatDateTime = (iso: string) =>
   new Date(iso).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
 
-// Tableau de bord de la collecte : derniers imports de l'extension et fraîcheur des relevés par station
+// Tableau de bord de la collecte : derniers imports (relevé hebdomadaire, extension) et fraîcheur des relevés par station
 export const CollectionStatusPanel: React.FC<CollectionStatusPanelProps> = ({ onOpenStation }) => {
   const [status, setStatus] = useState<CollectionStatus | null>(null);
   const [showAllStale, setShowAllStale] = useState(false);
@@ -46,7 +46,7 @@ export const CollectionStatusPanel: React.FC<CollectionStatusPanelProps> = ({ on
         </div>
         <div>
           <h2 className="text-base font-bold text-white">État de la collecte des tarifs</h2>
-          <p className="text-xs text-slate-400">Relevés envoyés par l'extension navigateur et ancienneté des tarifs par station</p>
+          <p className="text-xs text-slate-400">Relevés hebdomadaires (GitHub Actions) ou de l'extension navigateur, et ancienneté des tarifs par station</p>
         </div>
       </div>
 
@@ -57,7 +57,7 @@ export const CollectionStatusPanel: React.FC<CollectionStatusPanelProps> = ({ on
             {lastImport
               ? `Aucun relevé reçu depuis ${importAge} jours.`
               : 'Aucun relevé reçu pour l’instant.'}{' '}
-            Vérifiez que le navigateur portant l'extension est ouvert et que la collecte n'est pas bloquée par Tesla.
+            Vérifiez le dernier relevé dans GitHub Actions (ou que le navigateur portant l'extension est ouvert) et que la collecte n'est pas bloquée par Tesla.
           </span>
         </div>
       )}
@@ -170,7 +170,7 @@ export const CollectionStatusPanel: React.FC<CollectionStatusPanelProps> = ({ on
                   {status.imports.map((imp) => (
                     <tr key={imp.at}>
                       <td className="py-2 pr-4 whitespace-nowrap">{formatDateTime(imp.at)}</td>
-                      <td className="py-2 pr-4">{imp.source === 'extension' ? 'Extension' : 'Fichier'}</td>
+                      <td className="py-2 pr-4">{imp.source === 'brightdata' ? 'Relevé hebdo' : imp.source === 'extension' ? 'Extension' : 'Fichier'}</td>
                       <td className="py-2 pr-4">{imp.updated}</td>
                       <td className="py-2 pr-4">{imp.confirmed}</td>
                       <td className="py-2 pr-4">{imp.skipped}</td>

@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   parseTeslaData,
   applyTeslaData,
+  pricingChanged,
   logImport,
   purgePriceHistory,
   type DatabaseSchema,
@@ -137,5 +138,20 @@ describe('purgePriceHistory', () => {
     ]);
     // La courbe nationale n'est pas purgée
     expect(db.nationalHistory).toHaveLength(3);
+  });
+});
+
+describe('pricingChanged', () => {
+  const base = { teslaPeak: 0.4, teslaOffPeak: 0.2, nonTeslaPeak: 0.55, nonTeslaOffPeak: 0.3, peakHours: '09:00 - 20:00' };
+
+  it('détecte tout changement de prix ou d’heures pleines', () => {
+    expect(pricingChanged(base, { ...base })).toBe(false);
+    expect(pricingChanged(base, { ...base, teslaOffPeak: 0.21 })).toBe(true);
+    expect(pricingChanged(base, { ...base, nonTeslaPeak: 0.56 })).toBe(true);
+    expect(pricingChanged(base, { ...base, peakHours: '10:00 - 21:00' })).toBe(true);
+  });
+
+  it('ignore les frais d’inoccupation et la date de mise à jour', () => {
+    expect(pricingChanged({ ...base, idleFeeStandard: 0.5, lastUpdated: 'a' } as any, { ...base, idleFeeStandard: 1, lastUpdated: 'b' } as any)).toBe(false);
   });
 });

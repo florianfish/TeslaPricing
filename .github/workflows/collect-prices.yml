@@ -1,0 +1,63 @@
+name: "Relevé hebdomadaire des tarifs (Bright Data)"
+
+# Relève les tarifs de toutes les stations ouvertes via Bright Data Web Unlocker, les importe dans
+# l'add-on Home Assistant (POST /api/prices/import) et envoie sur Telegram les stations dont le
+# tarif a changé. Aucun commit sur le dépôt : la base de l'add-on fait foi.
+#
+# Secrets : BRIGHTDATA_API_TOKEN, IMPORT_KEY (clé d'import de l'add-on), TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID.
+# Variables : TESLAPRICING_URL (adresse publique de l'add-on, ex. https://suc.poissonmail.fr),
+#             BRIGHTDATA_ZONE (facultatif, défaut web_unlocker1), PUBLIC_URL (liens des fiches).
+
+on:
+  schedule:
+    # Chaque dimanche à 05:12 UTC (06:12 heure française d'hiver, 07:12 d'été)
+    - cron: '12 5 * * 0'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Essai : relever sans importer ni envoyer sur Telegram"
+        type: boolean
+        default: false
+      limit:
+        description: "Nombre maximal de stations (vide = toutes)"
+        default: ""
+
+concurrency:
+  group: collect-prices
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  releve:
+    runs-on: ubuntu-latest
+    # ≈ 300 stations × 8 s ≈ 40 min, plus les pauses après une limite Tesla
+    timeout-minutes: 120
+    steps:
+      - name: Récupérer le code source
+        uses: actions/checkout@v4
+
+      - name: Configurer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'npm'
+
+      - name: Installer les dépendances
+        run: npm ci --legacy-peer-deps
+
+      - name: Relever, importer et notifier
+        env:
+          TESLAPRICING_URL: ${{ vars.TESLAPRICING_URL }}
+          IMPORT_KEY: ${{ secrets.IMPORT_KEY }}
+          BRIGHTDATA_API_TOKEN: ${{ secrets.BRIGHTDATA_API_TOKEN }}
+          BRIGHTDATA_ZONE: ${{ vars.BRIGHTDATA_ZONE || 'web_unlocker1' }}
+          BRIGHTDATA_COUNTRY: fr
+          DELAY_SEC: '5'
+          LIMIT: ${{ inputs.limit }}
+          DRY_RUN: ${{ inputs.dry_run && '1' || '' }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          PUBLIC_URL: ${{ vars.PUBLIC_URL || secrets.PUBLIC_URL || '' }}
+        run: npm run collect-prices

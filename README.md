@@ -170,11 +170,19 @@ Le workflow `.github/workflows/update-stations.yml` tourne chaque nuit à 03:00 
 - Optionnellement, renseigner la variable `PUBLIC_URL` pour que les alertes Telegram contiennent des liens directs vers les fiches stations.
 
 **Base persistante séparée (`DATA_DIR`, add-on Home Assistant) :** le flux nocturne n'atteint pas cette base. Le serveur synchronise donc lui-même les stations depuis supercharge.info, 30 s après le démarrage puis toutes les 24 h (nouvelles stations, changements de statut, bornes ; les tarifs ne sont jamais modifiés). Les options `telegram_bot_token` et `telegram_chat_id` permettent d'activer les notifications Telegram directement depuis l'add-on. Activé par défaut dès que `DATA_DIR` est défini ; `STATION_SYNC=1` ou `STATION_SYNC=0` force le choix.
-### 6. Collecte des tarifs Tesla depuis le navigateur
+### 6. Collecte des tarifs Tesla
 
-L'API Tesla FindUs est protégée par Akamai : les requêtes serveur (GitHub Actions, serveurs, `curl`, Node) sont refusées (`403`), même via une IP résidentielle. Seul un vrai navigateur, depuis une connexion personnelle, obtient les tarifs. (L'API GraphQL de l'app mobile Tesla, testée en octobre 2026, n'est pas bloquée mais ne renvoie aucune donnée hors de l'app.)
+L'API Tesla FindUs est protégée par Akamai : les requêtes serveur directes (GitHub Actions, serveurs, `curl`, Node) sont refusées (`403`), même via une IP résidentielle. Deux façons d'obtenir les tarifs : passer par **Bright Data Web Unlocker**, qui fait la requête depuis un vrai navigateur et une IP résidentielle, ou par un vrai navigateur chez soi. (L'API GraphQL de l'app mobile Tesla, testée en octobre 2026, n'est pas bloquée mais ne renvoie aucune donnée hors de l'app.)
 
-**Automatique — extension Chrome (`extension/`)** : à intervalle régulier (7 jours par défaut), l'extension ouvre un onglet `www.tesla.com` en arrière-plan, interroge l'API depuis la page — ou, si Akamai refuse ces requêtes, ouvre directement chaque URL JSON `get-charger-details` dans l'onglet (≈ 30 min avec le délai par défaut de 5 s par requête, réglable de 1 à 30 s ; le mode auto / fetch / JSON se choisit aussi dans les options) et envoie le relevé à l'add-on Home Assistant.
+**Automatique — relevé hebdomadaire (GitHub Actions + Bright Data)** : le workflow `.github/workflows/collect-prices.yml` tourne chaque dimanche à 05:12 UTC (`npm run collect-prices`). Il lit la liste des stations et leurs tarifs actuels sur l'add-on, interroge chaque station via Bright Data (`locationId`, puis slug ; 5 s entre deux requêtes, nouvel essai après une pause si Tesla répond 429 ou un captcha), importe le relevé dans l'add-on (`POST /api/prices/import`) puis envoie sur Telegram les stations dont le tarif a changé (ou « aucun changement », et les éventuels échecs). ≈ 40 min et ≈ 350 requêtes Bright Data par relevé, dans les 5 000 requêtes gratuites par mois. Lancement manuel possible depuis l'onglet Actions, avec un mode essai (ni import ni Telegram) et un nombre maximal de stations.
+
+1. Sur [brightdata.com](https://brightdata.com) : créer une zone **Web Unlocker API** (`web_unlocker1` par défaut) et récupérer la clé API. Un moyen de paiement doit être enregistré, même pour l'offre gratuite.
+2. L'add-on doit être joignable depuis Internet (ex. `https://suc.poissonmail.fr`) avec une **Clé d'import** renseignée.
+3. Dans le dépôt GitHub, **Settings → Secrets and variables → Actions** :
+   - secrets : `BRIGHTDATA_API_TOKEN`, `IMPORT_KEY` (la clé d'import de l'add-on), `TELEGRAM_BOT_TOKEN` et `TELEGRAM_CHAT_ID` (déjà utilisés par l'actualisation nocturne) ;
+   - variables : `TESLAPRICING_URL` (adresse de l'add-on), et si besoin `BRIGHTDATA_ZONE` (autre nom de zone) et `PUBLIC_URL` (liens vers les fiches).
+
+**Secours — extension Chrome (`extension/`)** : à intervalle régulier (7 jours par défaut), l'extension ouvre un onglet `www.tesla.com` en arrière-plan, interroge l'API depuis la page — ou, si Akamai refuse ces requêtes, ouvre directement chaque URL JSON `get-charger-details` dans l'onglet (≈ 30 min avec le délai par défaut de 5 s par requête, réglable de 1 à 30 s ; le mode auto / fetch / JSON se choisit aussi dans les options) et envoie le relevé à l'add-on Home Assistant.
 
 1. Dans l'add-on, renseigner l'option **Clé d'import** et un port direct (onglet **Réseau**), puis redémarrer.
 2. Dans Chrome/Edge/Brave : `chrome://extensions` → **Mode développeur** → **Charger l'extension non empaquetée** → dossier `extension/`.
@@ -215,7 +223,7 @@ Les données sont persistées dans `/data` (variable `DATA_DIR`), donc incluses 
 | `GET` | `/api/stations/events?limit=200` | Dernières évolutions de stations (nouvelles stations, changements de statut) |
 | `GET` | `/api/prices/collection-status` | État de la collecte : derniers imports, ancienneté des tarifs des stations ouvertes, stations à revérifier |
 | `GET` | `/api/prices/collector-stations` | Stations à interroger par le collecteur (`[id, locationId, locationSlug]`) |
-| `POST` | `/api/prices/import` | Import d'un relevé du collecteur (en-tête `Authorization: Bearer <clé d'import>`) |
+| `POST` | `/api/prices/import` | Import d'un relevé du collecteur (en-tête `Authorization: Bearer <clé d'import>` ; `source: "brightdata"` pour le relevé hebdomadaire) |
 | `GET` | `/robots.txt` | Règles d'indexation (tout interdire sans `PUBLIC_URL`) |
 | `GET` | `/sitemap.xml` | Plan du site : accueil et pages station (404 sans `PUBLIC_URL`) |
 | `GET` | `/superchargeur-<nom>-<id>` | Page station rendue côté serveur (titre, tarifs, données structurées), puis application |

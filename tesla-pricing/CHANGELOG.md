@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.7.0
+
+- Les tarifs sont désormais relevés automatiquement chaque semaine, sans navigateur ouvert : un workflow GitHub Actions interroge Tesla via Bright Data, envoie le relevé à l'add-on et annonce sur Telegram les stations dont le tarif a changé. L'extension Chrome reste utilisable en secours.
+- État de la collecte : les imports du relevé hebdomadaire apparaissent comme « Relevé hebdo ».
+
 ## 1.6.0
 
 - Application installable sur Android (PWA) : bouton « Installer » dans l'en-tête ou menu de Chrome, ouverture en plein écran depuis l'écran d'accueil, raccourcis vers la carte, la liste, les mises à jour et le simulateur.
