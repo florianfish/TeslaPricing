@@ -8,6 +8,7 @@ jobs:
   irve:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - name: IRVE statique et dynamique (lignes Tesla)
         run: |
           curl -sSL -o statique.csv https://transport.data.gouv.fr/resources/84013/download
@@ -37,7 +38,6 @@ jobs:
           for r in dyn: by[r['id_pdc_itinerance'].rsplit('E',1)[0]].append(r['occupation_pdc'])
           print('exemples ids dyn', [r['id_pdc_itinerance'] for r in dyn[:5]])
           PY
-      - uses: actions/checkout@v4
       - name: Fraîcheur et rapprochement
         run: |
           python3 - <<'PY'
