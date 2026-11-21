@@ -1,12 +1,14 @@
 // Appli Android TeslaPricing : Trusted Web Activity qui affiche le site en plein écran (moteur de Chrome).
 // Aucun code d'interface : tout vient de la PWA. Build par la CI mutualisée Forge-Apk.
+import java.net.URI
+
 plugins {
     id("com.android.application")
 }
 
 // Adresse du site affiché : variable TWA_URL (ex. dans la CI), sinon l'instance publique
 val twaUrl: String = System.getenv("TWA_URL")?.takeIf { it.isNotBlank() } ?: "https://suc.poissonmail.fr/"
-val twaHost: String = java.net.URI(twaUrl).host
+val twaHost: String = URI(twaUrl).host
 val twaOrigin: String = "https://$twaHost"
 
 android {
