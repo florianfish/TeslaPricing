@@ -45,14 +45,16 @@ describe('fetchFindUs', () => {
     expect(JSON.parse(options.body)).toEqual({ zone: 'web_unlocker1', url: findUsUrl('444407'), format: 'raw', country: 'fr' });
   });
 
-  it('distingue limite Tesla (429), blocage (403), station inconnue (404) et erreur Bright Data (0)', async () => {
+  it('distingue limite Tesla (429), blocage (403), station inconnue (404), raté passager (503) et erreur de configuration (0)', async () => {
     const cases: [Response, number][] = [
       [reply('response status was rejected: 429 status code'), 429],
       [reply('captcha or protection page found'), 403],
       [reply('<HTML><HEAD><TITLE>Access Denied</TITLE></HEAD></HTML>'), 403],
       [reply(JSON.stringify({ data: { data: null } })), 404],
       [reply('zone "web_unlocker1" not found', 400), 0],
-      [reply('pas du JSON'), 0],
+      [reply('pas du JSON'), 503],
+      [reply(''), 503],
+      [reply('<html><title>502 Bad Gateway</title></html>', 502), 503],
     ];
     for (const [response, status] of cases) {
       globalThis.fetch = vi.fn().mockResolvedValue(response);
@@ -91,7 +93,23 @@ describe('fetchStation', () => {
     expect(fetchMock.mock.calls.every(([, o]) => JSON.parse(o.body).url === findUsUrl('417068'))).toBe(true);
   });
 
-  it('abandonne la station après les essais, ou dès une erreur Bright Data', async () => {
+  it('retente après une réponse vide ou une panne Bright Data', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(reply(''))
+      .mockResolvedValueOnce(reply('Bad Gateway', 502))
+      .mockResolvedValueOnce(reply(findUsBody));
+    globalThis.fetch = fetchMock;
+
+    expect(await fetchStation(['30179', 'slug'], config, { retryPauseMs: 0 })).toMatchObject({ status: 200, candidate: '30179', requests: 3 });
+  });
+
+  it('retente après un délai dépassé', async () => {
+    globalThis.fetch = vi.fn().mockRejectedValueOnce(new Error('The operation was aborted due to timeout')).mockResolvedValueOnce(reply(findUsBody));
+    expect(await fetchStation(['29713'], config, { retryPauseMs: 0 })).toMatchObject({ status: 200, requests: 2 });
+  });
+
+  it('abandonne la station après les essais, ou dès une erreur de configuration Bright Data', async () => {
     globalThis.fetch = vi.fn().mockImplementation(async () => reply('response status was rejected: 429 status code'));
     expect(await fetchStation(['1', 'slug'], config, { retries: 1, retryPauseMs: 0 })).toMatchObject({ status: 429, requests: 2 });
 
