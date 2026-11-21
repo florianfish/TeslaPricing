@@ -10,7 +10,6 @@ jobs:
     steps:
       - name: IRVE statique et dynamique (lignes Tesla)
         run: |
-          set -x
           curl -sSL -o statique.csv https://transport.data.gouv.fr/resources/84013/download
           curl -sSL -o dynamique.csv https://transport.data.gouv.fr/resources/84098/download
           ls -la *.csv
@@ -38,23 +37,54 @@ jobs:
           for r in dyn: by[r['id_pdc_itinerance'].rsplit('E',1)[0]].append(r['occupation_pdc'])
           print('exemples ids dyn', [r['id_pdc_itinerance'] for r in dyn[:5]])
           PY
-      - name: En-têtes HTTP (taille, cache)
+      - uses: actions/checkout@v4
+      - name: Fraîcheur et rapprochement
         run: |
-          curl -sSIL https://transport.data.gouv.fr/resources/84098/download | grep -i "content-length\|last-modified\|etag\|location\|^HTTP"
-  pricebooks:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Grilles brutes Tesla via Bright Data
-        env:
-          TOKEN: ${{ secrets.BRIGHTDATA_API_TOKEN }}
+          python3 - <<'PY'
+          import csv, json, math, collections, datetime as dt
+          now=dt.datetime.now(dt.timezone.utc)
+          stat=[r for r in csv.DictReader(open('statique.csv', encoding='utf-8')) if r.get('id_pdc_itinerance','').startswith('FRTSLE')]
+          dyn={r['id_pdc_itinerance']:r for r in csv.DictReader(open('dynamique.csv', encoding='utf-8')) if r.get('id_pdc_itinerance','').startswith('FRTSLE')}
+          ages=[]
+          for r in dyn.values():
+              t=dt.datetime.fromisoformat(r['horodatage'].replace(' ','T'))
+              ages.append((now-t).total_seconds()/3600)
+          ages.sort()
+          for h in [1,6,24,24*7,24*30]: print(f'points mis à jour < {h} h :', sum(a<h for a in ages), '/', len(ages))
+          st=collections.defaultdict(list)
+          for r in stat: st[r['id_station_itinerance']].append(r)
+          fresh=collections.Counter()
+          for sid,rows in st.items():
+              n=sum(1 for r in rows if r['id_pdc_itinerance'] in dyn and (now-dt.datetime.fromisoformat(dyn[r['id_pdc_itinerance']]['horodatage'].replace(' ','T'))).total_seconds()<6*3600)
+              fresh['avec >=1 point frais 6h' if n else 'sans point frais']+=1
+          print(fresh)
+          db=json.load(open('server/data/superchargers_db.json'))
+          ours=[s for s in db['superchargers'] if s['status']=='OPEN']
+          print('nos stations ouvertes', len(ours), 'champs', [k for k in ours[0] if 'lat' in k.lower() or 'lon' in k.lower() or 'id' in k.lower()])
+          def d(a,b,c,e):
+              R=6371000; p=math.pi/180
+              return 2*R*math.asin(math.sqrt(math.sin((c-a)*p/2)**2+math.cos(a*p)*math.cos(c*p)*math.sin((e-b)*p/2)**2))
+          irve={}
+          for sid,rows in st.items():
+              lon,lat=json.loads(rows[0]['coordonneesXY'])
+              irve[sid]=(lat,lon,rows[0]['nom_station'],rows[0]['id_station_local'],len(rows))
+          matched=0; amb=0; dists=[]; locid=0; supid=0
+          for s in ours:
+              c=sorted((d(s['latitude'],s['longitude'],v[0],v[1]),k) for k,v in irve.items())
+              if c and c[0][0]<400:
+                  matched+=1; dists.append(c[0][0])
+                  if len(c)>1 and c[1][0]<400: amb+=1
+                  loc=irve[c[0][1]][3]
+                  if loc==str(s.get('locationId')): locid+=1
+                  if loc==str(s['id']): supid+=1
+          dists.sort()
+          print('rapprochées <400 m', matched, '/', len(ours), 'ambigues', amb, 'médiane', dists[len(dists)//2] if dists else None, 'max', dists[-1] if dists else None)
+          print('id_station_local == locationId', locid, ' == id supercharge.info', supid)
+          for s in ours[:5]:
+              c=min((d(s['latitude'],s['longitude'],v[0],v[1]),k) for k,v in irve.items())
+              print(s['name'], s['id'], s.get('locationId'), s.get('stallCount'), '->', irve[c[1]][2], irve[c[1]][3], irve[c[1]][4], round(c[0]))
+          PY
+      - name: Taille compressée
         run: |
-          for id in 444407 413625 300364; do
-            url="https://www.tesla.com/api/findus/get-charger-details?locationSlug=$id&programType=supercharger&locale=fr-FR&isInHkMoTw=false"
-            for try in 1 2 3; do
-              out=$(curl -sS -m 120 https://api.brightdata.com/request -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
-                -d "{\"zone\":\"web_unlocker1\",\"url\":\"$url\",\"format\":\"raw\",\"country\":\"fr\"}")
-              echo "$out" | python3 -c "import sys,json; d=json.load(sys.stdin)['data']['data']; print(json.dumps({k:d.get(k) for k in ['name','effectivePricebooks','timeZone','openToNonTeslas','publicStallCount','maxPowerKw']}, indent=1))" && break
-              echo "essai $try raté : ${out:0:120}"; sleep 10
-            done
-            sleep 5
-          done
+          curl -sSL -H 'Accept-Encoding: gzip' -o /dev/null -w 'gzip : %{size_download} octets, type %{content_type}\n' https://transport.data.gouv.fr/resources/84098/download
+          curl -sSIL https://transport.data.gouv.fr/resources/84098/download | grep -i "^location\|^HTTP\|etag\|last-modified\|cache-control"
