@@ -5,86 +5,30 @@ on:
 permissions:
   contents: read
 jobs:
-  irve:
+  occupation:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: IRVE statique et dynamique (lignes Tesla)
+        with:
+          ref: feat/occupation
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci --legacy-peer-deps
+      - name: Échantillon réel (rapprochement + relevé)
         run: |
-          curl -sSL -o statique.csv https://transport.data.gouv.fr/resources/84013/download
-          curl -sSL -o dynamique.csv https://transport.data.gouv.fr/resources/84098/download
-          ls -la *.csv
-          head -1 statique.csv
-          head -1 dynamique.csv
-          grep -c FRTSLE statique.csv || true
-          grep -c FRTSLE dynamique.csv || true
-          grep -i tesla statique.csv | head -3
-          grep FRTSLE dynamique.csv | head -8
-          python3 - <<'PY'
-          import csv, collections
-          rows=[r for r in csv.DictReader(open('statique.csv', encoding='utf-8')) if r.get('id_pdc_itinerance','').startswith('FRTSLE')]
-          print('statique Tesla', len(rows))
-          st=collections.Counter(r['id_station_itinerance'] for r in rows)
-          print('stations', len(st), st.most_common(3))
-          for r in rows[:2]: print({k:v for k,v in r.items() if v})
-          dyn=[r for r in csv.DictReader(open('dynamique.csv', encoding='utf-8')) if r.get('id_pdc_itinerance','').startswith('FRTSLE')]
-          print('dynamique Tesla', len(dyn))
-          print(collections.Counter(r.get('occupation_pdc') for r in dyn))
-          print(collections.Counter(r.get('etat_pdc') for r in dyn))
-          print(sorted(r.get('horodatage','') for r in dyn)[:2], sorted(r.get('horodatage','') for r in dyn)[-2:])
-          ids={r['id_pdc_itinerance'] for r in rows}
-          print('dyn∩stat', len(ids & {r['id_pdc_itinerance'] for r in dyn}))
-          by=collections.defaultdict(list)
-          for r in dyn: by[r['id_pdc_itinerance'].rsplit('E',1)[0]].append(r['occupation_pdc'])
-          print('exemples ids dyn', [r['id_pdc_itinerance'] for r in dyn[:5]])
-          PY
-      - name: Fraîcheur et rapprochement
-        run: |
-          python3 - <<'PY'
-          import csv, json, math, collections, datetime as dt
-          now=dt.datetime.now(dt.timezone.utc)
-          stat=[r for r in csv.DictReader(open('statique.csv', encoding='utf-8')) if r.get('id_pdc_itinerance','').startswith('FRTSLE')]
-          dyn={r['id_pdc_itinerance']:r for r in csv.DictReader(open('dynamique.csv', encoding='utf-8')) if r.get('id_pdc_itinerance','').startswith('FRTSLE')}
-          ages=[]
-          for r in dyn.values():
-              t=dt.datetime.fromisoformat(r['horodatage'].replace(' ','T'))
-              ages.append((now-t).total_seconds()/3600)
-          ages.sort()
-          for h in [1,6,24,24*7,24*30]: print(f'points mis à jour < {h} h :', sum(a<h for a in ages), '/', len(ages))
-          st=collections.defaultdict(list)
-          for r in stat: st[r['id_station_itinerance']].append(r)
-          fresh=collections.Counter()
-          for sid,rows in st.items():
-              n=sum(1 for r in rows if r['id_pdc_itinerance'] in dyn and (now-dt.datetime.fromisoformat(dyn[r['id_pdc_itinerance']]['horodatage'].replace(' ','T'))).total_seconds()<6*3600)
-              fresh['avec >=1 point frais 6h' if n else 'sans point frais']+=1
-          print(fresh)
-          db=json.load(open('server/data/superchargers_db.json'))
-          ours=[s for s in db['superchargers'] if s['status']=='OPEN']
-          print('nos stations ouvertes', len(ours), 'champs', [k for k in ours[0] if 'lat' in k.lower() or 'lon' in k.lower() or 'id' in k.lower()])
-          def d(a,b,c,e):
-              R=6371000; p=math.pi/180
-              return 2*R*math.asin(math.sqrt(math.sin((c-a)*p/2)**2+math.cos(a*p)*math.cos(c*p)*math.sin((e-b)*p/2)**2))
-          irve={}
-          for sid,rows in st.items():
-              lon,lat=json.loads(rows[0]['coordonneesXY'])
-              irve[sid]=(lat,lon,rows[0]['nom_station'],rows[0]['id_station_local'],len(rows))
-          matched=0; amb=0; dists=[]; locid=0; supid=0
-          for s in ours:
-              c=sorted((d(s['latitude'],s['longitude'],v[0],v[1]),k) for k,v in irve.items())
-              if c and c[0][0]<400:
-                  matched+=1; dists.append(c[0][0])
-                  if len(c)>1 and c[1][0]<400: amb+=1
-                  loc=irve[c[0][1]][3]
-                  if loc==str(s.get('locationId')): locid+=1
-                  if loc==str(s['id']): supid+=1
-          dists.sort()
-          print('rapprochées <400 m', matched, '/', len(ours), 'ambigues', amb, 'médiane', dists[len(dists)//2] if dists else None, 'max', dists[-1] if dists else None)
-          print('id_station_local == locationId', locid, ' == id supercharge.info', supid)
-          for s in ours[:5]:
-              c=min((d(s['latitude'],s['longitude'],v[0],v[1]),k) for k,v in irve.items())
-              print(s['name'], s['id'], s.get('locationId'), s.get('stallCount'), '->', irve[c[1]][2], irve[c[1]][3], irve[c[1]][4], round(c[0]))
-          PY
-      - name: Taille compressée
-        run: |
-          curl -sSL -H 'Accept-Encoding: gzip' -o /dev/null -w 'gzip : %{size_download} octets, type %{content_type}\n' https://transport.data.gouv.fr/resources/84098/download
-          curl -sSIL https://transport.data.gouv.fr/resources/84098/download | grep -i "^location\|^HTTP\|etag\|last-modified\|cache-control"
+          mkdir -p /tmp/data && cp server/data/superchargers_db.json /tmp/data/
+          cat > /tmp/run.ts <<'TS'
+          import { sampleOccupancy, getOccupancy, loadOccupancyStore } from './server/occupancy.ts';
+          const t0 = Date.now();
+          const r = await sampleOccupancy();
+          const s = loadOccupancyStore();
+          console.log('durée', Date.now() - t0, 'ms ; stations échantillonnées', r.stations, '; rapprochées', Object.keys(s.mapping).length);
+          const counts = Object.values(s.current).map((c: any) => `${c.occupied}/${c.total}`);
+          console.log('exemples', counts.slice(0, 15).join(' '));
+          for (const id of ['10338', '8033', '10341']) console.log(id, JSON.stringify({ ...getOccupancy(id), grid: undefined }));
+          TS
+          cp /tmp/run.ts ./run-occupancy.ts
+          DATA_DIR=/tmp/data npx tsx run-occupancy.ts
+          ls -la /tmp/data
