@@ -1,3 +1,6 @@
+import type { PricebookSlot } from './pricebooks';
+export type { PricebookSlot } from './pricebooks';
+
 export interface SuperchargerPricing {
   teslaPeak: number;         // €/kWh during peak hours (e.g. 0.36)
   teslaOffPeak: number;      // €/kWh during off-peak hours (e.g. 0.30)
@@ -23,6 +26,7 @@ export interface PriceSnapshot {
   source: string;            // "Relevé Borne / App Tesla", "Tesla API FindUs", "Observatoire Communautaire", etc.
   notes?: string;
   changePercentage?: number; // % variation vs previous snapshot
+  pricebooks?: PricebookSlot[]; // grille complète relevée (créneaux, types de véhicules), si disponible
 }
 
 // Évolution d'une station dans le registre supercharge.info : nouvelle station ou changement de statut
@@ -70,6 +74,7 @@ export interface Supercharger {
   facilityName?: string;
   dateOpened?: string;
   currentPricing: SuperchargerPricing;
+  pricebooks?: PricebookSlot[]; // grille complète de Tesla (src/pricebooks.ts) ; currentPricing en est le résumé HP / HC
   lastCheckedAt?: string;    // YYYY-MM-DD : dernier relevé du collecteur, prix modifié ou non
   priceHistory?: PriceSnapshot[];
 }

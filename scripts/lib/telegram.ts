@@ -1,4 +1,5 @@
 import type { Supercharger, StationEvent, SuperchargerPricing } from '../../src/types.js';
+import { formatSchedule, priceLevels, pricebooksChanged, type PricebookSlot } from '../../src/pricebooks.js';
 
 export interface TelegramConfig {
   botToken?: string;
@@ -222,6 +223,8 @@ export interface PriceChange {
   locationSlug?: string;
   before: PricingFields;
   after: PricingFields;
+  beforeGrid?: PricebookSlot[];  // grilles complètes, quand elles sont connues
+  afterGrid?: PricebookSlot[];
 }
 
 export interface PriceCollectionReport {
@@ -229,6 +232,7 @@ export interface PriceCollectionReport {
   collected: number;             // stations dont les tarifs ont été reçus
   changes: PriceChange[];
   failed?: { name: string; detail: string }[];
+  multiLevel?: number;           // stations dont la grille Tesla compte plus de deux prix
   abortReason?: string | null;   // relevé interrompu
   importError?: string | null;   // envoi à l'add-on en échec
 }
@@ -259,6 +263,11 @@ export function formatPriceChange(change: PriceChange, publicUrl?: string): stri
   ];
   if (before.peakHours !== after.peakHours) {
     lines.push(`🕒 Heures pleines : ${escapeHtml(before.peakHours)} → <b>${escapeHtml(after.peakHours)}</b>`);
+  }
+  // Grille à plus de deux prix (le résumé HP / HC ne dit pas tout), ou grille modifiée sans effet sur HP / HC
+  const grid = change.afterGrid;
+  if (grid?.length && (priceLevels(grid).length > 2 || (change.beforeGrid?.length && pricebooksChanged(change.beforeGrid, grid)))) {
+    lines.push(`📋 Grille Tesla : ${formatSchedule(grid)}`);
   }
   const cleanPublicUrl = (publicUrl || '').replace(/\/+$/, '');
   if (cleanPublicUrl && change.locationSlug) {

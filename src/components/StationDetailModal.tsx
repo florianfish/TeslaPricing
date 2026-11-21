@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import type { Supercharger } from '../types';
+import type { Supercharger, PricebookSlot } from '../types';
 import { offPeakHours, currentTariffPeriod, type TariffPeriod } from '../hours';
 import { stationFreshness, FRESHNESS_CLASSES } from '../freshness';
 import { isShareableLocation } from '../router';
 import { teslaStationUrl } from '../tesla';
 import { stationPagePath } from '../stationPage';
+import { PricebookSchedule } from './PricebookSchedule';
 import {
   X,
   Zap,
@@ -36,6 +37,23 @@ export const StationDetailModal: React.FC<StationDetailModalProps> = ({
   onClose,
 }) => {
   const [linkCopied, setLinkCopied] = useState(false);
+
+  // Grille complète : absente de la liste (trop lourde), lue sur la fiche détaillée de la station
+  const [pricebooks, setPricebooks] = useState<PricebookSlot[] | null>(null);
+  useEffect(() => {
+    setPricebooks(charger?.pricebooks ?? null);
+    if (!charger || charger.pricebooks) return;
+    let cancelled = false;
+    fetch(`api/superchargers/${encodeURIComponent(charger.id)}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((detail: Supercharger | null) => {
+        if (!cancelled && detail?.pricebooks?.length) setPricebooks(detail.pricebooks);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [charger?.id]);
 
   if (!charger) return null;
 
@@ -300,6 +318,10 @@ export const StationDetailModal: React.FC<StationDetailModalProps> = ({
               <span>Dernière révision : {new Date(current.lastUpdated).toLocaleDateString('fr-FR')}</span>
             </div>
           </div>
+
+          {pricebooks && pricebooks.length > 0 && (
+            <PricebookSchedule slots={pricebooks} now={now} checkedAt={charger.lastCheckedAt} />
+          )}
 
           {/* Historical Price Chart for this station */}
           <div className="bg-slate-950/70 rounded-2xl p-5 border border-slate-800 space-y-4">

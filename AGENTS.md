@@ -104,6 +104,8 @@ Pour toute modification ou extension de données, respecter scrupuleusement ces 
   - `lastCheckedAt?`: string (`YYYY-MM-DD`, dernier passage du collecteur, prix modifié ou non ; seuils de fraîcheur dans `src/freshness.ts`, partagé avec le serveur)
   - `priceHistory`: `PriceSnapshot[]`
 
+- `pricebooks?: PricebookSlot[]` sur `Supercharger` et `PriceSnapshot` : grille complète de Tesla (`src/pricebooks.ts`, partagé serveur / relevé / interface). `currentPricing` n'en est que le résumé HP (prix le plus haut) / HC (prix le plus bas) : une grille compte souvent un palier intermédiaire et trois types de véhicules (`TSLA`, `NTSLA`, `MSP`). Un changement de grille sans effet sur HP / HC est un changement de tarif (`gridChanged()`). La liste `/api/superchargers` omet les grilles (≈ 2 Ko par station) sauf avec `?pricebooks=1` ; la fiche les lit via `/api/superchargers/:id`.
+
 - `SuperchargerPricing` :
   - `teslaPeak`: number (€/kWh, ex: `0.36`)
   - `teslaOffPeak`: number (€/kWh, ex: `0.30`)

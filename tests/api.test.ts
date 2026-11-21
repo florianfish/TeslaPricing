@@ -202,6 +202,21 @@ describe('import des tarifs (POST /api/prices/import)', () => {
   });
 });
 
+describe('grilles complètes', () => {
+  it('liste sans les grilles (sauf ?pricebooks=1), fiche détaillée avec', async () => {
+    // 6507 a reçu une grille lors de l'import ci-dessus
+    const light = (await get('/api/superchargers')).body.data.find((s: any) => s.id === '6507');
+    expect(light.pricebooks).toBeUndefined();
+    expect(light.priceHistory.some((p: any) => 'pricebooks' in p)).toBe(false);
+
+    const full = (await get('/api/superchargers?pricebooks=1')).body.data.find((s: any) => s.id === '6507');
+    expect(full.pricebooks.length).toBeGreaterThan(0);
+    expect(full.priceHistory.at(-1).pricebooks.length).toBeGreaterThan(0);
+
+    expect((await get('/api/superchargers/6507')).body.pricebooks.length).toBeGreaterThan(0);
+  });
+});
+
 describe('import du relevé hebdomadaire Bright Data', () => {
   it('enregistre la source « brightdata » dans le journal des imports', async () => {
     const { status } = await post('/api/prices/import', {
