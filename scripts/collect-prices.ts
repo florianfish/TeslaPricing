@@ -148,7 +148,7 @@ async function main(): Promise<number> {
         : []),
       ...(failed.length ? ['', '<details><summary>Stations non relevées</summary>', '', ...failed.map((f) => `- ${f.name} : ${f.detail}`), '</details>'] : []),
     ]
-      .filter((l) => l !== null && l !== false && l !== undefined)
+      .filter((l) => l !== null && l !== undefined)
       .join('\n')
   );
 
