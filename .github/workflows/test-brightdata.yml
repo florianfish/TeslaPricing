@@ -1,0 +1,61 @@
+name: "Test relevé des tarifs via Bright Data"
+
+# Test en lecture seule : interroge l'API Tesla FindUs via Bright Data Web Unlocker pour
+# quelques stations et affiche les tarifs dans le résumé du job. Aucun commit, aucune écriture
+# en base, aucun envoi à l'add-on. Secret requis : BRIGHTDATA_API_TOKEN.
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "Nombre de stations à tester (les premières stations ouvertes)"
+        default: "10"
+      stations:
+        description: "Ids supercharge.info séparés par des virgules (remplace « limit »)"
+        default: ""
+      zone:
+        description: "Zone Bright Data Web Unlocker"
+        default: "web_unlocker1"
+      country:
+        description: "Pays de sortie Bright Data (vide = au choix de Bright Data)"
+        default: "fr"
+  push:
+    branches:
+      - test/brightdata-releve
+    paths:
+      - scripts/test-brightdata.ts
+      - .github/workflows/test-brightdata.yml
+
+permissions:
+  contents: read
+
+jobs:
+  releve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Récupérer le code source
+        uses: actions/checkout@v4
+
+      - name: Configurer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Relever les tarifs via Bright Data
+        env:
+          BRIGHTDATA_API_TOKEN: ${{ secrets.BRIGHTDATA_API_TOKEN }}
+          BRIGHTDATA_ZONE: ${{ inputs.zone || 'web_unlocker1' }}
+          BRIGHTDATA_COUNTRY: ${{ github.event_name == 'workflow_dispatch' && inputs.country || 'fr' }}
+          LIMIT: ${{ inputs.limit || '10' }}
+          STATIONS: ${{ inputs.stations }}
+        run: node scripts/test-brightdata.ts
+
+      - name: Conserver les réponses brutes
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brightdata-results
+          path: brightdata-results.json
+          if-no-files-found: ignore
+          retention-days: 7
