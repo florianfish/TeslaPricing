@@ -217,3 +217,24 @@ test.describe('Encart de parrainage', () => {
     await expect(offer).toBeVisible();
   });
 });
+
+test.describe('Carte sur téléphone', () => {
+  test.use({ viewport: { width: 412, height: 915 }, isMobile: true, hasTouch: true });
+
+  test('les filtres et le choix du fond de carte ne se chevauchent pas', async ({ page }) => {
+    await page.goto('#/carte');
+    const filters = await page.getByTestId('map-filters').boundingBox();
+    const styles = await page.getByTestId('map-styles').boundingBox();
+    expect(filters && styles).toBeTruthy();
+    const overlap =
+      filters!.x < styles!.x + styles!.width &&
+      styles!.x < filters!.x + filters!.width &&
+      filters!.y < styles!.y + styles!.height &&
+      styles!.y < filters!.y + filters!.height;
+    expect(overlap).toBe(false);
+    // Une seule ligne de filtres (défilement horizontal), pas de libellés coupés sur plusieurs lignes
+    expect(filters!.height).toBeLessThan(48);
+    await page.getByTestId('map-filters').screenshot({ path: 'test-results/map-filters-mobile.png' });
+    await page.screenshot({ path: 'test-results/map-mobile.png' });
+  });
+});
