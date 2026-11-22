@@ -1,5 +1,5 @@
 import React, { useSyncExternalStore } from 'react';
-import { Zap, MapPin, TrendingUp, Calculator, Database, ExternalLink, Gift, History, Download, Receipt } from 'lucide-react';
+import { Zap, MapPin, TrendingUp, Calculator, Database, ExternalLink, Gift, History, Download, Receipt, Users } from 'lucide-react';
 import { canInstall, promptInstall, subscribePwa } from '../pwa';
 import type { SuperchargerStats } from '../types';
 import type { Tab } from '../router';
@@ -9,6 +9,7 @@ interface NavbarProps {
   onTabChange: (tab: Tab) => void;
   stats: SuperchargerStats | null;
   showMyCharges?: boolean; // onglet « Mes recharges » (via Home Assistant, TeslaMate configuré)
+  showOccupancy?: boolean; // onglet « Affluence » (relevé de l'occupation actif)
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -16,6 +17,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onTabChange,
   stats,
   showMyCharges = false,
+  showOccupancy = false,
 }) => {
   const installable = useSyncExternalStore(subscribePwa, canInstall);
   return (
@@ -165,6 +167,21 @@ export const Navbar: React.FC<NavbarProps> = ({
             <Calculator className="w-4 h-4" />
             <span>Simulateur de Coût</span>
           </button>
+
+          {showOccupancy && (
+            <button
+              id="tab-occupancy"
+              onClick={() => onTabChange('occupancy')}
+              className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
+                activeTab === 'occupancy'
+                  ? 'bg-red-600 text-white shadow-md shadow-red-600/30'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+              }`}
+            >
+              <Users className="w-4 h-4" />
+              <span>Affluence</span>
+            </button>
+          )}
 
           {showMyCharges && (
             <button

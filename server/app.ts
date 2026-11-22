@@ -19,7 +19,7 @@ import { homePage, stationPage, renderPage, robotsTxt, sitemapXml } from './seo.
 import { parseStationPagePath, stationPagePath } from '../src/stationPage.js';
 import { getMyCharges, isMyChargesConfigured, isPrivateRequest } from './my-charges.js';
 import type { Supercharger } from '../src/types.js';
-import { getOccupancy } from './occupancy.js';
+import { getOccupancy, getOccupancyIntervalMin, getOccupancyNow, getOccupancyStatus } from './occupancy.js';
 
 export interface AppOptions {
   // Gabarit HTML de l'application (index.html, transformé par Vite en développement) :
@@ -55,6 +55,8 @@ export function createApp({ indexHtml }: AppOptions = {}) {
       gaMeasurementId: getGaMeasurementId() || null,
       // Onglet « Mes recharges » : configuré, et seulement via Home Assistant (jamais sur l'adresse publique)
       myCharges: isMyChargesConfigured() && isPrivateRequest(req),
+      // Onglet « Affluence » : relevé de l'occupation actif
+      occupancy: getOccupancyIntervalMin() > 0,
     });
   });
 
@@ -139,6 +141,23 @@ export function createApp({ indexHtml }: AppOptions = {}) {
       const { slug } = req.params;
       const history = getPriceHistoryForCharger(slug);
       res.json({ locationSlug: slug, history });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  // Relevé de l'occupation : état (tableau de bord de la collecte) et toutes les stations en ce moment
+  app.get('/api/occupancy/status', (req, res) => {
+    try {
+      res.json(getOccupancyStatus());
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  app.get('/api/occupancy/now', (req, res) => {
+    try {
+      res.json(getOccupancyNow());
     } catch (err: any) {
       res.status(500).json({ error: err.message });
     }

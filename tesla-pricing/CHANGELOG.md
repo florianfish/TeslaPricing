@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.1.0
+
+- Nouvel onglet Affluence : toutes les stations en ce moment, les plus chargées et les plus calmes, celles plus chargées que d'habitude à cette heure, avec un filtre par région.
+- Onglet Mises à jour : suivi du relevé de l'occupation (dernier relevé, stations suivies, remplissage de la carte d'affluence) avec une alerte s'il est en retard ou en échec.
+
 ## 2.0.1
 
 - Mes recharges : connexion à TeslaMate API par identifiant et mot de passe, comme sur MyTeslaMate. Pour une instance MyTeslaMate, le mot de passe suffit (l'identifiant est le sous-domaine de l'adresse). Nouvelle option « Identifiant TeslaMate API ».

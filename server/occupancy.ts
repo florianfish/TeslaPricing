@@ -14,10 +14,13 @@ import {
   readPointStatuses,
   readTeslaRows,
   sampleAll,
+  slotIndex,
+  MIN_SAMPLES_PER_SLOT,
   type OccupancyStore,
   type OccupancyView,
 } from '../scripts/lib/occupancy.js';
 import { DATA_DIR, initDatabase, getSetting, isPersistentDataDir } from './db.js';
+import type { OccupancyStatus, OccupancyLive } from '../src/types.js';
 
 const STORE_FILE = () => path.join(DATA_DIR, 'occupancy.json');
 const MAPPING_MAX_AGE_MS = 7 * 24 * 3600_000;
@@ -118,4 +121,55 @@ export async function sampleOccupancy(now = new Date()): Promise<{ stations: num
 
 export function getOccupancy(stationId: string): OccupancyView & { enabled: boolean } {
   return { ...occupancyView(loadOccupancyStore(), stationId), enabled: getOccupancyIntervalMin() > 0 };
+}
+
+// État du relevé, pour le tableau de bord de la collecte
+export function getOccupancyStatus(now = new Date()): OccupancyStatus {
+  const s = loadOccupancyStore();
+  const intervalMin = getOccupancyIntervalMin();
+  const openStations = initDatabase().superchargers.filter((st) => st.status === 'OPEN').length;
+  const lastSampleAge = s.lastSampleAt ? (now.getTime() - Date.parse(s.lastSampleAt)) / 60_000 : null;
+  let state: OccupancyStatus['state'];
+  if (intervalMin === 0) state = 'disabled';
+  else if (s.lastError) state = 'error';
+  else if (lastSampleAge === null) state = 'pending';
+  else if (lastSampleAge > 3 * intervalMin) state = 'late';
+  else state = 'ok';
+  const visibleSlots = Object.values(s.slots).reduce((sum, st) => sum + st.n.filter((n) => n >= MIN_SAMPLES_PER_SLOT).length, 0);
+  return {
+    state,
+    intervalMin,
+    lastSampleAt: s.lastSampleAt,
+    lastError: s.lastError,
+    mappingAt: s.mappingAt,
+    matchedStations: Object.keys(s.mapping).length,
+    openStations,
+    liveStations: Object.keys(s.current).length,
+    samples: Object.values(s.slots).reduce((sum, st) => sum + st.n.reduce((a, b) => a + b, 0), 0),
+    gridFill: Object.keys(s.mapping).length ? visibleSlots / (168 * Object.keys(s.mapping).length) : 0,
+  };
+}
+
+// Toutes les stations en ce moment, avec l'occupation habituelle du créneau (jour × heure en cours)
+export function getOccupancyNow(now = new Date()): OccupancyLive {
+  const s = loadOccupancyStore();
+  const slot = slotIndex(now);
+  const byId = new Map(initDatabase().superchargers.map((st) => [st.id, st]));
+  const stations: OccupancyLive['stations'] = [];
+  for (const [id, cur] of Object.entries(s.current)) {
+    const st = byId.get(id);
+    if (!st) continue;
+    const cell = s.slots[id];
+    stations.push({
+      id,
+      name: st.name,
+      city: st.city,
+      region: st.region,
+      occupied: cur.occupied,
+      total: cur.total,
+      at: cur.at,
+      usual: cell && cell.n[slot] >= MIN_SAMPLES_PER_SLOT ? Math.round((cell.sum[slot] / cell.n[slot]) * 100) / 100 : null,
+    });
+  }
+  return { enabled: getOccupancyIntervalMin() > 0, lastSampleAt: s.lastSampleAt, stations };
 }
