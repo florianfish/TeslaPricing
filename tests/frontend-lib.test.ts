@@ -8,6 +8,7 @@ import { parseRoute, routeHash, findStation } from '../src/router';
 import { CHANGELOG, parseChangelog, publishedReleases } from '../src/changelog';
 import { teslaStationUrl } from '../src/tesla';
 import { cachedAt } from '../src/pwa';
+import { isReferralSnoozed, snoozeReferral, REFERRAL_DISMISS_KEY } from '../src/referral';
 import { loadFixture } from './helpers';
 
 afterEach(() => {
@@ -137,5 +138,35 @@ describe('pwa', () => {
     expect(cachedAt(cached)?.toISOString()).toBe('2026-11-13T21:00:00.000Z');
     expect(cachedAt(new Response('{}'))).toBeNull();
     expect(cachedAt(new Response('{}', { headers: { 'X-SW-Cached-At': 'n/a' } }))).toBeNull();
+  });
+});
+
+describe('referral', () => {
+  const memoryStorage = () => {
+    const values = new Map<string, string>();
+    return { getItem: (k: string) => values.get(k) ?? null, setItem: (k: string, v: string) => void values.set(k, v) };
+  };
+  const DAY = 24 * 60 * 60 * 1000;
+  const closedAt = Date.parse('2026-11-01T10:00:00Z');
+
+  it('masque l’encart fermé pendant 15 jours, puis le repropose', () => {
+    const storage = memoryStorage();
+    expect(isReferralSnoozed(closedAt, storage)).toBe(false);
+    snoozeReferral(closedAt, storage);
+    expect(isReferralSnoozed(closedAt + 14 * DAY, storage)).toBe(true);
+    expect(isReferralSnoozed(closedAt + 15 * DAY - 1, storage)).toBe(true);
+    expect(isReferralSnoozed(closedAt + 15 * DAY, storage)).toBe(false);
+  });
+
+  it('affiche l’encart si la valeur est invalide, dans le futur ou le stockage indisponible', () => {
+    const storage = memoryStorage();
+    storage.setItem(REFERRAL_DISMISS_KEY, 'n/a');
+    expect(isReferralSnoozed(closedAt, storage)).toBe(false);
+    storage.setItem(REFERRAL_DISMISS_KEY, String(closedAt + DAY));
+    expect(isReferralSnoozed(closedAt, storage)).toBe(false);
+    expect(isReferralSnoozed(closedAt, null)).toBe(false);
+    const broken = { getItem: () => { throw new Error('bloqué'); }, setItem: () => { throw new Error('bloqué'); } };
+    expect(isReferralSnoozed(closedAt, broken)).toBe(false);
+    expect(() => snoozeReferral(closedAt, broken)).not.toThrow();
   });
 });
