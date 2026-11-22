@@ -1,0 +1,25 @@
+name: Release APK
+
+# APK signé de l'appli Android, publié dans une release GitHub (tag v1.2.0…). Lancement manuel seulement :
+# les versions de l'add-on Home Assistant ne passent pas par des tags.
+# Workflow partagé : https://github.com/florianfish/Forge-Apk
+on:
+  workflow_dispatch:
+    inputs:
+      type:
+        description: "Type de version (1.4.0 → mineure 1.5.0, correctif 1.4.1, majeure 2.0.0)"
+        type: choice
+        options: [mineure, correctif, majeure]
+        default: mineure
+
+jobs:
+  release:
+    uses: florianfish/Forge-Apk/.github/workflows/android-release.yml@main
+    permissions:
+      contents: write
+    with:
+      apk-name: TeslaPricing
+      type: ${{ inputs.type }}
+      gradle-version: "9.9.1"
+      apk-path: android/app/build/outputs/apk/release/app-release.apk
+    secrets: inherit

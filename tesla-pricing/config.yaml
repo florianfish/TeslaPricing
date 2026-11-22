@@ -32,6 +32,7 @@ options:
   public_url: ""
   telegram_bot_token: ""
   telegram_chat_id: ""
+  android_cert_sha256: ""
   teslamate_api_url: ""
   teslamate_api_user: ""
   teslamate_api_token: ""
@@ -43,6 +44,7 @@ schema:
   public_url: match(^(https?://[^\s?#]+)?$)?
   telegram_bot_token: password?
   telegram_chat_id: str?
+  android_cert_sha256: str?
   teslamate_api_url: match(^(https?://[^\s?#]+)?$)?
   teslamate_api_user: str?
   teslamate_api_token: password?

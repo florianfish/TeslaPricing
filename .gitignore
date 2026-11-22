@@ -13,3 +13,4 @@ tesla-probe-*.json
 server/data/*.backup-*.json
 test-results/
 playwright-report/
+.gradle/

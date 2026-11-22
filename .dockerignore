@@ -6,3 +6,10 @@ dist
 *.log
 .system_generated
 coverage
+# Appli Android : inutile à l'image de l'add-on
+android
+settings.gradle.kts
+build.gradle.kts
+gradle.properties
+.gradle
+build

@@ -1,0 +1,33 @@
+name: Build APK
+
+# Appli Android (Trusted Web Activity, dossier android/) : APK de debug à chaque changement de l'appli,
+# commentaire sur la PR, pré-release « debug » sur main. Workflow partagé : https://github.com/florianfish/Forge-Apk
+on:
+  push:
+    branches: [main]
+    paths:
+      - android/**
+      - settings.gradle.kts
+      - build.gradle.kts
+      - gradle.properties
+      - .github/workflows/android*.yml
+  pull_request:
+    paths:
+      - android/**
+      - settings.gradle.kts
+      - build.gradle.kts
+      - gradle.properties
+      - .github/workflows/android*.yml
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: florianfish/Forge-Apk/.github/workflows/android-build.yml@main
+    permissions:
+      contents: write        # pré-release « debug »
+      pull-requests: write   # commentaire sur les PR
+    with:
+      apk-name: TeslaPricing
+      gradle-version: "9.9.1"
+      apk-path: android/app/build/outputs/apk/debug/app-debug.apk
+    secrets: inherit
