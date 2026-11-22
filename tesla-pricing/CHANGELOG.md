@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.2.0
+
+- Occupation des stations : les cumuls (carte d'affluence) sont sauvegardés chaque dimanche à 20 h sur GitHub. Un add-on réinstallé ou une nouvelle instance repart de cette sauvegarde au lieu de zéro.
+
 ## 2.1.0
 
 - Nouvel onglet Affluence : toutes les stations en ce moment, les plus chargées et les plus calmes, celles plus chargées que d'habitude à cette heure, avec un filtre par région.

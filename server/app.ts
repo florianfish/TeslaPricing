@@ -19,7 +19,7 @@ import { homePage, stationPage, renderPage, robotsTxt, sitemapXml } from './seo.
 import { parseStationPagePath, stationPagePath } from '../src/stationPage.js';
 import { getMyCharges, isMyChargesConfigured, isPrivateRequest } from './my-charges.js';
 import type { Supercharger } from '../src/types.js';
-import { getOccupancy, getOccupancyIntervalMin, getOccupancyNow, getOccupancyStatus } from './occupancy.js';
+import { exportOccupancyStore, getOccupancy, getOccupancyIntervalMin, getOccupancyNow, getOccupancyStatus } from './occupancy.js';
 
 export interface AppOptions {
   // Gabarit HTML de l'application (index.html, transformé par Vite en développement) :
@@ -153,6 +153,13 @@ export function createApp({ indexHtml }: AppOptions = {}) {
     } catch (err: any) {
       res.status(500).json({ error: err.message });
     }
+  });
+
+  // Export des cumuls pour la sauvegarde hebdomadaire sur GitHub (clé d'import exigée)
+  app.get('/api/occupancy/export', (req, res) => {
+    if (!checkImportKey(req, res)) return;
+    res.set('Cache-Control', 'no-store');
+    res.json(exportOccupancyStore());
   });
 
   app.get('/api/occupancy/now', (req, res) => {

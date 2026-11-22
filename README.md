@@ -50,6 +50,7 @@ Application web complète permettant de visualiser, répertorier, comparer et hi
   - Grille complète publiée par Tesla, créneau par créneau : souvent plus de deux prix dans la journée (Gassin : 0,40 de 10 h à 20 h, 0,28 de 20 h à minuit, 0,19 de minuit à 10 h), pour les Tesla, les autres VE et le tarif « MSP », créneau en cours mis en évidence.
   - Affluence de chaque station d'après les données publiques IRVE (transport.data.gouv.fr) : bornes occupées en ce moment, moyenne par jour × heure, meilleure heure d'ici ce soir avec son tarif. Relevé par le serveur toutes les 15 min (option `occupancy_interval_min` / variable `OCCUPANCY_INTERVAL_MIN`, 0 = désactivé ; actif par défaut sur une base persistante `DATA_DIR`).
   - Onglet **Affluence** : toutes les stations en ce moment (les plus chargées, les plus calmes, plus chargées que d'habitude), filtre par région ; état du relevé dans l'onglet Mises à jour.
+  - Cumuls sauvegardés chaque dimanche à 20 h (heure de Paris) dans `server/data/occupancy.json` par le workflow `backup-occupancy.yml` (`npm run backup-occupancy`) ; une instance sans fichier d'occupation repart de cette sauvegarde.
 
 
 ---
@@ -229,6 +230,7 @@ Les données sont persistées dans `/data` (variable `DATA_DIR`), donc incluses 
 | `GET` | `/api/superchargers/:slug/occupancy` | Occupation de la station (données IRVE) : en ce moment, grille 7 × 24 des taux moyens (lundi = 0, heure de Paris), nombre de relevés |
 | `GET` | `/api/occupancy/status` | État du relevé de l'occupation : `ok`, `late` (rien depuis 3 intervalles), `error`, `pending`, `disabled` ; stations suivies, dernier relevé, remplissage de la carte d'affluence |
 | `GET` | `/api/occupancy/now` | Toutes les stations en ce moment : bornes occupées / suivies, occupation habituelle du créneau |
+| `GET` | `/api/occupancy/export` | Cumuls d'occupation pour la sauvegarde hebdomadaire (en-tête `Authorization: Bearer <clé d'import>`) |
 | `GET` | `/api/prices/stats` | Statistiques globales nationales (moyennes HP/HC, station la moins chère, etc.) |
 | `GET` | `/api/prices/updates?limit=200` | Dernières mises à jour de tarif, avec le relevé précédent de chaque station |
 | `GET` | `/api/stations/events?limit=200` | Dernières évolutions de stations (nouvelles stations, changements de statut) |

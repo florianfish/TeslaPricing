@@ -7,7 +7,7 @@ import { fetchFrenchSites, applyRegistrySites, type StationSyncResult } from '..
 import { notifyStationEvents } from '../scripts/lib/telegram.js';
 
 // Données livrées avec l'application (seed). DATA_DIR permet de persister ailleurs (ex: /data pour l'add-on Home Assistant)
-const SEED_DIR = path.join(process.cwd(), 'server', 'data');
+export const SEED_DIR = path.join(process.cwd(), 'server', 'data');
 export const DATA_DIR = process.env.DATA_DIR || SEED_DIR;
 const DB_FILE = path.join(DATA_DIR, 'superchargers_db.json');
 const SEED_DB_FILE = path.join(SEED_DIR, 'superchargers_db.json');
