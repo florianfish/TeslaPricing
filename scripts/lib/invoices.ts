@@ -2,6 +2,7 @@
 // tarif relevé pour la station à cette date. Logique pure ; récupération et accès dans server/my-charges.ts.
 
 import type { Supercharger, PriceSnapshot } from '../../src/types.js';
+import { rateAtMinute, priceLevels, parisClock } from '../../src/pricebooks.js';
 
 // Session de recharge telle que renvoyée par TeslaMate API (GET /api/v1/cars/:id/charges)
 export interface TeslaMateCharge {
@@ -30,6 +31,7 @@ export interface ChargeAnalysis {
   cost: number;                 // € facturés
   realRate: number;             // €/kWh réel = coût / énergie fournie
   period: TariffPeriod | null;  // créneau au début de la session (heure de Paris)
+  fromGrid: boolean;            // prix attendu lu sur la grille complète du relevé (palier intermédiaire compris)
   expectedRate: number | null;  // tarif Tesla relevé pour ce créneau, à cette date
   priceDate: string | null;     // date du relevé de prix utilisé
   expectedCost: number | null;
@@ -157,7 +159,11 @@ export function analyzeCharges(charges: TeslaMateCharge[], stations: Supercharge
 
     const snap = priceInEffect(first.station, start);
     const period = snap ? periodAt(snap.peakHours, start) : null;
-    const expectedRate = snap && period ? (period === 'peak' ? snap.teslaPeak : snap.teslaOffPeak) : null;
+    // Grille complète du relevé si elle existe (ex. 0,28 de 20 h à minuit), sinon HP / HC
+    const clock = parisClock(start);
+    const gridRate = snap?.pricebooks?.length ? rateAtMinute(snap.pricebooks, 'TSLA', clock.minute, clock.weekday) : null;
+    const lowestRate = snap?.pricebooks?.length ? (priceLevels(snap.pricebooks).at(-1) ?? null) : null;
+    const expectedRate = gridRate ?? (snap && period ? (period === 'peak' ? snap.teslaPeak : snap.teslaOffPeak) : null);
     const expectedCost = expectedRate !== null && energyUsed > 0 ? round(expectedRate * energyUsed) : null;
     return {
       chargeIds: group.map((g) => g.charge.charge_id),
@@ -171,11 +177,12 @@ export function analyzeCharges(charges: TeslaMateCharge[], stations: Supercharge
       cost,
       realRate: energyUsed > 0 ? round(cost / energyUsed, 3) : 0,
       period,
+      fromGrid: gridRate !== null,
       expectedRate,
       priceDate: snap?.date ?? null,
       expectedCost,
       diff: expectedCost !== null ? round(cost - expectedCost) : null,
-      offPeakCost: snap && energyUsed > 0 ? round(snap.teslaOffPeak * energyUsed) : null,
+      offPeakCost: snap && energyUsed > 0 ? round((lowestRate ?? snap.teslaOffPeak) * energyUsed) : null,
     };
   });
   sessions.sort((a, b) => Date.parse(b.start) - Date.parse(a.start));

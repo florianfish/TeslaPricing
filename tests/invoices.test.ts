@@ -56,6 +56,16 @@ describe('tarif en vigueur', () => {
   });
 });
 
+describe('grille complète', () => {
+  it('prix exact du créneau (palier intermédiaire) et prix le plus bas de la grille', () => {
+    const slot = (rate: number, start: string, end: string) => ({ vehicle: 'TSLA', fee: 'CHARGING', rate, uom: 'kwh', start, end, days: null, tou: true });
+    const withGrid = { ...snap('2026-06-01', 0.44, 0.2), pricebooks: [slot(0.44, '10:00', '20:00'), slot(0.3, '20:00', '00:00'), slot(0.2, '00:00', '10:00')] };
+    const gridStation = station('9003', "Les Sables-d'Olonne, France", "Les Sables-d'Olonne", 46.5139, -1.7771, [withGrid]);
+    const [session] = analyzeCharges([charges[0]], [gridStation]).sessions; // 20 h 13 à Paris
+    expect(session).toMatchObject({ fromGrid: true, period: 'offPeak', expectedRate: 0.3, expectedCost: 9.76, offPeakCost: 6.51 });
+  });
+});
+
 describe('analyse des sessions', () => {
   const report = analyzeCharges(charges, stations);
 

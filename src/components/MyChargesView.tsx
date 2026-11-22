@@ -12,6 +12,7 @@ interface ChargeAnalysis {
   cost: number;
   realRate: number;
   period: 'peak' | 'offPeak' | null;
+  fromGrid?: boolean;
   expectedRate: number | null;
   priceDate: string | null;
   expectedCost: number | null;
@@ -175,7 +176,7 @@ export const MyChargesView: React.FC<Props> = ({ superchargers, onSelectSupercha
                       <td className="py-2 pr-4 font-semibold text-white">{euro(s.cost)}</td>
                       <td className="py-2 pr-4">{rate(s.realRate)}</td>
                       <td className="py-2 pr-4 whitespace-nowrap" title={s.priceDate ? `Relevé du ${s.priceDate}` : 'Aucun relevé avant cette date'}>
-                        {s.expectedRate !== null ? `${rate(s.expectedRate)} (${s.period === 'peak' ? 'HP' : 'HC'})` : '—'}
+                        {s.expectedRate !== null ? `${rate(s.expectedRate)} (${s.fromGrid ? 'grille' : s.period === 'peak' ? 'HP' : 'HC'})` : '—'}
                       </td>
                       <td className={`py-2 pr-4 font-semibold ${diffClass(s)}`}>{s.diff !== null ? signed(s.diff) : '—'}</td>
                       <td className="py-2 text-emerald-400">{s.offPeakCost !== null ? euro(s.offPeakCost) : '—'}</td>

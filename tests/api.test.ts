@@ -202,6 +202,21 @@ describe('import des tarifs (POST /api/prices/import)', () => {
   });
 });
 
+describe('grilles complètes', () => {
+  it('liste sans les grilles (sauf ?pricebooks=1), fiche détaillée avec', async () => {
+    // 6507 a reçu une grille lors de l'import ci-dessus
+    const light = (await get('/api/superchargers')).body.data.find((s: any) => s.id === '6507');
+    expect(light.pricebooks).toBeUndefined();
+    expect(light.priceHistory.some((p: any) => 'pricebooks' in p)).toBe(false);
+
+    const full = (await get('/api/superchargers?pricebooks=1')).body.data.find((s: any) => s.id === '6507');
+    expect(full.pricebooks.length).toBeGreaterThan(0);
+    expect(full.priceHistory.at(-1).pricebooks.length).toBeGreaterThan(0);
+
+    expect((await get('/api/superchargers/6507')).body.pricebooks.length).toBeGreaterThan(0);
+  });
+});
+
 describe('import du relevé hebdomadaire Bright Data', () => {
   it('enregistre la source « brightdata » dans le journal des imports', async () => {
     const { status } = await post('/api/prices/import', {
@@ -273,6 +288,26 @@ describe('mes recharges (GET /api/my-charges)', () => {
       delete process.env.TESLAMATE_API_URL;
       delete process.env.TESLAMATE_API_TOKEN;
     }
+  });
+});
+
+describe('occupation (GET /api/superchargers/:id/occupancy)', () => {
+  it('renvoie la grille cumulée de la station, 404 si la station est inconnue', async () => {
+    const { emptyStore, addSample } = await import('../scripts/lib/occupancy');
+    const store = emptyStore();
+    store.mapping = { '6507': ['FRTSLE00A1', 'FRTSLE00A2'] };
+    const saturday14h = new Date('2026-11-21T13:00:00Z');
+    addSample(store, '6507', { occupied: 1, total: 2 }, saturday14h);
+    addSample(store, '6507', { occupied: 2, total: 2 }, saturday14h);
+    fs.writeFileSync(path.join(dataDir, 'occupancy.json'), JSON.stringify(store));
+
+    const { status, body } = await get('/api/superchargers/6507/occupancy');
+    expect(status).toBe(200);
+    expect(body).toMatchObject({ enabled: true, matched: true, points: 2, samples: 2, current: { occupied: 2, total: 2 } });
+    expect(body.grid[5][14]).toBe(0.75);
+    expect(body.grid[0][0]).toBeNull();
+    expect((await get('/api/superchargers/662/occupancy')).body).toMatchObject({ matched: false, samples: 0 });
+    expect((await get('/api/superchargers/inconnue/occupancy')).status).toBe(404);
   });
 });
 

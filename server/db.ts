@@ -8,7 +8,7 @@ import { notifyStationEvents } from '../scripts/lib/telegram.js';
 
 // Données livrées avec l'application (seed). DATA_DIR permet de persister ailleurs (ex: /data pour l'add-on Home Assistant)
 const SEED_DIR = path.join(process.cwd(), 'server', 'data');
-const DATA_DIR = process.env.DATA_DIR || SEED_DIR;
+export const DATA_DIR = process.env.DATA_DIR || SEED_DIR;
 const DB_FILE = path.join(DATA_DIR, 'superchargers_db.json');
 const SEED_DB_FILE = path.join(SEED_DIR, 'superchargers_db.json');
 const RAW_FILE = path.join(SEED_DIR, 'france_sites_raw.json');
@@ -537,6 +537,11 @@ export function getStationEvents(limit = 200): StationEvent[] {
 export const STATION_SYNC_ENABLED = process.env.STATION_SYNC
   ? process.env.STATION_SYNC !== '0'
   : DB_FILE !== SEED_DB_FILE;
+
+// Base persistante séparée de celle du dépôt (add-on Home Assistant, DATA_DIR)
+export function isPersistentDataDir(): boolean {
+  return DB_FILE !== SEED_DB_FILE;
+}
 
 export async function syncStationsFromRegistry(): Promise<StationSyncResult> {
   const sites = await fetchFrenchSites();

@@ -47,6 +47,8 @@ Application web complète permettant de visualiser, répertorier, comparer et hi
   - Tarifs actualisés automatiquement de manière centralisée (automatisation nocturne et synchronisation BDD).
   - Badge de fraîcheur (« Relevé il y a N j ») sur chaque station, dans la liste, la fiche et la carte.
   - Lien direct partageable vers chaque fiche (`#/carte?station=6507`, identifiant de la station ; plusieurs stations peuvent partager un même slug) ; le bouton Retour du navigateur referme la fiche.
+  - Grille complète publiée par Tesla, créneau par créneau : souvent plus de deux prix dans la journée (Gassin : 0,40 de 10 h à 20 h, 0,28 de 20 h à minuit, 0,19 de minuit à 10 h), pour les Tesla, les autres VE et le tarif « MSP », créneau en cours mis en évidence.
+  - Affluence de chaque station d'après les données publiques IRVE (transport.data.gouv.fr) : bornes occupées en ce moment, moyenne par jour × heure, meilleure heure d'ici ce soir avec son tarif. Relevé par le serveur toutes les 15 min (option `occupancy_interval_min` / variable `OCCUPANCY_INTERVAL_MIN`, 0 = désactivé ; actif par défaut sur une base persistante `DATA_DIR`).
 
 
 ---
@@ -220,9 +222,10 @@ Les données sont persistées dans `/data` (variable `DATA_DIR`), donc incluses 
 | `GET` | `/api/health` | Vérification de l'état du serveur |
 | `GET` | `/api/config` | Configuration publique du frontend (`gaMeasurementId` Google Analytics, ou `null` ; `myCharges` : onglet « Mes recharges » proposé) |
 | `GET` | `/api/my-charges` | Mes sessions Superchargeur (TeslaMate API) comparées aux tarifs relevés ; via l'Ingress Home Assistant ou avec `Authorization: Bearer <clé d'import>` uniquement |
-| `GET` | `/api/superchargers` | Liste des stations filtrable (`search`, `status`, `otherEVsOnly`, `minPower`, `region`, `sortBy`, `sortOrder`) |
-| `GET` | `/api/superchargers/:slug` | Détails complets d'un superchargeur via son slug (ex: `rennessupercharger`) |
+| `GET` | `/api/superchargers` | Liste des stations filtrable (`search`, `status`, `otherEVsOnly`, `minPower`, `region`, `sortBy`, `sortOrder`) ; sans les grilles complètes, sauf avec `pricebooks=1` |
+| `GET` | `/api/superchargers/:slug` | Détails complets d'un superchargeur via son slug (ex: `rennessupercharger`) ou son id, grille complète (`pricebooks`) comprise |
 | `GET` | `/api/superchargers/:slug/prices` | Historique complet des relevés de prix d'une station |
+| `GET` | `/api/superchargers/:slug/occupancy` | Occupation de la station (données IRVE) : en ce moment, grille 7 × 24 des taux moyens (lundi = 0, heure de Paris), nombre de relevés |
 | `GET` | `/api/prices/stats` | Statistiques globales nationales (moyennes HP/HC, station la moins chère, etc.) |
 | `GET` | `/api/prices/updates?limit=200` | Dernières mises à jour de tarif, avec le relevé précédent de chaque station |
 | `GET` | `/api/stations/events?limit=200` | Dernières évolutions de stations (nouvelles stations, changements de statut) |
