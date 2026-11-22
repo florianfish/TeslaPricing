@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.1
+
+- Mes recharges : connexion à TeslaMate API par identifiant et mot de passe, comme sur MyTeslaMate. Pour une instance MyTeslaMate, le mot de passe suffit (l'identifiant est le sous-domaine de l'adresse). Nouvelle option « Identifiant TeslaMate API ».
+
 ## 2.0.0
 
 - Grille tarifaire complète : la fiche de chaque station affiche maintenant tous les prix publiés par Tesla, créneau par créneau, pour les Tesla, les autres véhicules et le tarif « MSP ». Beaucoup de stations ont trois prix dans la journée : à Gassin, 0,40 € de 10 h à 20 h, 0,28 € de 20 h à minuit et 0,19 € de minuit à 10 h, alors que seuls les prix heures pleines / heures creuses étaient affichés jusqu'ici. Le créneau en cours est mis en évidence.

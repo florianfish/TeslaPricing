@@ -24,7 +24,13 @@ Les tarifs Tesla sont collectés chaque semaine par un workflow GitHub Actions q
 
 ### Mes recharges (TeslaMate / MyTeslaMate)
 
-Renseigner l'**Adresse de TeslaMate API** (et son **Jeton** si besoin) pour ajouter l'onglet **Mes recharges**. Il liste vos sessions payantes au Superchargeur et compare, pour chacune :
+Renseigner l'**Adresse de TeslaMate API** et ses accès pour ajouter l'onglet **Mes recharges** :
+
+- **MyTeslaMate** (`https://abcd.api.myteslamate.com`) : le **mot de passe** suffit, l'identifiant est le sous-domaine (`abcd`) ; le renseigner seulement s'il est différent ;
+- autre instance protégée par **identifiant et mot de passe** : renseigner les deux ;
+- TeslaMate API auto-hébergée avec **jeton** : laisser l'identifiant vide et mettre le jeton dans « Mot de passe ou jeton ».
+
+L'onglet liste vos sessions payantes au Superchargeur et compare, pour chacune :
 
 - le montant facturé par Tesla au tarif relevé pour la station à cette date, au créneau du début de la session ;
 - l'écart, et ce qu'aurait coûté la même énergie en heures creuses.
