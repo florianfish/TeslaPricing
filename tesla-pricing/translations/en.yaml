@@ -1,6 +1,9 @@
 network:
   3000/tcp: Web UI port for direct access (leave empty to only use the Home Assistant sidebar)
 configuration:
+  occupancy_interval_min:
+    name: Station occupancy (minutes)
+    description: Interval for sampling Tesla stall occupancy from the French open data (IRVE, transport.data.gouv.fr), shown as busy hours and best time in the station details. 0 to disable.
   import_key:
     name: Import key
     description: Key shared with the "Collecteur Tesla" browser extension to import prices. Leave empty to disable importing.

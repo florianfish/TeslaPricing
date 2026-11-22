@@ -6,6 +6,7 @@ import { isShareableLocation } from '../router';
 import { teslaStationUrl } from '../tesla';
 import { stationPagePath } from '../stationPage';
 import { PricebookSchedule } from './PricebookSchedule';
+import { OccupancyPanel } from './OccupancyPanel';
 import {
   X,
   Zap,
@@ -322,6 +323,8 @@ export const StationDetailModal: React.FC<StationDetailModalProps> = ({
           {pricebooks && pricebooks.length > 0 && (
             <PricebookSchedule slots={pricebooks} now={now} checkedAt={charger.lastCheckedAt} />
           )}
+
+          <OccupancyPanel stationId={charger.id} pricing={current} pricebooks={pricebooks} now={now} />
 
           {/* Historical Price Chart for this station */}
           <div className="bg-slate-950/70 rounded-2xl p-5 border border-slate-800 space-y-4">

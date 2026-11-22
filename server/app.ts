@@ -18,6 +18,7 @@ import {
 import { homePage, stationPage, renderPage, robotsTxt, sitemapXml } from './seo.js';
 import { parseStationPagePath, stationPagePath } from '../src/stationPage.js';
 import type { Supercharger } from '../src/types.js';
+import { getOccupancy } from './occupancy.js';
 
 export interface AppOptions {
   // Gabarit HTML de l'application (index.html, transformé par Vite en développement) :
@@ -119,6 +120,17 @@ export function createApp({ indexHtml }: AppOptions = {}) {
       const { slug } = req.params;
       const history = getPriceHistoryForCharger(slug);
       res.json({ locationSlug: slug, history });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  // Occupation de la station (données IRVE) : en ce moment et moyenne par jour × heure
+  app.get('/api/superchargers/:slug/occupancy', (req, res) => {
+    try {
+      const charger = getSuperchargerBySlug(req.params.slug);
+      if (!charger) return res.status(404).json({ error: `Superchargeur '${req.params.slug}' non trouvé` });
+      res.json(getOccupancy(charger.id));
     } catch (err: any) {
       res.status(500).json({ error: err.message });
     }
