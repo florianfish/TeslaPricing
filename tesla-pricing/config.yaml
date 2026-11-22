@@ -23,13 +23,16 @@ ports_description:
 # ID de mesure Google Analytics 4 (vide = suivi désactivé)
 # URL publique du site pour le référencement (vide = instance privée, non indexée)
 # Alertes Telegram lors de l'évolution des stations (ouverture, travaux, nouvelles stations)
+# Occupation des stations (données publiques IRVE) : échantillon toutes les N minutes, 0 = désactivé
 options:
+  occupancy_interval_min: 15
   import_key: ""
   ga_measurement_id: ""
   public_url: ""
   telegram_bot_token: ""
   telegram_chat_id: ""
 schema:
+  occupancy_interval_min: int(0,1440)?
   import_key: password?
   ga_measurement_id: match(^(G-[A-Za-z0-9]+)?$)?
   public_url: match(^(https?://[^\s?#]+)?$)?
