@@ -1,6 +1,9 @@
 network:
   3000/tcp: Port de l'interface web pour un accès direct (laisser vide pour n'utiliser que la barre latérale Home Assistant)
 configuration:
+  occupancy_interval_min:
+    name: Occupation des stations (minutes)
+    description: Intervalle de relevé de l'occupation des bornes Tesla d'après les données publiques IRVE (transport.data.gouv.fr), pour afficher l'affluence et la meilleure heure dans la fiche station. 0 pour désactiver.
   import_key:
     name: Clé d'import
     description: Clé partagée avec l'extension navigateur « Collecteur Tesla » pour importer les tarifs. Laisser vide pour désactiver l'import.

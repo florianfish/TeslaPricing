@@ -23,12 +23,16 @@ function parisMinutes(now: Date): number {
 
 // Créneau tarifaire en cours ; "09:00 - 00:00" court jusqu'à minuit, une plage peut chevaucher minuit.
 export function currentTariffPeriod(peakHours: string, now: Date = new Date()): TariffPeriod | null {
+  return tariffPeriodAt(peakHours, parisMinutes(now));
+}
+
+// Créneau tarifaire à une minute de la journée (0 = minuit), heure de Paris
+export function tariffPeriodAt(peakHours: string, minute: number): TariffPeriod | null {
   const match = peakHours.match(/^\s*(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})\s*$/);
   if (!match) return null;
   const start = toMinutes(match[1]);
   const end = toMinutes(match[2]);
   if (start === end) return null;
-  const t = parisMinutes(now);
-  const inPeak = start < end ? t >= start && t < end : t >= start || t < end;
+  const inPeak = start < end ? minute >= start && minute < end : minute >= start || minute < end;
   return inPeak ? 'peak' : 'offPeak';
 }

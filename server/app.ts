@@ -18,6 +18,8 @@ import {
 } from './db.js';
 import { homePage, stationPage, renderPage, robotsTxt, sitemapXml } from './seo.js';
 import { parseStationPagePath, stationPagePath } from '../src/stationPage.js';
+import type { Supercharger } from '../src/types.js';
+import { getOccupancy } from './occupancy.js';
 
 export interface AppOptions {
   // Gabarit HTML de l'application (index.html, transformé par Vite en développement) :
@@ -27,6 +29,15 @@ export interface AppOptions {
 
 // Application Express avec les routes de l'API, sans frontend ni écoute réseau (testable en mémoire).
 // Le frontend (Vite ou dist/) et le démarrage sont ajoutés par server.ts.
+// Station sans ses grilles complètes (ni la sienne, ni celles de son historique)
+function withoutPricebooks(s: Supercharger): Supercharger {
+  const { pricebooks: _grid, ...rest } = s;
+  return {
+    ...rest,
+    priceHistory: s.priceHistory?.map(({ pricebooks: _p, ...snap }) => snap),
+  };
+}
+
 export function createApp({ indexHtml }: AppOptions = {}) {
   const app = express();
   app.use(express.json({ limit: '15mb' }));
@@ -66,9 +77,12 @@ export function createApp({ indexHtml }: AppOptions = {}) {
         sortOrder: sortOrder as 'asc' | 'desc',
       });
 
+      // Grilles complètes (≈ 2 Ko par station) : seulement sur demande, la liste reste légère.
+      // La fiche station les lit via /api/superchargers/:id, le relevé via ?pricebooks=1.
+      const withPricebooks = req.query.pricebooks === '1';
       res.json({
         total: results.length,
-        data: results,
+        data: withPricebooks ? results : results.map(withoutPricebooks),
       });
     } catch (err: any) {
       res.status(500).json({ error: err.message });
@@ -107,6 +121,17 @@ export function createApp({ indexHtml }: AppOptions = {}) {
       const { slug } = req.params;
       const history = getPriceHistoryForCharger(slug);
       res.json({ locationSlug: slug, history });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  // Occupation de la station (données IRVE) : en ce moment et moyenne par jour × heure
+  app.get('/api/superchargers/:slug/occupancy', (req, res) => {
+    try {
+      const charger = getSuperchargerBySlug(req.params.slug);
+      if (!charger) return res.status(404).json({ error: `Superchargeur '${req.params.slug}' non trouvé` });
+      res.json(getOccupancy(charger.id));
     } catch (err: any) {
       res.status(500).json({ error: err.message });
     }

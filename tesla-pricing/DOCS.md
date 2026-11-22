@@ -26,6 +26,14 @@ Les tarifs Tesla sont collectés chaque semaine par un workflow GitHub Actions q
 
 L'appli Android (dossier `android/` du dépôt) affiche ce site en plein écran. Pour qu'elle s'ouvre sans barre d'adresse, renseigner dans l'option **Empreintes de l'appli Android** l'empreinte SHA-256 de ses clés de signature (debug et release, séparées par une virgule) : l'add-on publie alors `/.well-known/assetlinks.json`. Voir `android/README.md`.
 
+### Occupation des stations
+
+L'add-on relève toutes les 15 minutes l'état des bornes Tesla publié en open data (base nationale IRVE de transport.data.gouv.fr : ≈ 1,7 Mo compressé par relevé, soit ≈ 160 Mo par jour). La fiche de chaque station affiche alors son **affluence** : bornes occupées en ce moment, moyenne par jour et par heure, et la **meilleure heure** d'ici ce soir. La grille se remplit au fil des semaines.
+
+Les stations sont rapprochées des données publiques par leur position, une fois par semaine (fichier statique de ≈ 130 Mo). Données conservées dans `/data/occupancy.json`.
+
+Régler l'intervalle avec l'option **Occupation des stations (minutes)**, ou `0` pour désactiver.
+
 ### Google Analytics
 
 Pour suivre la fréquentation de l'interface, renseigner l'ID de mesure Google Analytics 4 (`G-XXXXXXXXXX`, visible dans **Admin → Flux de données** de la propriété GA4) dans l'option **ID de mesure Google Analytics**, puis redémarrer l'add-on. Une page vue est envoyée à chaque onglet consulté. Laisser vide pour désactiver le suivi (aucun script Google n'est alors chargé).

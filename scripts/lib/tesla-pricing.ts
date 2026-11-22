@@ -1,4 +1,5 @@
 import type { Supercharger, SuperchargerPricing, PriceSnapshot, StationEvent, ImportLogEntry } from '../../src/types.js';
+import { normalizePricebooks, pricebooksChanged, type PricebookSlot } from '../../src/pricebooks.js';
 
 export interface DatabaseSchema {
   superchargers: Supercharger[];
@@ -19,6 +20,7 @@ export function logImport(db: DatabaseSchema, entry: ImportLogEntry) {
 // Extraire et normaliser les tarifs depuis le schéma Tesla (effectivePricebooks)
 export function parseTeslaData(teslaData: any): {
   pricing: SuperchargerPricing;
+  pricebooks: PricebookSlot[];
   stallCount?: number;
   powerKw?: number;
   otherEVs?: boolean;
@@ -90,10 +92,16 @@ export function parseTeslaData(teslaData: any): {
 
   return {
     pricing,
+    pricebooks: normalizePricebooks(pricebooks),
     stallCount: teslaData.publicStallCount,
     powerKw: teslaData.maxPowerKw,
     otherEVs: teslaData.openToNonTeslas,
   };
+}
+
+// La grille complète a-t-elle changé ? Une première grille (aucune connue avant) n'est pas un changement.
+export function gridChanged(before: PricebookSlot[] | undefined, after: PricebookSlot[] | undefined): boolean {
+  return !!before?.length && !!after?.length && pricebooksChanged(before, after);
 }
 
 // Un nouveau relevé modifie-t-il le tarif affiché ? (règle commune à l'import et au relevé Bright Data)
@@ -122,9 +130,14 @@ export function applyTeslaData(
   if (!parsed) return { outcome: 'invalid' };
   charger.lastCheckedAt = todayIso;
 
-  const { pricing } = parsed;
+  const { pricing, pricebooks } = parsed;
   const current = charger.currentPricing;
-  if (!pricingChanged(current, pricing)) return { outcome: 'confirmed' };
+  // Un changement de la grille complète compte aussi (ex. le palier intermédiaire de 20 h à minuit)
+  const changed = pricingChanged(current, pricing) || gridChanged(charger.pricebooks, pricebooks);
+  if (!changed) {
+    if (pricebooks.length) charger.pricebooks = pricebooks; // première grille connue, ou identique
+    return { outcome: 'confirmed' };
+  }
 
   const oldAvg = (current.teslaPeak + current.teslaOffPeak) / 2;
   const newAvg = (pricing.teslaPeak + pricing.teslaOffPeak) / 2;
@@ -144,6 +157,7 @@ export function applyTeslaData(
     source: 'Tesla API FindUs (Officiel)',
     notes: 'Relevé collecté depuis le navigateur (collecteur Tesla)',
     changePercentage,
+    ...(pricebooks.length ? { pricebooks } : {}),
   };
 
   if (!charger.priceHistory) charger.priceHistory = [];
@@ -151,6 +165,7 @@ export function applyTeslaData(
   db.priceSnapshots.push(snapshot);
 
   charger.currentPricing = pricing;
+  if (pricebooks.length) charger.pricebooks = pricebooks;
   if (parsed.stallCount) charger.stallCount = parsed.stallCount;
   if (parsed.powerKw) charger.powerKw = parsed.powerKw;
   if (typeof parsed.otherEVs === 'boolean') charger.otherEVs = parsed.otherEVs;

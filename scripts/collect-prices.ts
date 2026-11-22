@@ -14,7 +14,8 @@
 import 'dotenv/config';
 import fs from 'fs';
 import { fetchStation, type BrightDataConfig } from './lib/brightdata.js';
-import { parseTeslaData, pricingChanged } from './lib/tesla-pricing.js';
+import { parseTeslaData, pricingChanged, gridChanged } from './lib/tesla-pricing.js';
+import { priceLevels } from '../src/pricebooks.js';
 import { notifyPriceCollection, type PriceChange, type PriceCollectionReport } from './lib/telegram.js';
 import type { Supercharger } from '../src/types.js';
 
@@ -61,7 +62,7 @@ async function main(): Promise<number> {
 
   const stationList: [string, string, string][] = (await getJson('/api/prices/collector-stations')).data;
   const current = new Map<string, Supercharger>(
-    ((await getJson('/api/superchargers')).data as Supercharger[]).map((s) => [String(s.id), s])
+    ((await getJson('/api/superchargers?pricebooks=1')).data as Supercharger[]).map((s) => [String(s.id), s])
   );
   const stations = stationList.slice(0, LIMIT);
   console.log(`${stations.length} station(s) à relever sur ${BASE_URL}\n`);
@@ -71,6 +72,7 @@ async function main(): Promise<number> {
   const changes: PriceChange[] = [];
   const failed: { name: string; detail: string }[] = [];
   let collected = 0;
+  let multiLevel = 0; // stations dont la grille Tesla compte plus de deux prix
   let requests = 0;
   let abortReason: string | null = null;
 
@@ -92,8 +94,20 @@ async function main(): Promise<number> {
       failed.push({ name, detail: r.status === 200 ? 'pas de grille tarifaire Tesla' : r.detail });
     } else {
       collected++;
-      if (station?.currentPricing && pricingChanged(station.currentPricing, parsed.pricing)) {
-        changes.push({ id, name, locationSlug: station.locationSlug, before: station.currentPricing, after: parsed.pricing });
+      if (priceLevels(parsed.pricebooks).length > 2) multiLevel++;
+      if (
+        station?.currentPricing &&
+        (pricingChanged(station.currentPricing, parsed.pricing) || gridChanged(station.pricebooks, parsed.pricebooks))
+      ) {
+        changes.push({
+          id,
+          name,
+          locationSlug: station.locationSlug,
+          before: station.currentPricing,
+          after: parsed.pricing,
+          beforeGrid: station.pricebooks,
+          afterGrid: parsed.pricebooks,
+        });
       }
     }
 
@@ -125,13 +139,14 @@ async function main(): Promise<number> {
     }
   }
 
-  const report: PriceCollectionReport = { stations: stations.length, collected, changes, failed, abortReason, importError };
+  const report: PriceCollectionReport = { stations: stations.length, collected, changes, failed, abortReason, importError, multiLevel };
 
   writeSummary(
     [
       `## Relevé des tarifs via Bright Data${DRY_RUN ? ' (essai, sans import)' : ''}`,
       '',
       `**${collected}/${stations.length} stations relevées**, ${changes.length} tarif(s) modifié(s), ${requests} requête(s) Bright Data.`,
+      `${multiLevel} station(s) avec plus de deux prix dans la journée (grille Tesla).`,
       importCounts && `Import dans l'add-on : ${importCounts}.`,
       importError && `⚠️ Import en échec : ${importError}`,
       abortReason && `⛔ Relevé interrompu : ${abortReason}`,
