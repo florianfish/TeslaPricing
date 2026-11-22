@@ -17,6 +17,7 @@ import {
 } from './db.js';
 import { homePage, stationPage, renderPage, robotsTxt, sitemapXml } from './seo.js';
 import { parseStationPagePath, stationPagePath } from '../src/stationPage.js';
+import { getMyCharges, isMyChargesConfigured, isPrivateRequest } from './my-charges.js';
 import type { Supercharger } from '../src/types.js';
 import { getOccupancy } from './occupancy.js';
 
@@ -50,7 +51,25 @@ export function createApp({ indexHtml }: AppOptions = {}) {
 
   // Configuration publique du frontend (Google Analytics)
   app.get('/api/config', (req, res) => {
-    res.json({ gaMeasurementId: getGaMeasurementId() || null });
+    res.json({
+      gaMeasurementId: getGaMeasurementId() || null,
+      // Onglet « Mes recharges » : configuré, et seulement via Home Assistant (jamais sur l'adresse publique)
+      myCharges: isMyChargesConfigured() && isPrivateRequest(req),
+    });
+  });
+
+  // Mes recharges au Superchargeur (TeslaMate API) comparées aux tarifs relevés : données personnelles
+  app.get('/api/my-charges', async (req, res) => {
+    if (!isPrivateRequest(req)) {
+      return res.status(403).json({ error: 'Accessible uniquement depuis Home Assistant' });
+    }
+    if (!isMyChargesConfigured()) return res.json({ enabled: false });
+    try {
+      res.set('Cache-Control', 'private, no-store');
+      res.json({ enabled: true, ...(await getMyCharges()) });
+    } catch (err: any) {
+      res.status(502).json({ enabled: true, error: err.message });
+    }
   });
 
   // Get all superchargers with filtering & sorting

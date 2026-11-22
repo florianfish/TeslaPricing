@@ -23,6 +23,7 @@ ports_description:
 # ID de mesure Google Analytics 4 (vide = suivi désactivé)
 # URL publique du site pour le référencement (vide = instance privée, non indexée)
 # Alertes Telegram lors de l'évolution des stations (ouverture, travaux, nouvelles stations)
+# TeslaMate API (ex. MyTeslaMate) : onglet « Mes recharges », visible seulement depuis Home Assistant
 # Occupation des stations (données publiques IRVE) : échantillon toutes les N minutes, 0 = désactivé
 options:
   occupancy_interval_min: 15
@@ -31,6 +32,9 @@ options:
   public_url: ""
   telegram_bot_token: ""
   telegram_chat_id: ""
+  teslamate_api_url: ""
+  teslamate_api_token: ""
+  teslamate_car_id: 1
 schema:
   occupancy_interval_min: int(0,1440)?
   import_key: password?
@@ -38,6 +42,9 @@ schema:
   public_url: match(^(https?://[^\s?#]+)?$)?
   telegram_bot_token: password?
   telegram_chat_id: str?
+  teslamate_api_url: match(^(https?://[^\s?#]+)?$)?
+  teslamate_api_token: password?
+  teslamate_car_id: int(1,)?
 environment:
   DATA_DIR: /data
 watchdog: http://[HOST]:[PORT:3000]/api/health
