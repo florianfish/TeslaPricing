@@ -1,10 +1,14 @@
 name: "Image de l'add-on Home Assistant"
 
+# Appelé par « Version de l'add-on » (addon-release.yml) après le commit de version.
+# Lancement manuel : reconstruit l'image de la version actuelle de main, sans changer de numéro.
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'tesla-pricing/config.yaml'
+  workflow_call:
+    inputs:
+      ref:
+        description: "Commit à construire (celui qui porte la nouvelle version)"
+        type: string
+        required: true
   workflow_dispatch:
 
 jobs:
@@ -24,6 +28,8 @@ jobs:
     steps:
       - name: Récupérer le code source
         uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
 
       - name: Lire la version de l'add-on
         id: version

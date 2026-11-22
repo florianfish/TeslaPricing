@@ -75,6 +75,11 @@ Le projet adopte une architecture full-stack unifiée servie par un unique proce
 - Projet Gradle déclaré à la racine (`settings.gradle.kts` → `android/app`) car Forge-Apk compile depuis la racine ; ces fichiers sont exclus de l'image Docker (`.dockerignore`). Builds : `.github/workflows/android.yml` (debug, chemins `android/**`) et `android-release.yml` (manuel).
 - `/.well-known/assetlinks.json` (`server/app.ts`) publie les empreintes de l'option `android_cert_sha256` pour `fr.florian.teslapricing` et `.debug` : garder ces noms de paquets alignés avec `android/app/build.gradle.kts`.
 
+### G. Versions de l'add-on
+- **Une PR ne change jamais `version` dans `tesla-pricing/config.yaml`.** Elle ajoute ses nouveautés (rédigées pour l'utilisateur de l'add-on) sous `## À venir`, en tête de `tesla-pricing/CHANGELOG.md` ; créer la section si elle n'existe pas.
+- La version est publiée à la main par le workflow **Version de l'add-on** (`.github/workflows/addon-release.yml`, type mineure / correctif / majeure) : tests (`ci.yml`), nouveau numéro, `## À venir` → `## X.Y.Z`, commit `chore(release)` sur `main`, tag `addon-vX.Y.Z`, puis image GHCR (`addon-image.yml`). Il échoue si `## À venir` manque ou est vide.
+- Les tags `vX.Y.Z` sont réservés aux APK (Forge-Apk calcule la version suivante à partir d'eux) : ne pas en créer pour l'add-on.
+
 ---
 
 ## ⚠️ 3. Gotchas & Pièges Fréquents (Important pour Agents)

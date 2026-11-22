@@ -218,7 +218,7 @@ Le dépôt est aussi un dépôt d'add-ons Home Assistant (`repository.yaml` + do
 2. Installer **Tesla Pricing** et le démarrer.
 3. Optionnel : définir un port d'accès direct dans l'onglet **Réseau** de l'add-on (désactivé par défaut).
 
-Les données sont persistées dans `/data` (variable `DATA_DIR`), donc incluses dans les sauvegardes HA. L'image (`amd64` / `aarch64`) est publiée sur GHCR par `.github/workflows/addon-image.yml` à chaque changement de `version` dans `tesla-pricing/config.yaml`. Voir [tesla-pricing/DOCS.md](tesla-pricing/DOCS.md).
+Les données sont persistées dans `/data` (variable `DATA_DIR`), donc incluses dans les sauvegardes HA. L'image (`amd64` / `aarch64`) est publiée sur GHCR quand on lance à la main le workflow **Version de l'add-on** (`.github/workflows/addon-release.yml`, type mineure / correctif / majeure) : tests, numéro de version dans `tesla-pricing/config.yaml`, section « À venir » du changelog datée de ce numéro, tag `addon-vX.Y.Z`, puis image (`addon-image.yml`). Voir [tesla-pricing/DOCS.md](tesla-pricing/DOCS.md).
 
 ## 📡 Documentation des Endpoints API
 
