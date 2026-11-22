@@ -26,6 +26,17 @@ Les tarifs Tesla sont collectés chaque semaine par un workflow GitHub Actions q
 
 L'appli Android (dossier `android/` du dépôt) affiche ce site en plein écran. Pour qu'elle s'ouvre sans barre d'adresse, renseigner dans l'option **Empreintes de l'appli Android** l'empreinte SHA-256 de ses clés de signature (debug et release, séparées par une virgule) : l'add-on publie alors `/.well-known/assetlinks.json`. Voir `android/README.md`.
 
+### Mes recharges (TeslaMate / MyTeslaMate)
+
+Renseigner l'**Adresse de TeslaMate API** (et son **Jeton** si besoin) pour ajouter l'onglet **Mes recharges**. Il liste vos sessions payantes au Superchargeur et compare, pour chacune :
+
+- le montant facturé par Tesla au tarif relevé pour la station à cette date, au créneau du début de la session ;
+- l'écart, et ce qu'aurait coûté la même énergie en heures creuses.
+
+Les sessions sont rattachées aux stations par leur position (moins de 300 m). Deux sessions consécutives au même coût (TeslaMate reporte parfois la même facture sur chacune) sont regroupées.
+
+Ce sont des données personnelles (lieux, dates, montants) : l'onglet et la route `/api/my-charges` ne répondent que via la barre latérale de Home Assistant (Ingress) ou avec la clé d'import, **jamais** sur l'adresse publique du site. Elles ne sont pas mises en cache par l'application installée.
+
 ### Occupation des stations
 
 L'add-on relève toutes les 15 minutes l'état des bornes Tesla publié en open data (base nationale IRVE de transport.data.gouv.fr : ≈ 1,7 Mo compressé par relevé, soit ≈ 160 Mo par jour). La fiche de chaque station affiche alors son **affluence** : bornes occupées en ce moment, moyenne par jour et par heure, et la **meilleure heure** d'ici ce soir. La grille se remplit au fil des semaines.

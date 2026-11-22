@@ -19,6 +19,15 @@ configuration:
   android_cert_sha256:
     name: Android app fingerprints
     description: SHA-256 fingerprints of the Android app signing keys (debug and release, comma-separated), published in /.well-known/assetlinks.json. Without them, the app shows an address bar.
+  teslamate_api_url:
+    name: TeslaMate API URL
+    description: URL of your TeslaMate API (teslamateapi, or the one provided by MyTeslaMate) for the "Mes recharges" tab comparing your Supercharger bills with recorded prices. Only shown through Home Assistant. Leave empty to disable.
+  teslamate_api_token:
+    name: TeslaMate API token
+    description: Access token for TeslaMate API (Authorization Bearer header), if your instance requires one.
+  teslamate_car_id:
+    name: TeslaMate car ID
+    description: TeslaMate ID of the car (1 for the first one).
   telegram_chat_id:
     name: Telegram chat ID
     description: Recipient chat ID (user, group or channel) for notifications.

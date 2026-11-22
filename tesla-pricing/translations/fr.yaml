@@ -22,3 +22,12 @@ configuration:
   android_cert_sha256:
     name: Empreintes de l'appli Android
     description: Empreintes SHA-256 des clés de signature de l'appli Android (debug et release, séparées par des virgules), publiées dans /.well-known/assetlinks.json. Sans elles, l'appli affiche une barre d'adresse.
+  teslamate_api_url:
+    name: Adresse de TeslaMate API
+    description: Adresse de votre TeslaMate API (teslamateapi, ou celle fournie par MyTeslaMate), pour l'onglet « Mes recharges » qui compare vos factures Superchargeur aux tarifs relevés. Onglet visible seulement depuis Home Assistant. Laisser vide pour désactiver.
+  teslamate_api_token:
+    name: Jeton de TeslaMate API
+    description: Jeton d'accès à TeslaMate API (en-tête Authorization Bearer), si votre instance en demande un.
+  teslamate_car_id:
+    name: Numéro de la voiture dans TeslaMate
+    description: Identifiant TeslaMate de la voiture (1 pour la première).

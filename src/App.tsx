@@ -6,6 +6,7 @@ import { SuperchargerDirectory } from './components/SuperchargerDirectory';
 import { PriceEvolutionView } from './components/PriceEvolutionView';
 import { CostSimulator } from './components/CostSimulator';
 import { PriceUpdatesView } from './components/PriceUpdatesView';
+import { MyChargesView } from './components/MyChargesView';
 import { StationDetailModal } from './components/StationDetailModal';
 import { ReferralEncart } from './components/ReferralEncart';
 import { CookieBanner } from './components/CookieBanner';
@@ -27,6 +28,14 @@ export default function App() {
   // Données servies par le service worker faute de réseau : date de leur enregistrement
   const [offlineSince, setOfflineSince] = useState<Date | null>(null);
   const online = useSyncExternalStore(subscribePwa, isOnline);
+  // Onglet « Mes recharges » : proposé par le serveur seulement via Home Assistant, TeslaMate configuré
+  const [showMyCharges, setShowMyCharges] = useState(false);
+  useEffect(() => {
+    fetch('api/config')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((config) => setShowMyCharges(!!config?.myCharges))
+      .catch(() => {});
+  }, []);
 
   // Onglet et fiche station ouverte sont portés par l'URL (#/carte?station=6507)
   const route = useRoute();
@@ -105,6 +114,7 @@ export default function App() {
       <Navbar
         activeTab={activeTab}
         onTabChange={setActiveTab}
+        showMyCharges={showMyCharges}
         stats={stats}
       />
 
@@ -193,6 +203,11 @@ export default function App() {
                 superchargers={superchargers}
                 onSelectSupercharger={openStation}
               />
+            )}
+
+            {/* View 6: My Supercharger sessions vs recorded prices (Home Assistant only) */}
+            {activeTab === 'charges' && showMyCharges && (
+              <MyChargesView superchargers={superchargers} onSelectSupercharger={openStation} />
             )}
 
             {/* View 5: Charging Cost Simulator */}
