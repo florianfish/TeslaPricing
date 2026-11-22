@@ -103,7 +103,7 @@ describe('applyTeslaData', () => {
     const before = db.priceSnapshots.length;
 
     expect(applyTeslaData(db, station, threeLevels(0.28), '2026-10-08').outcome).toBe('confirmed');
-    expect(station.pricebooks?.find((s) => s.start === '20:00')).toMatchObject({ vehicle: 'TSLA', rate: 0.28 });
+    expect(station.pricebooks?.find((s) => s.vehicle === 'TSLA' && s.start === '20:00')).toMatchObject({ vehicle: 'TSLA', rate: 0.28 });
     expect(db.priceSnapshots).toHaveLength(before);
   });
 
@@ -116,8 +116,8 @@ describe('applyTeslaData', () => {
 
     expect(result).toEqual({ outcome: 'updated', changePercentage: 0 });
     expect(station.currentPricing).toMatchObject({ teslaPeak: 0.36, teslaOffPeak: 0.16 });
-    expect(station.pricebooks?.find((s) => s.start === '20:00')?.rate).toBe(0.3);
-    expect(station.priceHistory?.at(-1)?.pricebooks?.find((s) => s.start === '20:00')?.rate).toBe(0.3);
+    expect(station.pricebooks?.find((s) => s.vehicle === 'TSLA' && s.start === '20:00')?.rate).toBe(0.3);
+    expect(station.priceHistory?.at(-1)?.pricebooks?.find((s) => s.vehicle === 'TSLA' && s.start === '20:00')?.rate).toBe(0.3);
     // Même grille au relevé suivant : rien de nouveau
     expect(applyTeslaData(db, station, threeLevels(0.3), '2026-10-22').outcome).toBe('confirmed');
   });
