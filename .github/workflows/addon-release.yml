@@ -1,0 +1,97 @@
+name: "Version de l'add-on"
+
+# Publie une nouvelle version de l'add-on Home Assistant. Lancement manuel seulement
+# (Actions › Version de l'add-on › Run workflow, depuis main), comme « Release APK » de Forge-Apk :
+#   1. tests complets (ci.yml) sur le commit à publier ;
+#   2. numéro calculé depuis tesla-pricing/config.yaml selon le type choisi ;
+#      la section « ## À venir » du CHANGELOG devient « ## X.Y.Z » (obligatoire : c'est ce qu'affiche Home Assistant) ;
+#      commit « chore(release) » sur main et tag addon-vX.Y.Z (les tags vX.Y.Z restent ceux de l'appli Android) ;
+#   3. image publiée sur GHCR (addon-image.yml) : Home Assistant propose alors la mise à jour.
+on:
+  workflow_dispatch:
+    inputs:
+      type:
+        description: "Type de version (2.2.0 → mineure 2.3.0, correctif 2.2.1, majeure 3.0.0)"
+        type: choice
+        options: [mineure, correctif, majeure]
+        default: mineure
+
+concurrency: addon-release
+
+jobs:
+  tests:
+    uses: ./.github/workflows/ci.yml
+
+  version:
+    needs: tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      sha: ${{ steps.commit.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Version
+        id: version
+        env:
+          TYPE: ${{ inputs.type }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          test "$GITHUB_REF" = "refs/heads/$DEFAULT_BRANCH" \
+            || { echo "::error::Lancer le workflow depuis la branche $DEFAULT_BRANCH"; exit 1; }
+          LAST=$(yq -r '.version' tesla-pricing/config.yaml)
+          [[ "$LAST" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] \
+            || { echo "::error::Version illisible dans tesla-pricing/config.yaml : « $LAST »"; exit 1; }
+          IFS=. read -r MAJ MIN PAT <<< "$LAST"
+          case "$TYPE" in
+            majeure)   VERSION="$((MAJ + 1)).0.0" ;;
+            correctif) VERSION="$MAJ.$MIN.$((PAT + 1))" ;;
+            *)         VERSION="$MAJ.$((MIN + 1)).0" ;;
+          esac
+          if git ls-remote --exit-code --tags origin "refs/tags/addon-v$VERSION" > /dev/null; then
+            echo "::error::Le tag addon-v$VERSION existe déjà"; exit 1
+          fi
+          echo "Version actuelle : $LAST → nouvelle : $VERSION"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Changelog et config.yaml
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          CHANGELOG=tesla-pricing/CHANGELOG.md
+          grep -qx '## À venir' "$CHANGELOG" \
+            || { echo "::error::Pas de section « ## À venir » dans $CHANGELOG : rien à publier (l'ajouter avec les nouveautés)"; exit 1; }
+          # Contenu de la section (jusqu'au titre suivant) : au moins une ligne non vide
+          awk '/^## /{s=($0=="## À venir");next} s && NF{found=1} END{exit !found}' "$CHANGELOG" \
+            || { echo "::error::La section « ## À venir » de $CHANGELOG est vide"; exit 1; }
+          sed -i "0,/^## À venir\$/s//## $VERSION/" "$CHANGELOG"
+          sed -i -E "s/^version: .*/version: \"$VERSION\"/" tesla-pricing/config.yaml
+          test "$(yq -r '.version' tesla-pricing/config.yaml)" = "$VERSION"
+          echo "### Add-on $VERSION" >> "$GITHUB_STEP_SUMMARY"
+          awk -v v="## $VERSION" '/^## /{s=($0==v);next} s' "$CHANGELOG" >> "$GITHUB_STEP_SUMMARY"
+          git diff --stat
+
+      - name: Commit et tag
+        id: commit
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -am "chore(release): add-on $VERSION"
+          git tag "addon-v$VERSION"
+          # Échoue si main a bougé pendant les tests : relancer le workflow
+          git push --atomic origin "HEAD:$GITHUB_REF" "addon-v$VERSION"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+  # Le commit poussé avec le jeton du workflow ne déclenche aucun autre workflow : l'image est construite ici
+  image:
+    needs: version
+    uses: ./.github/workflows/addon-image.yml
+    permissions:
+      contents: read
+      packages: write
+    with:
+      ref: ${{ needs.version.outputs.sha }}

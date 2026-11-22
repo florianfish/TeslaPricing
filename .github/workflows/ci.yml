@@ -8,6 +8,7 @@ on:
       - 'server/data/**'
   pull_request:
   workflow_dispatch:
+  workflow_call: # avant chaque version de l'add-on (addon-release.yml)
 
 jobs:
   test:

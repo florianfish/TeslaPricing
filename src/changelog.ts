@@ -24,4 +24,11 @@ export function parseChangelog(markdown: string): ChangelogRelease[] {
   return releases;
 }
 
-export const CHANGELOG: ChangelogRelease[] = parseChangelog(changelogMarkdown);
+// Nouveautés pas encore publiées (renommées « ## X.Y.Z » par le workflow « Version de l'add-on ») : pas affichées dans l'appli
+export const UNRELEASED = 'À venir';
+
+export function publishedReleases(releases: ChangelogRelease[]): ChangelogRelease[] {
+  return releases.filter((release) => release.version !== UNRELEASED);
+}
+
+export const CHANGELOG: ChangelogRelease[] = publishedReleases(parseChangelog(changelogMarkdown));
