@@ -347,6 +347,15 @@ describe('occupation (GET /api/superchargers/:id/occupancy)', () => {
     expect(live.stations).toEqual([expect.objectContaining({ id: '6507', occupied: 2, total: 2, region: expect.any(String) })]);
     expect((await get('/api/config')).body.occupancy).toBe(true);
   });
+
+  it('export pour la sauvegarde hebdomadaire : clé exigée, sans état du moment ni erreur', async () => {
+    expect((await get('/api/occupancy/export')).status).toBe(401);
+    const res = await fetch(`${baseUrl}/api/occupancy/export`, { headers: { Authorization: 'Bearer cle-de-test' } });
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body).toMatchObject({ version: 1, mapping: { '6507': ['FRTSLE00A1', 'FRTSLE00A2'] }, current: {}, lastError: null });
+    expect(body.slots['6507'].n.reduce((a: number, b: number) => a + b, 0)).toBe(2);
+  });
 });
 
 describe("purge de l'historique (POST /api/prices/purge-history)", () => {

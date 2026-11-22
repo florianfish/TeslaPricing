@@ -19,7 +19,7 @@ import {
   type OccupancyStore,
   type OccupancyView,
 } from '../scripts/lib/occupancy.js';
-import { DATA_DIR, initDatabase, getSetting, isPersistentDataDir } from './db.js';
+import { DATA_DIR, SEED_DIR, initDatabase, getSetting, isPersistentDataDir } from './db.js';
 import type { OccupancyStatus, OccupancyLive } from '../src/types.js';
 
 const STORE_FILE = () => path.join(DATA_DIR, 'occupancy.json');
@@ -30,8 +30,12 @@ let running = false;
 
 export function loadOccupancyStore(): OccupancyStore {
   if (store) return store;
+  // Instance neuve : repartir de la sauvegarde hebdomadaire du dépôt (server/data/occupancy.json)
+  const seed = path.join(SEED_DIR, 'occupancy.json');
+  const file = fs.existsSync(STORE_FILE()) || !fs.existsSync(seed) ? STORE_FILE() : seed;
   try {
-    const parsed = JSON.parse(fs.readFileSync(STORE_FILE(), 'utf-8'));
+    const parsed = JSON.parse(fs.readFileSync(file, 'utf-8'));
+    if (file === seed) console.log("Occupation : reprise de la sauvegarde du dépôt (server/data/occupancy.json).");
     store = parsed?.version === 1 ? { ...emptyStore(), ...parsed } : emptyStore();
   } catch {
     store = emptyStore();
@@ -172,4 +176,9 @@ export function getOccupancyNow(now = new Date()): OccupancyLive {
     });
   }
   return { enabled: getOccupancyIntervalMin() > 0, lastSampleAt: s.lastSampleAt, stations };
+}
+
+// Sauvegarde hebdomadaire sur GitHub : cumuls et rapprochement, sans l'état du moment ni la dernière erreur
+export function exportOccupancyStore(): OccupancyStore {
+  return { ...loadOccupancyStore(), current: {}, lastError: null };
 }

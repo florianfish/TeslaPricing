@@ -11,6 +11,8 @@ import {
   sampleAll,
   occupancyView,
   distanceM,
+  formatStore,
+  isValidStore,
 } from '../scripts/lib/occupancy';
 import { bestHourToday, parisDayHour, ageLabel } from '../src/occupancy';
 import { tariffPeriodAt } from '../src/hours';
@@ -139,5 +141,25 @@ describe('interface', () => {
     expect(ageLabel('2026-11-21T22:44:30Z', now)).toBe("à l'instant");
     expect(ageLabel('2026-11-21T22:33:00Z', now)).toBe('il y a 12 min');
     expect(ageLabel('2026-11-21T19:45:00Z', now)).toBe('il y a 3 h');
+  });
+});
+
+describe('sauvegarde hebdomadaire', () => {
+  const store = emptyStore();
+  store.mapping = matchStations(ours, groupIrveStations(readTeslaRows(STATIC)));
+  sampleAll(store, readPointStatuses(readTeslaRows(DYNAMIC)), now);
+
+  it('fichier relu à l’identique, une station par ligne (diff lisible)', () => {
+    const text = formatStore(store);
+    expect(JSON.parse(text)).toEqual(store);
+    expect(text.split('\n').filter((l) => l.startsWith('    "6507": '))).toHaveLength(3); // mapping, slots, current
+    expect(text.endsWith('}\n')).toBe(true);
+  });
+
+  it('n’écrase jamais la sauvegarde avec un export vide ou inattendu', () => {
+    expect(isValidStore(store)).toBe(true);
+    expect(isValidStore(emptyStore())).toBe(false);
+    expect(isValidStore({ error: 'x' })).toBe(false);
+    expect(isValidStore(null)).toBe(false);
   });
 });

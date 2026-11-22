@@ -268,3 +268,31 @@ export function occupancyView(store: OccupancyStore, stationId: string): Occupan
     lastSampleAt: store.lastSampleAt,
   };
 }
+
+// --- Sauvegarde hebdomadaire (server/data/occupancy.json) -------------------------------------------
+
+// Fichier valide : bon format et au moins une station rapprochée (sinon, ne pas écraser la sauvegarde)
+export function isValidStore(data: unknown): data is OccupancyStore {
+  const s = data as OccupancyStore;
+  return !!s && s.version === 1 && typeof s.mapping === 'object' && Object.keys(s.mapping || {}).length > 0 && typeof s.slots === 'object';
+}
+
+// JSON lisible et diff réduit : une station par ligne dans chaque section
+export function formatStore(store: OccupancyStore): string {
+  const keys = Object.keys(store) as (keyof OccupancyStore)[];
+  const lines = ['{'];
+  keys.forEach((key, i) => {
+    const value = store[key] as unknown;
+    const comma = i < keys.length - 1 ? ',' : '';
+    if (value && typeof value === 'object' && !Array.isArray(value) && Object.keys(value).length) {
+      const entries = Object.entries(value as Record<string, unknown>).sort(([a], [b]) => a.localeCompare(b, 'en', { numeric: true }));
+      lines.push(`  ${JSON.stringify(key)}: {`);
+      entries.forEach(([k, v], j) => lines.push(`    ${JSON.stringify(k)}: ${JSON.stringify(v)}${j < entries.length - 1 ? ',' : ''}`));
+      lines.push(`  }${comma}`);
+    } else {
+      lines.push(`  ${JSON.stringify(key)}: ${JSON.stringify(value)}${comma}`);
+    }
+  });
+  lines.push('}');
+  return lines.join('\n') + '\n';
+}

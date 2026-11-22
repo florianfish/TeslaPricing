@@ -43,7 +43,7 @@ Ce sont des données personnelles (lieux, dates, montants) : l'onglet et la rout
 
 L'add-on relève toutes les 15 minutes l'état des bornes Tesla publié en open data (base nationale IRVE de transport.data.gouv.fr : ≈ 1,7 Mo compressé par relevé, soit ≈ 160 Mo par jour). La fiche de chaque station affiche alors son **affluence** : bornes occupées en ce moment, moyenne par jour et par heure, et la **meilleure heure** d'ici ce soir. La grille se remplit au fil des semaines.
 
-Les stations sont rapprochées des données publiques par leur position, une fois par semaine (fichier statique de ≈ 130 Mo). Données conservées dans `/data/occupancy.json`.
+Les stations sont rapprochées des données publiques par leur position, une fois par semaine (fichier statique de ≈ 130 Mo). Données conservées dans `/data/occupancy.json`, et sauvegardées chaque dimanche à 20 h sur GitHub (`server/data/occupancy.json`, via la **Clé d'import**) : un add-on réinstallé repart de cette sauvegarde.
 
 L'onglet **Affluence** montre toutes les stations en ce moment (les plus chargées, les plus calmes, celles plus chargées que d'habitude). L'onglet **Mises à jour** indique l'état du relevé : dernier relevé, stations suivies, remplissage de la carte d'affluence, et une alerte si le relevé est en retard ou en échec.
 

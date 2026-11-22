@@ -18,6 +18,7 @@
     "collector": "tsx scripts/build-collector.ts",
     "import-prices": "tsx scripts/import-prices.ts",
     "collect-prices": "tsx scripts/collect-prices.ts",
+    "backup-occupancy": "tsx scripts/backup-occupancy.ts",
     "purge-history": "tsx scripts/purge-history.ts"
   },
   "dependencies": {

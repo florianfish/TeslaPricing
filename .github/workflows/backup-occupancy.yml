@@ -1,0 +1,69 @@
+name: "Sauvegarde hebdomadaire de l'occupation"
+
+# Chaque dimanche à 20:00 heure de Paris : copie les cumuls d'occupation de l'add-on
+# (GET /api/occupancy/export) dans server/data/occupancy.json et les commite. Une instance neuve
+# (ou un add-on réinstallé) repart de ce fichier au lieu de zéro.
+#
+# Secrets : IMPORT_KEY. Variable ou secret : TESLAPRICING_URL (adresse publique de l'add-on).
+
+on:
+  schedule:
+    # GitHub planifie en UTC : 20:00 à Paris = 19:00 UTC en hiver, 18:00 UTC en été.
+    # Les deux horaires sont planifiés ; l'étape « Heure de Paris » ne garde que celui de 20 h.
+    - cron: '0 18 * * 0'
+    - cron: '0 19 * * 0'
+  workflow_dispatch:
+
+concurrency:
+  group: backup-occupancy
+  cancel-in-progress: false
+
+jobs:
+  sauvegarde:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # commit et push de server/data/occupancy.json
+    steps:
+      - name: Heure de Paris
+        id: heure
+        run: |
+          heure=$(TZ=Europe/Paris date +%H)
+          echo "Il est ${heure} h à Paris."
+          if [ "${{ github.event_name }}" = "schedule" ] && [ "$heure" != "20" ]; then
+            echo "Pas 20 h à Paris (changement d'heure) : sauvegarde faite par l'autre horaire."
+            echo "lancer=non" >> "$GITHUB_OUTPUT"
+          else
+            echo "lancer=oui" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Récupérer le code source
+        if: steps.heure.outputs.lancer == 'oui'
+        uses: actions/checkout@v4
+
+      - name: Configurer Node.js
+        if: steps.heure.outputs.lancer == 'oui'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'npm'
+
+      - name: Installer les dépendances
+        if: steps.heure.outputs.lancer == 'oui'
+        run: npm ci --legacy-peer-deps
+
+      - name: Exporter l'occupation depuis l'add-on
+        if: steps.heure.outputs.lancer == 'oui'
+        env:
+          TESLAPRICING_URL: ${{ vars.TESLAPRICING_URL || secrets.TESLAPRICING_URL }}
+          IMPORT_KEY: ${{ secrets.IMPORT_KEY }}
+        run: npm run backup-occupancy
+
+      - name: Commiter et pousser la sauvegarde
+        if: steps.heure.outputs.lancer == 'oui'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore(data): sauvegarde hebdomadaire de l'occupation des stations"
+          file_pattern: "server/data/occupancy.json"
+          commit_user_name: "github-actions[bot]"
+          commit_user_email: "github-actions[bot]@users.noreply.github.com"
+          commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
