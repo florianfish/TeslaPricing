@@ -275,6 +275,7 @@ describe('mes recharges (GET /api/my-charges)', () => {
     resetMyChargesCache();
     process.env.TESLAMATE_API_URL = `http://127.0.0.1:${(teslamate.address() as AddressInfo).port}`;
     process.env.TESLAMATE_API_TOKEN = 'jeton-tm';
+    delete process.env.TESLAMATE_API_USER;
     try {
       expect((await getWith('/api/config', 'cle-de-test')).body.myCharges).toBe(true);
       const { status, body } = await getWith('/api/my-charges', 'cle-de-test');
@@ -283,11 +284,28 @@ describe('mes recharges (GET /api/my-charges)', () => {
       expect(body.sessions).toHaveLength(1);
       expect(body.sessions[0]).toMatchObject({ stationId: '6507', period: 'peak', cost: 7.56, energyUsed: 21 });
       expect(body.totals).toMatchObject({ sessions: 1, cost: 7.56 });
+
+      // Identifiant + mot de passe (MyTeslaMate) : authentification Basic
+      process.env.TESLAMATE_API_USER = 'abcd';
+      process.env.TESLAMATE_API_TOKEN = 'mot-de-passe';
+      resetMyChargesCache();
+      expect((await getWith('/api/my-charges', 'cle-de-test')).status).toBe(200);
+      expect(seen.at(-1)).toBe(`/api/v1/cars/1/charges?page=1&show=100 Basic ${Buffer.from('abcd:mot-de-passe').toString('base64')}`);
     } finally {
       teslamate.close();
       delete process.env.TESLAMATE_API_URL;
       delete process.env.TESLAMATE_API_TOKEN;
+      delete process.env.TESLAMATE_API_USER;
     }
+  });
+
+  it('authentification : Basic pour MyTeslaMate (identifiant = sous-domaine), Bearer pour un jeton', async () => {
+    const { myTeslaMateUser, teslaMateAuthHeader } = await import('../server/my-charges');
+    expect(myTeslaMateUser('https://abcd.api.myteslamate.com/api/v1')).toBe('abcd');
+    expect(myTeslaMateUser('https://teslamate.exemple.fr/api/v1')).toBe('');
+    expect(teslaMateAuthHeader({ user: 'abcd', secret: 'mdp' })).toEqual({ Authorization: `Basic ${Buffer.from('abcd:mdp').toString('base64')}` });
+    expect(teslaMateAuthHeader({ user: '', secret: 'jeton' })).toEqual({ Authorization: 'Bearer jeton' });
+    expect(teslaMateAuthHeader({ user: 'abcd', secret: '' })).toEqual({});
   });
 });
 

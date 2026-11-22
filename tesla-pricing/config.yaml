@@ -1,5 +1,5 @@
 name: Tesla Pricing
-version: "2.0.0"
+version: "2.0.1"
 slug: tesla_pricing
 description: Observatoire des Superchargeurs Tesla en France (carte, tarifs, historique, simulateur)
 url: https://github.com/florianfish/TeslaPricing
@@ -33,6 +33,7 @@ options:
   telegram_bot_token: ""
   telegram_chat_id: ""
   teslamate_api_url: ""
+  teslamate_api_user: ""
   teslamate_api_token: ""
   teslamate_car_id: 1
 schema:
@@ -43,6 +44,7 @@ schema:
   telegram_bot_token: password?
   telegram_chat_id: str?
   teslamate_api_url: match(^(https?://[^\s?#]+)?$)?
+  teslamate_api_user: str?
   teslamate_api_token: password?
   teslamate_car_id: int(1,)?
 environment:

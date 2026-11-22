@@ -19,9 +19,12 @@ configuration:
   teslamate_api_url:
     name: TeslaMate API URL
     description: URL of your TeslaMate API (teslamateapi, or the one provided by MyTeslaMate) for the "Mes recharges" tab comparing your Supercharger bills with recorded prices. Only shown through Home Assistant. Leave empty to disable.
+  teslamate_api_user:
+    name: TeslaMate API username
+    description: Login for username/password authentication. Empty for a MyTeslaMate instance (abcd.api.myteslamate.com) = the address subdomain (abcd); empty for any other instance = token authentication.
   teslamate_api_token:
-    name: TeslaMate API token
-    description: Access token for TeslaMate API (Authorization Bearer header), if your instance requires one.
+    name: TeslaMate API password or token
+    description: Password (with a username or a MyTeslaMate instance), or access token (Authorization Bearer header) for a self-hosted TeslaMate API.
   teslamate_car_id:
     name: TeslaMate car ID
     description: TeslaMate ID of the car (1 for the first one).
