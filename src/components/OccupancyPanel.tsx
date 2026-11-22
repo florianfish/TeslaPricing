@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Users } from 'lucide-react';
-import type { SuperchargerPricing } from '../types';
+import type { SuperchargerPricing, PricebookSlot } from '../types';
+import { rateAtMinute } from '../pricebooks';
 import { tariffPeriodAt } from '../hours';
 import { DAY_LABELS, ageLabel, bestHourToday, parisDayHour, type OccupancyResponse } from '../occupancy';
 
 interface Props {
   stationId: string;
   pricing: SuperchargerPricing;
+  pricebooks?: PricebookSlot[] | null; // grille complète : prix exact de l'heure, palier intermédiaire compris
   now: Date;
 }
 
@@ -14,7 +16,7 @@ const cellStyle = (rate: number | null): React.CSSProperties =>
   rate == null ? {} : { backgroundColor: `rgba(239, 68, 68, ${(0.08 + 0.85 * rate).toFixed(2)})` };
 
 // Affluence de la station : en ce moment, moyenne par jour × heure, meilleure heure d'ici ce soir
-export const OccupancyPanel: React.FC<Props> = ({ stationId, pricing, now }) => {
+export const OccupancyPanel: React.FC<Props> = ({ stationId, pricing, pricebooks, now }) => {
   const [data, setData] = useState<OccupancyResponse | null>(null);
 
   useEffect(() => {
@@ -35,7 +37,10 @@ export const OccupancyPanel: React.FC<Props> = ({ stationId, pricing, now }) => 
   const { day, hour } = parisDayHour(now);
   const best = bestHourToday(data.grid, now);
   const bestPeriod = best ? tariffPeriodAt(pricing.peakHours, best.hour * 60) : null;
-  const bestPrice = bestPeriod === 'peak' ? pricing.teslaPeak : bestPeriod === 'offPeak' ? pricing.teslaOffPeak : null;
+  // Jour de la grille Tesla au format JavaScript (0 = dimanche) ; parisDayHour compte depuis lundi
+  const gridRate = best && pricebooks?.length ? rateAtMinute(pricebooks, 'TSLA', best.hour * 60, (day + 1) % 7) : null;
+  const bestPrice =
+    gridRate ?? (bestPeriod === 'peak' ? pricing.teslaPeak : bestPeriod === 'offPeak' ? pricing.teslaOffPeak : null);
   const hasGrid = data.grid.some((row) => row.some((v) => v != null));
 
   return (
@@ -73,9 +78,11 @@ export const OccupancyPanel: React.FC<Props> = ({ stationId, pricing, now }) => 
                 {String(best.hour).padStart(2, '0')} h · {Math.round(best.rate * 100)} % d'occupation
               </strong>
               <div className="text-[10px] text-slate-500 mt-0.5">
-                {bestPeriod
-                  ? `${bestPeriod === 'peak' ? 'Heures pleines' : 'Heures creuses'} : ${bestPrice?.toFixed(2)} €/kWh (Tesla)`
-                  : 'Moyenne des semaines passées'}
+                {gridRate !== null
+                  ? `Tarif Tesla à cette heure : ${gridRate.toFixed(2)} €/kWh`
+                  : bestPeriod
+                    ? `${bestPeriod === 'peak' ? 'Heures pleines' : 'Heures creuses'} : ${bestPrice?.toFixed(2)} €/kWh (Tesla)`
+                    : 'Moyenne des semaines passées'}
               </div>
             </>
           ) : (

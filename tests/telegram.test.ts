@@ -274,6 +274,19 @@ describe('Relevé des tarifs : message Telegram', () => {
     expect(text).toContain('<a href="https://suc.example.fr/superchargeur-lexysupercharger-10338">Fiche Observatoire</a>');
   });
 
+  it('grille à trois prix : détaillée sous le résumé HP / HC', () => {
+    const grid = [
+      { vehicle: 'TSLA', fee: 'CHARGING', rate: 0.4, uom: 'kwh', start: '10:00', end: '20:00', days: null, tou: true },
+      { vehicle: 'TSLA', fee: 'CHARGING', rate: 0.28, uom: 'kwh', start: '20:00', end: '00:00', days: null, tou: true },
+      { vehicle: 'TSLA', fee: 'CHARGING', rate: 0.19, uom: 'kwh', start: '00:00', end: '10:00', days: null, tou: true },
+    ];
+    expect(formatPriceChange({ ...ferin, afterGrid: grid })).toContain(
+      '📋 Grille Tesla : 0,19 (00:00 – 10:00) · 0,40 (10:00 – 20:00) · 0,28 (20:00 – 00:00)'
+    );
+    // Grille à deux prix inchangée : pas de ligne en plus
+    expect(formatPriceChange({ ...ferin, beforeGrid: grid.slice(0, 2), afterGrid: grid.slice(0, 2) })).not.toContain('Grille Tesla');
+  });
+
   it('en-tête : bilan du relevé, stations en échec, import raté ; tri par nom', () => {
     const [msg] = formatPriceCollectionMessage(
       {

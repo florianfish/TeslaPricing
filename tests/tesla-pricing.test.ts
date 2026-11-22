@@ -3,6 +3,7 @@ import {
   parseTeslaData,
   applyTeslaData,
   pricingChanged,
+  gridChanged,
   logImport,
   purgePriceHistory,
   type DatabaseSchema,
@@ -85,6 +86,42 @@ describe('applyTeslaData', () => {
     expect(db.priceSnapshots.at(-1)?.id).toBe('6507-2026-10-08');
   });
 
+  // Grille à trois prix : HP 0,36 (09–20 h), palier 20 h – minuit, HC 0,16 (minuit – 9 h)
+  const threeLevels = (mid: number) => ({
+    effectivePricebooks: [
+      { feeType: 'CHARGING', vehicleMakeType: 'TSLA', isTou: true, rateBase: 0.36, startTime: '09:00', endTime: '20:00', days: '0,1,2,3,4,5,6' },
+      { feeType: 'CHARGING', vehicleMakeType: 'TSLA', isTou: true, rateBase: mid, startTime: '20:00', endTime: '00:00', days: '0,1,2,3,4,5,6' },
+      { feeType: 'CHARGING', vehicleMakeType: 'TSLA', isTou: true, rateBase: 0.16, startTime: '00:00', endTime: '09:00', days: '0,1,2,3,4,5,6' },
+      { feeType: 'CHARGING', vehicleMakeType: 'NTSLA', isTou: true, rateBase: 0.53, startTime: '09:00', endTime: '20:00' },
+      { feeType: 'CHARGING', vehicleMakeType: 'NTSLA', isTou: true, rateBase: 0.22, startTime: '20:00', endTime: '09:00' },
+    ],
+  });
+
+  it('première grille complète : conservée sur la station, sans compter comme un changement', () => {
+    const db = loadFixture();
+    const station = db.superchargers.find((s) => s.id === '6507')!;
+    const before = db.priceSnapshots.length;
+
+    expect(applyTeslaData(db, station, threeLevels(0.28), '2026-10-08').outcome).toBe('confirmed');
+    expect(station.pricebooks?.find((s) => s.vehicle === 'TSLA' && s.start === '20:00')).toMatchObject({ vehicle: 'TSLA', rate: 0.28 });
+    expect(db.priceSnapshots).toHaveLength(before);
+  });
+
+  it('palier intermédiaire modifié, HP / HC inchangés : « updated », grille historisée', () => {
+    const db = loadFixture();
+    const station = db.superchargers.find((s) => s.id === '6507')!;
+    applyTeslaData(db, station, threeLevels(0.28), '2026-10-08');
+
+    const result = applyTeslaData(db, station, threeLevels(0.3), '2026-10-15');
+
+    expect(result).toEqual({ outcome: 'updated', changePercentage: 0 });
+    expect(station.currentPricing).toMatchObject({ teslaPeak: 0.36, teslaOffPeak: 0.16 });
+    expect(station.pricebooks?.find((s) => s.vehicle === 'TSLA' && s.start === '20:00')?.rate).toBe(0.3);
+    expect(station.priceHistory?.at(-1)?.pricebooks?.find((s) => s.vehicle === 'TSLA' && s.start === '20:00')?.rate).toBe(0.3);
+    // Même grille au relevé suivant : rien de nouveau
+    expect(applyTeslaData(db, station, threeLevels(0.3), '2026-10-22').outcome).toBe('confirmed');
+  });
+
   it("réponse invalide : « invalid », la station n'est pas marquée comme relevée", () => {
     const db = loadFixture();
     const station = db.superchargers.find((s) => s.id === '6507')!;
@@ -138,6 +175,16 @@ describe('purgePriceHistory', () => {
     ]);
     // La courbe nationale n'est pas purgée
     expect(db.nationalHistory).toHaveLength(3);
+  });
+});
+
+describe('gridChanged', () => {
+  const slot = (rate: number) => [{ vehicle: 'TSLA', fee: 'CHARGING', rate, uom: 'kwh', start: '20:00', end: '00:00', days: null, tou: true }];
+  it('une grille absente d’un côté n’est pas un changement', () => {
+    expect(gridChanged(undefined, slot(0.3))).toBe(false);
+    expect(gridChanged(slot(0.3), [])).toBe(false);
+    expect(gridChanged(slot(0.3), slot(0.3))).toBe(false);
+    expect(gridChanged(slot(0.3), slot(0.31))).toBe(true);
   });
 });
 
