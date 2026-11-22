@@ -65,7 +65,7 @@ describe('lecture', () => {
   });
 
   it('GET /api/config : Google Analytics désactivé par défaut', async () => {
-    expect((await get('/api/config')).body).toEqual({ gaMeasurementId: null, myCharges: false });
+    expect((await get('/api/config')).body).toEqual({ gaMeasurementId: null, myCharges: false, occupancy: true });
   });
 
   it('GET /api/superchargers : toutes les stations', async () => {
@@ -326,6 +326,26 @@ describe('occupation (GET /api/superchargers/:id/occupancy)', () => {
     expect(body.grid[0][0]).toBeNull();
     expect((await get('/api/superchargers/662/occupancy')).body).toMatchObject({ matched: false, samples: 0 });
     expect((await get('/api/superchargers/inconnue/occupancy')).status).toBe(404);
+  });
+
+  it('état du relevé (suivi) et affluence de toutes les stations en ce moment', async () => {
+    const status = (await get('/api/occupancy/status')).body;
+    expect(status).toMatchObject({ state: 'pending', intervalMin: 15, matchedStations: 1, liveStations: 1, samples: 2, lastSampleAt: null });
+    expect(status.gridFill).toBeCloseTo(1 / 168);
+
+    const { loadOccupancyStore, getOccupancyStatus } = await import('../server/occupancy');
+    const store = loadOccupancyStore();
+    store.lastSampleAt = '2026-11-22T10:00:00Z';
+    expect(getOccupancyStatus(new Date('2026-11-22T10:20:00Z')).state).toBe('ok');
+    expect(getOccupancyStatus(new Date('2026-11-22T11:00:00Z')).state).toBe('late'); // > 3 × 15 min
+    store.lastError = '2026-11-22T10:15:00Z : HTTP 503';
+    expect(getOccupancyStatus(new Date('2026-11-22T10:20:00Z')).state).toBe('error');
+    store.lastError = null;
+
+    const live = (await get('/api/occupancy/now')).body;
+    expect(live).toMatchObject({ enabled: true, lastSampleAt: '2026-11-22T10:00:00Z' });
+    expect(live.stations).toEqual([expect.objectContaining({ id: '6507', occupied: 2, total: 2, region: expect.any(String) })]);
+    expect((await get('/api/config')).body.occupancy).toBe(true);
   });
 });
 

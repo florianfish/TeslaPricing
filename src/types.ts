@@ -132,6 +132,36 @@ export interface SuperchargerStats {
   lastSyncTime: string;
 }
 
+// Relevé de l'occupation des stations (données IRVE) : /api/occupancy/status
+export interface OccupancyStatus {
+  state: 'ok' | 'late' | 'error' | 'pending' | 'disabled';
+  intervalMin: number;
+  lastSampleAt: string | null;
+  lastError: string | null;
+  mappingAt: string | null;      // dernier rapprochement bornes ↔ stations
+  matchedStations: number;       // stations rattachées à des bornes publiées
+  openStations: number;
+  liveStations: number;          // stations avec un état à jour au dernier relevé
+  samples: number;               // relevés cumulés (toutes stations)
+  gridFill: number;              // part des cases jour × heure affichables (0–1)
+}
+
+// Affluence de toutes les stations en ce moment : /api/occupancy/now
+export interface OccupancyLive {
+  enabled: boolean;
+  lastSampleAt: string | null;
+  stations: {
+    id: string;
+    name: string;
+    city: string;
+    region: string;
+    occupied: number;
+    total: number;
+    at: string;
+    usual: number | null;        // occupation habituelle à ce jour et cette heure (0–1)
+  }[];
+}
+
 export interface SuperchargerFilterOptions {
   search?: string;
   status?: string;

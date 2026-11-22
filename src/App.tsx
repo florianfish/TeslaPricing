@@ -7,6 +7,7 @@ import { PriceEvolutionView } from './components/PriceEvolutionView';
 import { CostSimulator } from './components/CostSimulator';
 import { PriceUpdatesView } from './components/PriceUpdatesView';
 import { MyChargesView } from './components/MyChargesView';
+import { OccupancyLiveView } from './components/OccupancyLiveView';
 import { StationDetailModal } from './components/StationDetailModal';
 import { ReferralEncart } from './components/ReferralEncart';
 import { CookieBanner } from './components/CookieBanner';
@@ -30,10 +31,14 @@ export default function App() {
   const online = useSyncExternalStore(subscribePwa, isOnline);
   // Onglet « Mes recharges » : proposé par le serveur seulement via Home Assistant, TeslaMate configuré
   const [showMyCharges, setShowMyCharges] = useState(false);
+  const [showOccupancy, setShowOccupancy] = useState(false);
   useEffect(() => {
     fetch('api/config')
       .then((res) => (res.ok ? res.json() : null))
-      .then((config) => setShowMyCharges(!!config?.myCharges))
+      .then((config) => {
+        setShowMyCharges(!!config?.myCharges);
+        setShowOccupancy(!!config?.occupancy);
+      })
       .catch(() => {});
   }, []);
 
@@ -115,6 +120,7 @@ export default function App() {
         activeTab={activeTab}
         onTabChange={setActiveTab}
         showMyCharges={showMyCharges}
+        showOccupancy={showOccupancy}
         stats={stats}
       />
 
@@ -206,6 +212,11 @@ export default function App() {
             )}
 
             {/* View 6: My Supercharger sessions vs recorded prices (Home Assistant only) */}
+            {/* View 7: Live occupancy across all stations (IRVE open data) */}
+            {activeTab === 'occupancy' && showOccupancy && (
+              <OccupancyLiveView superchargers={superchargers} onSelectSupercharger={openStation} />
+            )}
+
             {activeTab === 'charges' && showMyCharges && (
               <MyChargesView superchargers={superchargers} onSelectSupercharger={openStation} />
             )}

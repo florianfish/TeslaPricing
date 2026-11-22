@@ -45,6 +45,8 @@ L'add-on relève toutes les 15 minutes l'état des bornes Tesla publié en open 
 
 Les stations sont rapprochées des données publiques par leur position, une fois par semaine (fichier statique de ≈ 130 Mo). Données conservées dans `/data/occupancy.json`.
 
+L'onglet **Affluence** montre toutes les stations en ce moment (les plus chargées, les plus calmes, celles plus chargées que d'habitude). L'onglet **Mises à jour** indique l'état du relevé : dernier relevé, stations suivies, remplissage de la carte d'affluence, et une alerte si le relevé est en retard ou en échec.
+
 Régler l'intervalle avec l'option **Occupation des stations (minutes)**, ou `0` pour désactiver.
 
 ### Google Analytics
