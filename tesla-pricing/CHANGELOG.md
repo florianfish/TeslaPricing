@@ -1,6 +1,6 @@
 # Changelog
 
-## À venir
+## 3.0.0
 
 - Appli Android « Superchargeurs » : le site en plein écran, avec son icône et son écran de démarrage, sans barre d'adresse. Nouvelle option « Empreintes de l'appli Android » : les empreintes SHA-256 de ses clés de signature, publiées dans `/.well-known/assetlinks.json` pour qu'Android reconnaisse l'appli.
 
