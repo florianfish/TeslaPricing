@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.0.0
+
+- Grille tarifaire complète : la fiche de chaque station affiche maintenant tous les prix publiés par Tesla, créneau par créneau, pour les Tesla, les autres véhicules et le tarif « MSP ». Beaucoup de stations ont trois prix dans la journée : à Gassin, 0,40 € de 10 h à 20 h, 0,28 € de 20 h à minuit et 0,19 € de minuit à 10 h, alors que seuls les prix heures pleines / heures creuses étaient affichés jusqu'ici. Le créneau en cours est mis en évidence.
+- Affluence des stations : bornes occupées en ce moment, affluence moyenne par jour et par heure, et meilleure heure d'ici ce soir avec son prix, d'après les données publiques des bornes (transport.data.gouv.fr). L'add-on relève l'occupation toutes les 15 minutes (nouvelle option « Occupation des stations », 0 pour désactiver) ; la grille d'affluence se remplit au fil des semaines.
+- Mes recharges : nouvel onglet qui compare chacune de vos recharges au Superchargeur, lue dans TeslaMate ou MyTeslaMate, au tarif relevé pour la station ce jour-là : prix payé au kWh, écart, et coût de la même recharge en heures creuses. À activer avec les nouvelles options « Adresse de TeslaMate API » et « Jeton de TeslaMate API ». Ces données personnelles ne sont visibles que depuis Home Assistant, jamais sur l'adresse publique du site.
+- Le relevé hebdomadaire des tarifs signale aussi les changements de grille, même quand les prix heures pleines / heures creuses ne bougent pas.
+
 ## 1.7.0
 
 - Les tarifs sont désormais relevés automatiquement chaque semaine, sans navigateur ouvert : un workflow GitHub Actions interroge Tesla via Bright Data, envoie le relevé à l'add-on et annonce sur Telegram les stations dont le tarif a changé. L'extension Chrome reste utilisable en secours.
