@@ -5,7 +5,7 @@ import { offPeakHours, currentTariffPeriod } from '../src/hours';
 import { daysSince, freshnessLevel, relativeDays, stationFreshness } from '../src/freshness';
 import { distanceKm, formatDistance } from '../src/geo';
 import { parseRoute, routeHash, findStation } from '../src/router';
-import { CHANGELOG, parseChangelog } from '../src/changelog';
+import { CHANGELOG, parseChangelog, publishedReleases } from '../src/changelog';
 import { teslaStationUrl } from '../src/tesla';
 import { cachedAt } from '../src/pwa';
 import { loadFixture } from './helpers';
@@ -116,6 +116,11 @@ describe('changelog', () => {
       { version: '2.0.0', changes: ['Un suite', 'Deux'] },
       { version: '1.0.0', changes: ['Init'] },
     ]);
+  });
+
+  it('n’affiche pas les nouveautés « À venir » pas encore publiées', () => {
+    const releases = parseChangelog('# Changelog\n\n## À venir\n\n- Bientôt\n\n## 1.0.0\n\n- Init\n');
+    expect(publishedReleases(releases)).toEqual([{ version: '1.0.0', changes: ['Init'] }]);
   });
 
   it('documente la version de l’add-on en tête du CHANGELOG', () => {
