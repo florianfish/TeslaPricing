@@ -4,6 +4,7 @@
 
 - Appli Android : elle ne se fermait plus aussitôt ouverte. Elle démarre désormais normalement et affiche le site.
 - L'encart de l'offre de parrainage, une fois fermé, ne réapparaît plus pendant 15 jours.
+- Carte sur téléphone : les filtres et le choix du fond de carte ne se chevauchent plus ; les filtres tiennent sur une ligne qui défile.
 
 ## 3.0.0
 

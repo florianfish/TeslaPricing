@@ -302,15 +302,20 @@ export const FranceMap: React.FC<FranceMapProps> = ({
       {/* Map Container */}
       <div ref={mapContainerRef} className="w-full h-full z-0" />
 
-      {/* Floating Map Controls & Filters */}
-      <div className="absolute top-4 left-4 z-10 flex flex-wrap gap-2 max-w-[calc(100%-2rem)]">
-        <div className="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-900/90 backdrop-blur-md rounded-xl border border-slate-700/80 shadow-lg text-xs">
-          <Filter className="w-3.5 h-3.5 text-red-400" />
-          <span className="font-semibold text-slate-300 mr-1">Filtres :</span>
+      {/* Commandes flottantes : empilées sur téléphone (sans chevauchement), filtres à gauche et fond de carte
+          à droite à partir de la tablette. Le conteneur laisse passer les gestes vers la carte entre les blocs. */}
+      <div className="absolute top-3 inset-x-3 sm:top-4 sm:inset-x-4 z-10 flex flex-col md:flex-row md:items-start md:justify-between gap-2 pointer-events-none">
+      <div className="flex flex-wrap gap-2 min-w-0 md:flex-1 [&>*]:pointer-events-auto">
+        <div
+          data-testid="map-filters"
+          className="flex items-center gap-1.5 max-w-full overflow-x-auto [scrollbar-width:none] px-3 py-1.5 bg-slate-900/90 backdrop-blur-md rounded-xl border border-slate-700/80 shadow-lg text-xs"
+        >
+          <Filter className="w-3.5 h-3.5 shrink-0 text-red-400" />
+          <span className="hidden sm:inline shrink-0 font-semibold text-slate-300 mr-1">Filtres :</span>
 
           <button
             onClick={() => setMapFilter('ALL')}
-            className={`px-2.5 py-1 rounded-lg font-medium transition-colors ${
+            className={`shrink-0 whitespace-nowrap px-2.5 py-1 rounded-lg font-medium transition-colors ${
               mapFilter === 'ALL'
                 ? 'bg-red-600 text-white'
                 : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
@@ -321,7 +326,7 @@ export const FranceMap: React.FC<FranceMapProps> = ({
 
           <button
             onClick={() => setMapFilter('OTHER_EVS')}
-            className={`px-2.5 py-1 rounded-lg font-medium transition-colors ${
+            className={`shrink-0 whitespace-nowrap px-2.5 py-1 rounded-lg font-medium transition-colors ${
               mapFilter === 'OTHER_EVS'
                 ? 'bg-red-600 text-white'
                 : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
@@ -332,7 +337,7 @@ export const FranceMap: React.FC<FranceMapProps> = ({
 
           <button
             onClick={() => setMapFilter('HIGH_POWER')}
-            className={`px-2.5 py-1 rounded-lg font-medium transition-colors ${
+            className={`shrink-0 whitespace-nowrap px-2.5 py-1 rounded-lg font-medium transition-colors ${
               mapFilter === 'HIGH_POWER'
                 ? 'bg-red-600 text-white'
                 : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
@@ -343,7 +348,7 @@ export const FranceMap: React.FC<FranceMapProps> = ({
 
           <button
             onClick={() => setMapFilter('CHEAP')}
-            className={`px-2.5 py-1 rounded-lg font-medium transition-colors ${
+            className={`shrink-0 whitespace-nowrap px-2.5 py-1 rounded-lg font-medium transition-colors ${
               mapFilter === 'CHEAP'
                 ? 'bg-red-600 text-white'
                 : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
@@ -421,8 +426,8 @@ export const FranceMap: React.FC<FranceMapProps> = ({
         )}
       </div>
 
-      {/* Top-Right Style Switcher (100% Free & No API Key Required) */}
-      <div className="absolute top-4 right-4 z-10 flex items-center space-x-1 p-1 bg-slate-900/90 backdrop-blur-md rounded-xl border border-slate-700/80 shadow-lg text-xs">
+      {/* Fond de carte (tuiles libres, sans clé d'API) */}
+      <div data-testid="map-styles" className="pointer-events-auto self-start shrink-0 flex items-center space-x-1 p-1 bg-slate-900/90 backdrop-blur-md rounded-xl border border-slate-700/80 shadow-lg text-xs">
         <div className="flex items-center px-2 py-1 text-slate-400 font-semibold gap-1.5 border-r border-slate-800 mr-0.5">
           <Layers className="w-3.5 h-3.5 text-red-400" />
           <span className="hidden sm:inline">Fond de carte :</span>
@@ -460,6 +465,7 @@ export const FranceMap: React.FC<FranceMapProps> = ({
         >
           Satellite
         </button>
+      </div>
       </div>
 
       {/* Map Legend */}
