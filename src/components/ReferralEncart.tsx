@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Gift, ExternalLink, Sparkles, X, ChevronRight, Zap } from 'lucide-react';
+import { isReferralSnoozed, snoozeReferral } from '../referral';
 
 interface ReferralEncartProps {
   variant?: 'banner' | 'card' | 'compact';
@@ -10,7 +11,8 @@ export const ReferralEncart: React.FC<ReferralEncartProps> = ({
   variant = 'banner',
   className = '',
 }) => {
-  const [isDismissed, setIsDismissed] = useState(false);
+  // Le bandeau fermé reste masqué 15 jours ; la variante compacte n'a pas de bouton de fermeture
+  const [isDismissed, setIsDismissed] = useState(() => variant !== 'compact' && isReferralSnoozed());
   const referralUrl = 'https://www.tesla.com/fr_Fr/referral/florian572745';
 
   if (isDismissed) {
@@ -106,7 +108,10 @@ export const ReferralEncart: React.FC<ReferralEncartProps> = ({
 
           <button
             type="button"
-            onClick={() => setIsDismissed(true)}
+            onClick={() => {
+              snoozeReferral();
+              setIsDismissed(true);
+            }}
             aria-label="Fermer l'encart"
             title="Fermer l'encart"
             className="p-2 rounded-xl text-slate-400 hover:text-slate-200 hover:bg-slate-800/80 transition-colors shrink-0"

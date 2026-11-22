@@ -198,3 +198,22 @@ test.describe('Application installable (PWA)', () => {
     await context.setOffline(false);
   });
 });
+
+test.describe('Encart de parrainage', () => {
+  test('une fois fermé, il n’est plus proposé pendant 15 jours', async ({ page }) => {
+    await page.clock.install({ time: new Date('2026-11-01T10:00:00Z') });
+    await page.goto('#/carte');
+    const offer = page.getByText('Profiter des 1 000 km offerts');
+    await expect(offer).toBeVisible();
+    await page.getByRole('button', { name: "Fermer l'encart" }).click();
+    await expect(offer).toBeHidden();
+
+    await page.reload();
+    await expect(page.getByText('Carte de France')).toBeVisible();
+    await expect(offer).toBeHidden();
+
+    await page.clock.setSystemTime(new Date('2026-11-16T10:00:01Z'));
+    await page.reload();
+    await expect(offer).toBeVisible();
+  });
+});
