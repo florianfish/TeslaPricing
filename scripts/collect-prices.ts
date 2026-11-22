@@ -28,11 +28,19 @@ const DELAY_MS = Math.max(1, Number(env('DELAY_SEC', '5')) || 5) * 1000;
 const LIMIT = Number(env('LIMIT')) || Infinity;
 // Arrêt si les N premières stations échouent toutes (Bright Data ou Tesla bloque tout)
 const EARLY_ABORT_AFTER = 10;
+// Requêtes en parallèle : Bright Data change d'adresse IP à chaque requête, la limite de Tesla par
+// adresse (≈ 1 requête / 5 s) ne s'applique donc pas à l'ensemble. Chaque file garde DELAY_SEC entre ses requêtes.
+const CONCURRENCY = Math.min(8, Math.max(1, Math.round(Number(env('CONCURRENCY', '3')) || 3)));
+// Durée maximale du relevé : au-delà, plus de nouvelle station, et ce qui est relevé est importé
+// (sinon GitHub coupe le job et tout est perdu, comme le 22/11/2026 à la station 209/292)
+const MAX_MINUTES = Number(env('MAX_MINUTES', '200')) || 200;
 
 const brightData: BrightDataConfig = {
   token: env('BRIGHTDATA_API_TOKEN'),
   zone: env('BRIGHTDATA_ZONE', 'web_unlocker1'),
   country: env('BRIGHTDATA_COUNTRY', 'fr'),
+  // Une requête bloquée ne doit pas immobiliser une file 2 min : elle est retentée (raté passager)
+  timeoutMs: 60_000,
 };
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -76,11 +84,32 @@ async function main(): Promise<number> {
   let requests = 0;
   let abortReason: string | null = null;
 
-  for (let i = 0; i < stations.length; i++) {
+  const deadline = Date.now() + MAX_MINUTES * 60_000;
+  let next = 0;
+  let done = 0;
+  let outOfTime = false;
+
+  const worker = async (lane: number) => {
+    // Départs décalés pour ne pas envoyer les premières requêtes ensemble
+    await sleep((lane * DELAY_MS) / CONCURRENCY);
+    let first = true;
+    while (!abortReason) {
+      if (Date.now() > deadline) {
+        outOfTime = true;
+        return;
+      }
+      const i = next++;
+      if (i >= stations.length) return;
+      if (!first) await sleep(DELAY_MS);
+      first = false;
+      await collectStation(i);
+    }
+  };
+
+  const collectStation = async (i: number) => {
     const [id, locationId, slug] = stations[i];
     const station = current.get(id);
     const name = station?.name || id;
-    if (i > 0) await sleep(DELAY_MS);
 
     const r = await fetchStation([locationId, slug].filter((v, k, a) => v && a.indexOf(v) === k), brightData, {
       onAttempt: (candidate, res, attempt) =>
@@ -111,11 +140,18 @@ async function main(): Promise<number> {
       }
     }
 
-    if (collected === 0 && i + 1 >= EARLY_ABORT_AFTER) {
-      abortReason = `aucun tarif reçu sur les ${i + 1} premières stations (${r.detail})`;
-      break;
+    done++;
+    if (collected === 0 && done >= EARLY_ABORT_AFTER && !abortReason) {
+      abortReason = `aucun tarif reçu sur les ${done} premières stations (${r.detail})`;
     }
+  };
+
+  const started = Date.now();
+  await Promise.all(Array.from({ length: CONCURRENCY }, (_, lane) => worker(lane)));
+  if (outOfTime && !abortReason) {
+    abortReason = `durée maximale de ${MAX_MINUTES} min atteinte : ${stations.length - done} station(s) non relevée(s)`;
   }
+  console.log(`Durée du relevé : ${Math.round((Date.now() - started) / 60_000)} min (${CONCURRENCY} requêtes en parallèle).`);
 
   console.log(`\n${collected}/${stations.length} stations relevées, ${changes.length} changement(s), ${requests} requête(s) Bright Data.`);
 
