@@ -17661,6 +17661,153 @@
           "changePercentage": 0
         }
       ]
+    },
+    {
+      "id": "12491",
+      "locationId": "482857",
+      "locationSlug": "ploermelsupercharger",
+      "name": "Ploërmel, France",
+      "city": "Ploërmel",
+      "department": "Dép. 56",
+      "region": "Bretagne",
+      "street": "26 Av. Georges Pompidou",
+      "postalCode": "56800",
+      "latitude": 47.931743,
+      "longitude": -2.382386,
+      "status": "PLAN",
+      "stallCount": 8,
+      "powerKw": 500,
+      "stallsBreakdown": {
+        "v2": 0,
+        "v3": 0,
+        "v4": 0
+      },
+      "otherEVs": true,
+      "currentPricing": {
+        "teslaPeak": 0.36,
+        "teslaOffPeak": 0.3,
+        "nonTeslaPeak": 0.49,
+        "nonTeslaOffPeak": 0.39,
+        "peakHours": "09:00 - 20:00",
+        "idleFeeStandard": 0.5,
+        "idleFeeCongested": 1,
+        "lastUpdated": "2026-11-25T12:11:17.176Z"
+      },
+      "priceHistory": [
+        {
+          "id": "12491-2026-11-25",
+          "superchargerId": "12491",
+          "superchargerName": "Ploërmel, France",
+          "locationSlug": "ploermelsupercharger",
+          "date": "2026-11-25",
+          "teslaPeak": 0.36,
+          "teslaOffPeak": 0.3,
+          "nonTeslaPeak": 0.49,
+          "nonTeslaOffPeak": 0.39,
+          "peakHours": "09:00 - 20:00",
+          "source": "Nouveau référencement",
+          "notes": "Nouvelle station répertoriée",
+          "changePercentage": 0
+        }
+      ]
+    },
+    {
+      "id": "12490",
+      "locationId": "462617",
+      "locationSlug": "castelsarrasinsupercharger",
+      "name": "Castelsarrasin, France",
+      "city": "Castelsarrasin",
+      "department": "Dép. 82",
+      "region": "Occitanie",
+      "street": "Route du Barraouet",
+      "postalCode": "82100",
+      "latitude": 44.057122,
+      "longitude": 1.101537,
+      "status": "PLAN",
+      "stallCount": 8,
+      "powerKw": 500,
+      "stallsBreakdown": {
+        "v2": 0,
+        "v3": 0,
+        "v4": 0
+      },
+      "otherEVs": true,
+      "currentPricing": {
+        "teslaPeak": 0.36,
+        "teslaOffPeak": 0.3,
+        "nonTeslaPeak": 0.49,
+        "nonTeslaOffPeak": 0.39,
+        "peakHours": "09:00 - 20:00",
+        "idleFeeStandard": 0.5,
+        "idleFeeCongested": 1,
+        "lastUpdated": "2026-11-25T12:11:17.176Z"
+      },
+      "priceHistory": [
+        {
+          "id": "12490-2026-11-25",
+          "superchargerId": "12490",
+          "superchargerName": "Castelsarrasin, France",
+          "locationSlug": "castelsarrasinsupercharger",
+          "date": "2026-11-25",
+          "teslaPeak": 0.36,
+          "teslaOffPeak": 0.3,
+          "nonTeslaPeak": 0.49,
+          "nonTeslaOffPeak": 0.39,
+          "peakHours": "09:00 - 20:00",
+          "source": "Nouveau référencement",
+          "notes": "Nouvelle station répertoriée",
+          "changePercentage": 0
+        }
+      ]
+    },
+    {
+      "id": "12492",
+      "locationId": "30260",
+      "locationSlug": "fouquiereslesbethunesupercharger",
+      "name": "Fouquières-lès-Béthune, France",
+      "city": "Fouquières-lès-Béthune",
+      "department": "Dép. 62",
+      "region": "Hauts-de-France",
+      "street": "Z.A. Actipolis",
+      "postalCode": "62232",
+      "latitude": 50.513386,
+      "longitude": 2.621082,
+      "status": "PLAN",
+      "stallCount": 8,
+      "powerKw": 500,
+      "stallsBreakdown": {
+        "v2": 0,
+        "v3": 0,
+        "v4": 0
+      },
+      "otherEVs": true,
+      "currentPricing": {
+        "teslaPeak": 0.36,
+        "teslaOffPeak": 0.3,
+        "nonTeslaPeak": 0.49,
+        "nonTeslaOffPeak": 0.39,
+        "peakHours": "09:00 - 20:00",
+        "idleFeeStandard": 0.5,
+        "idleFeeCongested": 1,
+        "lastUpdated": "2026-11-25T12:11:17.176Z"
+      },
+      "priceHistory": [
+        {
+          "id": "12492-2026-11-25",
+          "superchargerId": "12492",
+          "superchargerName": "Fouquières-lès-Béthune, France",
+          "locationSlug": "fouquiereslesbethunesupercharger",
+          "date": "2026-11-25",
+          "teslaPeak": 0.36,
+          "teslaOffPeak": 0.3,
+          "nonTeslaPeak": 0.49,
+          "nonTeslaOffPeak": 0.39,
+          "peakHours": "09:00 - 20:00",
+          "source": "Nouveau référencement",
+          "notes": "Nouvelle station répertoriée",
+          "changePercentage": 0
+        }
+      ]
     }
   ],
   "priceSnapshots": [
@@ -22763,6 +22910,51 @@
       "source": "Nouveau référencement",
       "notes": "Nouvelle station répertoriée",
       "changePercentage": 0
+    },
+    {
+      "id": "12491-2026-11-25",
+      "superchargerId": "12491",
+      "superchargerName": "Ploërmel, France",
+      "locationSlug": "ploermelsupercharger",
+      "date": "2026-11-25",
+      "teslaPeak": 0.36,
+      "teslaOffPeak": 0.3,
+      "nonTeslaPeak": 0.49,
+      "nonTeslaOffPeak": 0.39,
+      "peakHours": "09:00 - 20:00",
+      "source": "Nouveau référencement",
+      "notes": "Nouvelle station répertoriée",
+      "changePercentage": 0
+    },
+    {
+      "id": "12490-2026-11-25",
+      "superchargerId": "12490",
+      "superchargerName": "Castelsarrasin, France",
+      "locationSlug": "castelsarrasinsupercharger",
+      "date": "2026-11-25",
+      "teslaPeak": 0.36,
+      "teslaOffPeak": 0.3,
+      "nonTeslaPeak": 0.49,
+      "nonTeslaOffPeak": 0.39,
+      "peakHours": "09:00 - 20:00",
+      "source": "Nouveau référencement",
+      "notes": "Nouvelle station répertoriée",
+      "changePercentage": 0
+    },
+    {
+      "id": "12492-2026-11-25",
+      "superchargerId": "12492",
+      "superchargerName": "Fouquières-lès-Béthune, France",
+      "locationSlug": "fouquiereslesbethunesupercharger",
+      "date": "2026-11-25",
+      "teslaPeak": 0.36,
+      "teslaOffPeak": 0.3,
+      "nonTeslaPeak": 0.49,
+      "nonTeslaOffPeak": 0.39,
+      "peakHours": "09:00 - 20:00",
+      "source": "Nouveau référencement",
+      "notes": "Nouvelle station répertoriée",
+      "changePercentage": 0
     }
   ],
   "nationalHistory": [
@@ -22887,8 +23079,35 @@
       "changePercentage": -5.2
     }
   ],
-  "lastSyncTime": "2026-11-24T13:19:24.955Z",
+  "lastSyncTime": "2026-11-25T12:11:17.176Z",
   "stationEvents": [
+    {
+      "date": "2026-11-25",
+      "type": "NEW",
+      "superchargerId": "12491",
+      "superchargerName": "Ploërmel, France",
+      "city": "Ploërmel",
+      "region": "Bretagne",
+      "to": "PLAN"
+    },
+    {
+      "date": "2026-11-25",
+      "type": "NEW",
+      "superchargerId": "12490",
+      "superchargerName": "Castelsarrasin, France",
+      "city": "Castelsarrasin",
+      "region": "Occitanie",
+      "to": "PLAN"
+    },
+    {
+      "date": "2026-11-25",
+      "type": "NEW",
+      "superchargerId": "12492",
+      "superchargerName": "Fouquières-lès-Béthune, France",
+      "city": "Fouquières-lès-Béthune",
+      "region": "Hauts-de-France",
+      "to": "PLAN"
+    },
     {
       "date": "2026-11-24",
       "type": "STATUS",
