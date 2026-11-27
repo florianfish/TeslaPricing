@@ -11,7 +11,7 @@
       "postalCode": "49240",
       "latitude": 47.518148,
       "longitude": -0.606939,
-      "status": "PLAN",
+      "status": "CONSTRUCTION",
       "stallCount": 16,
       "powerKw": 500,
       "stallsBreakdown": {
@@ -1000,8 +1000,8 @@
       "latitude": 47.538405,
       "longitude": 0.987659,
       "status": "CONSTRUCTION",
-      "stallCount": 8,
-      "powerKw": 250,
+      "stallCount": 24,
+      "powerKw": 500,
       "stallsBreakdown": {
         "v2": 0,
         "v3": 0,
@@ -17773,7 +17773,7 @@
       "latitude": 50.513386,
       "longitude": 2.621082,
       "status": "PLAN",
-      "stallCount": 8,
+      "stallCount": 20,
       "powerKw": 500,
       "stallsBreakdown": {
         "v2": 0,
@@ -23079,8 +23079,18 @@
       "changePercentage": -5.2
     }
   ],
-  "lastSyncTime": "2026-11-25T12:11:17.176Z",
+  "lastSyncTime": "2026-11-27T11:48:29.368Z",
   "stationEvents": [
+    {
+      "date": "2026-11-27",
+      "type": "STATUS",
+      "superchargerId": "10340",
+      "superchargerName": "Avrillé, France",
+      "city": "Avrillé",
+      "region": "Pays de la Loire",
+      "from": "PLAN",
+      "to": "CONSTRUCTION"
+    },
     {
       "date": "2026-11-25",
       "type": "NEW",
