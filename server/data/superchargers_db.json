@@ -6146,7 +6146,7 @@
       "postalCode": "88100",
       "latitude": 48.293374,
       "longitude": 6.935576,
-      "status": "PLAN",
+      "status": "CONSTRUCTION",
       "stallCount": 8,
       "powerKw": 500,
       "stallsBreakdown": {
@@ -23079,8 +23079,18 @@
       "changePercentage": -5.2
     }
   ],
-  "lastSyncTime": "2026-11-27T11:48:29.368Z",
+  "lastSyncTime": "2026-11-28T11:24:17.918Z",
   "stationEvents": [
+    {
+      "date": "2026-11-28",
+      "type": "STATUS",
+      "superchargerId": "11956",
+      "superchargerName": "Saint-Dié-des-Vosges, France - Rue Marcel Mauss",
+      "city": "Saint-Dié-des-Vosges",
+      "region": "Grand Est",
+      "from": "PLAN",
+      "to": "CONSTRUCTION"
+    },
     {
       "date": "2026-11-27",
       "type": "STATUS",
